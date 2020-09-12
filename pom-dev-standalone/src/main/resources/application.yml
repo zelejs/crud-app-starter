@@ -67,15 +67,15 @@ logging:
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3307/coop?characterEncoding=utf8&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    filters: log4j,wall,mergeStat
-    sql-script-encoding: UTF-8
-    schema: classpath*:sql/**/*-schema.sql
-    data: classpath*:sql/**/*-data.sql
-    initialize: false
+      url: jdbc:mysql://localhost:3307/coop?characterEncoding=utf8&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      filters: log4j,wall,mergeStat
+      sql-script-encoding: UTF-8
+      schema: classpath*:sql/**/*-schema.sql
+      data: classpath*:sql/**/*-data.sql
+      initialize: false
 
 logging:
   level: debug
