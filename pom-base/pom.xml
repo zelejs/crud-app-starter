@@ -50,25 +50,6 @@
             <version>1.0.0</version>
         </dependency>-->
 
-        <!--    tag 和 image    -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-tag</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-image</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-
-        <!-- 初始化启动eav  -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-runtime</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
         <!-- uaas 相关 uaas-dev：uaas功能    -->
         <!-- uaas-dev-org：测试初始化用户数据 -->
         <!--<dependency>
