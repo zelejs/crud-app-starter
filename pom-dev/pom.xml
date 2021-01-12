@@ -19,11 +19,15 @@
 
     <properties>
         <!---CRUD, scope provided-->
-        <skipStandalone>false</skipStandalone>
+        <skipStandalone>true</skipStandalone>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>pom-base</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-dev</artifactId>

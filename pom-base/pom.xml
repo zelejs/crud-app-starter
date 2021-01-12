@@ -26,28 +26,18 @@
     </properties>
 
     <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.21</version>
-        </dependency>
-
+<!-- do not introduce config table -->
 <!--        <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>field-config</artifactId>
             <version>1.2.1</version>
         </dependency>-->
 
-
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.2.5</version>
         </dependency>
-
-
 
         <!--  授权   -->
      <!--   <dependency>
@@ -68,6 +58,7 @@
             <artifactId>uaas-dev-org</artifactId>
             <version>1.0.0</version>
         </dependency>-->
+
         <!--dependent runtime -->
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -80,23 +71,47 @@
             <version>${crud-core.version}</version>
         </dependency>
 
-        <!--springboot amqp(rabbbitmq)-->
+        <!-- data -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.21</version>
         </dependency>
 
-        <!-- springboot cache -->
+        <!--springboot-->
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
-            <version>2.6.11</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        
+        <!-- springboot cache -->
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
         </dependency>
+        <!-- <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>2.6.11</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache.version}</version>
+        </dependency>
+
+        <!--springboot amqp(rabbbitmq)-->
+        <!-- <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency> -->
 
         <!--springboot test-->
         <dependency>
@@ -111,8 +126,7 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!--log4j logGER-->
+        <!--log4j-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -123,7 +137,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.29</version>
         </dependency>
-
 
         <!--allow swagger support java 11 (above java9)-->
         <dependency>
@@ -151,7 +164,6 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.4</version>
         </dependency>
-
     </dependencies>
 
     <build>
