@@ -25,16 +25,10 @@
     <dependencies>
         <dependency>
             <groupId>com.jfeat</groupId>
-            <artifactId>pom-base</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
             <artifactId>crud-dev</artifactId>
             <version>0.0.2</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>
