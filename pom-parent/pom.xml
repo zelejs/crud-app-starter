@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.jfeat</groupId>
+    <artifactId>pom-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>SpringBoot-Parent</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <!-- crud  -->
+        <crud-base.version>0.0.1</crud-base.version>
+        <crud-core.version>0.0.5</crud-core.version>
+        <crud-plus.version>0.1.0</crud-plus.version>
+        <crud-log.version>0.0.2</crud-log.version>
+        <swagger-ui.version>0.0.1</swagger-ui.version>
+        <jwt-core.version>0.1.1</jwt-core.version>
+        <perm-core.version>0.1.1</perm-core.version>
+        <eav.version>2.1.1</eav.version>
+        <field-config.version>1.2.1</field-config.version>
+
+        <!-- common -->
+        <hutool-all.version>5.7.2</hutool-all.version>
+        <mysql-connector-java.version>8.0.15</mysql-connector-java.version> <!--old version 5.1.43-->
+        <commons-lang3.version>3.9</commons-lang3.version>
+        <log4j.version>1.2.17</log4j.version>
+        <slf4j-api.version>1.7.29</slf4j-api.version>
+        <ehcache-core.version>2.6.11</ehcache-core.version>
+        <ehcache.version>3.3.1</ehcache.version>
+
+        <!-- dev -->
+        <flyway-core.version>5.2.4</flyway-core.version>
+        <io.swagger.version>1.5.9</io.swagger.version>
+
+        <!-- java 11  -->
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jaxb-core.version>2.3.0</jaxb-core.version>
+        <jaxb-impl.version>2.3.1</jaxb-impl.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
+        <aspectjweaver.version>1.9.4</aspectjweaver.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+
+        <!-- plugins -->
+        <swagger-maven-plugin.version>3.1.5</swagger-maven-plugin.version>
+        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+        <spring-boot-maven-plugin.version>1.5.4.RELEASE</spring-boot-maven-plugin.version>
+        <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+
+        <!-- sprintboot  -->
+        <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
+
+        <!-- legacy  -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <shiro.version>1.4.0</shiro.version>
+        <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
+        <mybatisplus.version>2.1.9</mybatisplus.version>
+        <fastjson.version>1.2.52</fastjson.version>
+        <commons.io.version>2.5</commons.io.version>
+        <commons.lang3.version>3.7</commons.lang3.version>
+        <velocity.version>1.7</velocity.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <!-- <zxing.version>3.2.1</zxing.version> -->
+        <druid.version>1.1.12</druid.version>
+        <beetl.version>2.7.15</beetl.version>
+        <swagger.version>2.2.2</swagger.version>
+        <jjwt.version>0.7.0</jjwt.version>
+        <jedis.version>2.9.0</jedis.version>
+        <fst.version>2.50</fst.version>
+        <h2.version>1.4.196</h2.version>
+        <guava.version>18.0</guava.version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>archiva-internal</id>
+            <name>Internal Repository</name>
+            <url>http://120.79.49.72:8081/repository/internal</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>archiva-internal</id>
+            <name>Internal Repository</name>
+            <url>http://120.79.49.72:8081/repository/internal</url>
+        </repository>
+    </repositories>
+
+</project>
