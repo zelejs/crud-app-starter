@@ -18,7 +18,7 @@
 
     <properties>
         <!-- crud  -->
-        <crud-base.version>0.0.1</crud-base.version>
+        <crud-base.version>0.0.2</crud-base.version>
         <crud-core.version>0.0.5</crud-core.version>
         <crud-plus.version>0.1.0</crud-plus.version>
         <crud-log.version>0.0.2</crud-log.version>
