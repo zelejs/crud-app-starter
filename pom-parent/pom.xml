@@ -32,6 +32,7 @@
         <hutool-all.version>5.7.2</hutool-all.version>
         <mysql-connector-java.version>8.0.15</mysql-connector-java.version> <!--old version 5.1.43-->
         <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-logging.version>1.2</commons-logging.version>
         <log4j.version>1.2.17</log4j.version>
         <slf4j-api.version>1.7.29</slf4j-api.version>
         <ehcache-core.version>2.6.11</ehcache-core.version>
