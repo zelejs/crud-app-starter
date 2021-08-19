@@ -3,145 +3,30 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>pom-uaas</artifactId>
+    <artifactId>pom-bundle-standalone</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>pom-uaas</name>
-    <description>pom-uaas</description>
+    <name>pom-bundle-standalone</name>
+    <description>pom-bundle-standalone</description>
 
     <parent>
         <groupId>com.jfeat</groupId>
-        <artifactId>pom-base</artifactId>
+        <artifactId>pom-parent</artifactId>
         <version>1.0.0</version>
         <relativePath />
     </parent>
 
     <properties>
         <skipStandalone>false</skipStandalone>
-        <!---CRUD, scope provided-->
-        <crud-plus.version>0.1.0</crud-plus.version>
-        <crud-core.version>0.0.5</crud-core.version>
-        <eav.version>2.1.1</eav.version>
     </properties>
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.21</version>
-        </dependency>
-
         <dependency>
             <groupId>com.jfeat</groupId>
-            <artifactId>pom-runtime</artifactId>
-        </dependency>
-
-        <!--  授权   -->
-     <!--   <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>fingerprint-auth-client</artifactId>
+            <artifactId>pom-bundle</artifactId>
             <version>1.0.0</version>
-        </dependency>-->
-
-
-
-        <!-- uaas 相关 uaas-dev：uaas功能    -->
-        <!-- uaas-dev-org：测试初始化用户数据 -->
-        <!--<dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>uaas-dev</artifactId>
-            <version>1.2.0</version>
-        </dependency>-->
-       <!-- <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>uaas-dev-org</artifactId>
-            <version>1.0.0</version>
-        </dependency>-->
-        <!--dependent runtime -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-plus</artifactId>
-            <version>${crud-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-core</artifactId>
-            <version>${crud-core.version}</version>
-        </dependency>
-
-        <!--springboot amqp(rabbbitmq)-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
-        <!-- springboot cache -->
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
-            <version>2.6.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
-        </dependency>
-
-        <!--springboot test-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <!--log4j logGER-->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.29</version>
-        </dependency>
-
-
-        <!--allow swagger support java 11 (above java9)-->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.4</version>
         </dependency>
 
     </dependencies>

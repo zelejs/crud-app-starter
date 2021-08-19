@@ -19,17 +19,14 @@
 
     <properties>
         <skipStandalone>false</skipStandalone>
-        <!---CRUD, scope provided-->
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-dev</artifactId>
             <version>0.0.2</version>
         </dependency>
-
     </dependencies>
 
     <build>

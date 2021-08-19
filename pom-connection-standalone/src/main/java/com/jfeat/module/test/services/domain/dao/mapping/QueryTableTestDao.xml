@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.module.test.services.domain.dao.QueryTableTestDao">
+                                                                                    <sql id="Base_Column_List">
+                                                                                                                                        pom_table_test.id, pom_table_test.name
+    </sql>
+
+    
+    
+
+    <select id="queryMasterModel" resultType="TableTestModel">
+       SELECT pom_table_test.*
+       FROM pom_table_test
+       WHERE pom_table_test.id=#{id}
+       GROUP BY pom_table_test.id
+    </select>
+
+
+        
+    <select id="findTableTestPage" resultType="TableTestRecord" parameterType="TableTestRecord">
+            SELECT <include refid="Base_Column_List"/>
+
+        
+
+        FROM pom_table_test
+
+        
+        
+        WHERE 1=1
+        
+
+        
+                                                                            <if test="record.id != null and record.id>0 ">
+                                    AND pom_table_test.id LIKE CONCAT('%',#{record.id},'%')
+                            </if>
+                                                                    <if test="record.name != null and record.name!= ''">
+                                    AND pom_table_test.name LIKE CONCAT('%',#{record.name},'%')
+                            </if>
+        
+        <if test="startTime != null">
+            <![CDATA[AND pom_table_test.start_time >= DATE(#{startTime})]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[AND pom_table_test.end_time <= DATE(#{endTime}]]>
+        </if>
+            <!--
+        <if test="search != null and search != ''">
+            OR pom_table_test.name LIKE CONCAT('%',#{search},'%')
+        </if>
+        -->
+                                    </select>
+</mapper>

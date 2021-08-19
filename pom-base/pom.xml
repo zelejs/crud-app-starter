@@ -59,7 +59,7 @@
             <version>${flyway-core.version}</version>
         </dependency> -->
 
-        <!-- crud -->
+        <!--crud -->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-plus</artifactId>
@@ -103,7 +103,8 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector-java.version}</version>
+            <version>${mysql-connector-java.version}</version> <!--old version 5.1.43-->
+            <scope>runtime</scope>
         </dependency>
 
         <!--slf4j-->
@@ -149,14 +150,13 @@
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
         </dependency> -->
-
+        
         <!--springboot test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -216,7 +216,7 @@
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.5</version>
+                <version>${swagger-maven-plugin.version}</version>
                 <configuration>
                     <apiSources>
                         <apiSource>
@@ -246,7 +246,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -255,7 +255,8 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.5.4.RELEASE</version>
+                <version>${spring-boot-maven-plugin.version}</version>
+                <!-- <version>1.5.4.RELEASE</version> -->
                 <configuration>
                     <skip>${skipStandalone}</skip>
                 </configuration>

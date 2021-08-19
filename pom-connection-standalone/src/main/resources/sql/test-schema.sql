@@ -1,0 +1,3 @@
+SET FOREIGN_KEY_CHECKS=0;
+
+DROP TABLE IF EXISTS `pom_table_test`; CREATE TABLE `pom_table_test` (`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',`name` varchar(50) NOT NULL COMMENT '名称',UNIQUE (`name`),PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
