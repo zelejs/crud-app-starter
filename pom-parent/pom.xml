@@ -40,6 +40,7 @@
 
         <!-- dev -->
         <flyway-core.version>5.2.4</flyway-core.version>
+        <io.swagger.version>1.5.9</io.swagger.version>
         <io.springfox.version>2.9.2</io.springfox.version>
         <swagger.version>2.9.2</swagger.version>
 

@@ -4,37 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jfeat</groupId>
-    <artifactId>pom-all</artifactId>
+    <artifactId>pom-all-starter</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>zero-io-pom</name>
-    <description>IO Library for Business</description>
-
-    <parent>
-        <groupId>com.jfeat</groupId>
-        <artifactId>sb-parent</artifactId>
-        <version>1.0.0</version>
-        <relativePath/>
-    </parent>
-
-    <properties>
-        <lombok.version>1.18.12</lombok.version>
-    </properties>
-
-    <dependencies>
-
-    </dependencies>
+    <name>STARTER</name>
+    <description>pom-all-starter</description>
 
     <modules>
+        <module>pom-parent</module>
+        <module>pom-base</module>
+        <module>pom-bundle</module>
+        <module>pom-bundle-standalone</module>
+        <module>pom-connection-standalone</module>
         <module>pom-runtime</module>
         <module>pom-dev-standalone</module>
         <module>pom-dev</module>
-        <module>pom-base</module>
-        <module>pom-uaas</module>
     </modules>
-
-
-
 
 </project>
