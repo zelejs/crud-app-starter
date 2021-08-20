@@ -65,6 +65,7 @@
             <artifactId>crud-plus</artifactId>
             <version>${crud-plus.version}</version>
         </dependency>
+        <!-- crud-core dependent io.springfox.swagger2 -->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-core</artifactId>
@@ -94,6 +95,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <!-- <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency> -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -162,20 +168,6 @@
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!--  io.swagger    -->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${io.swagger.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>${io.swagger.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <!--allow swagger support java 11 (above java9)-->
