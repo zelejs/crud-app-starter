@@ -3,7 +3,7 @@ build/
 /gen/
 .idea/
 .gradle/
-.svn/*
+.svn/
 *.iml
 *.swp
 *.log
