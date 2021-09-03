@@ -65,7 +65,7 @@
             <artifactId>crud-plus</artifactId>
             <version>${crud-plus.version}</version>
         </dependency>
-        <!-- crud-core dependent io.springfox.swagger2 -->
+        <!-- crud-core dependent io.springfox.swagger2, java11.x, spring-test -->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-core</artifactId>
