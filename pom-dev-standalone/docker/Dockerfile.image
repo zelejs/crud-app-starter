@@ -1,12 +1,23 @@
 #builk-stage
-FROM adoptopenjdk:11-jre-hotspot
-
-ENV JAVA_OPTS "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
+FROM adoptopenjdk:11-jdk-hotspot
 
 WORKDIR /webapps
 
 ADD target/*.jar /webapps/app.jar
 
-ADD ./tag/api+dev-standalone/application.yml /webapps/config/application-dev.yml
+COPY ./tag/api+dev-standalone/config/application.yml /webapps/config/application-dev.yml
+COPY ./tag/api+dev-standalone/config/logback-spring.xml /webapps/config/logback-spring.xml
 
-CMD ["/bin/sh", "-c", "java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080"]
+COPY ./tag/api+dev-standalone/script/deploy.sh /usr/local/bin/deploy.sh
+COPY ./tag/api+dev-standalone/script/predeploy.sh /usr/local/bin/predeploy.sh
+COPY ./tag/api+dev-standalone/script/deploy-lib.sh /usr/local/bin/deploy-lib.sh
+
+COPY ./tag/api+dev-standalone/script/fix_url.sh /usr/local/bin/fix_url.sh
+
+RUN chmod +x /usr/local/bin/deploy.sh
+RUN chmod +x /usr/local/bin/predeploy.sh
+RUN chmod +x /usr/local/bin/deploy-lib.sh
+RUN chmod +x /usr/local/bin/fix_url.sh
+
+
+CMD ["/bin/sh", "-c", "fix_url.sh && java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080"]
