@@ -1,0 +1,16 @@
+version: "3.4"
+services:
+  api:
+    image: api:dev-standalone
+    privileged: true
+    restart: always
+    working_dir: /webapps
+    volumes: 
+      - /etc/localtime:/etc/localtime:ro
+      - ./lib:/webapps/lib
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+    ports: 
+      - 8080:8080

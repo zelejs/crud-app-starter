@@ -19,9 +19,6 @@
 
     <properties>
         <skipStandalone>false</skipStandalone>
-        <!---CRUD, scope provided-->
-        <crud-plus.version>0.1.0</crud-plus.version>
-        <crud-core.version>0.0.5</crud-core.version>
         <eav.version>2.1.1</eav.version>
     </properties>
 
@@ -32,11 +29,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.21</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>pom-runtime</artifactId>
         </dependency>
 
         <!--  授权   -->

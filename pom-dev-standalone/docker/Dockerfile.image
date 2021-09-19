@@ -1,0 +1,12 @@
+#builk-stage
+FROM adoptopenjdk:11-jre-hotspot
+
+ENV JAVA_OPTS "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
+
+WORKDIR /webapps
+
+ADD target/*.jar /webapps/app.jar
+
+ADD ./tag/api+dev-standalone/application.yml /webapps/config/application-dev.yml
+
+CMD ["/bin/sh", "-c", "java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080"]

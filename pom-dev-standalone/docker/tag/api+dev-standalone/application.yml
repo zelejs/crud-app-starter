@@ -1,0 +1,16 @@
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://mysqlserver:3306/dummy?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&azeroDateTimeBehavior=convertToNull&llowPublicKeyRetrieval=true
+    username: root
+    password: root
+    filters: log4j,mergeStat
+    sql-script-encoding: UTF-8
+    schema: classpath*:sql/*-schema.sql
+    data: classpath*:sql/*-data.sql
+    initialize: true
+    
+logging:
+  level: debug
+  file: logs/access.log

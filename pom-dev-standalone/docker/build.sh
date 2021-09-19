@@ -1,3 +1,3 @@
 #!/bin/sh
-docker-compose -f docker+jar.yml build 
-docker-compose -f docker+jar.yml up
+docker-compose -f docker+buildjar.yml build 
+docker-compose -f docker+buildjar.yml up

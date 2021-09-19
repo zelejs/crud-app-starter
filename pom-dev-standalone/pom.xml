@@ -3,12 +3,12 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>pom-dev-standalone</artifactId>
+    <artifactId>dev-standalone</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>pom-dev-standalone</name>
-    <description>pom-dev-standalone</description>
+    <name>dev-standalone</name>
+    <description>dev-standalone</description>
 
     <parent>
         <groupId>com.jfeat</groupId>

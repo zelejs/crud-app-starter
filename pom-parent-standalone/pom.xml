@@ -3,12 +3,12 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>pom-base</artifactId>
+    <artifactId>dev-standalone</artifactId>
     <version>1.0.0</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>pom-base</name>
-    <description>pom-base</description>
+    <name>dev-standalone</name>
+    <description>dev-standalone</description>
 
     <parent>
         <groupId>com.jfeat</groupId>
@@ -18,121 +18,10 @@
     </parent>
 
     <properties>
-        <skipStandalone>true</skipStandalone>
+        <skipStandalone>false</skipStandalone>
     </properties>
 
     <dependencies>
-<!-- do not introduce config table -->
-<!--        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>field-config</artifactId>
-            <version>${field-config.version}</version>
-        </dependency>-->
-
-        <!--  授权   -->
-     <!--   <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>fingerprint-auth-client</artifactId>
-            <version>1.0.0</version>
-        </dependency>-->
-
-        <!-- uaas 相关 uaas-dev：uaas功能    -->
-        <!-- uaas-dev-org：测试初始化用户数据 -->
-        <!--<dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>uaas-dev</artifactId>
-            <version>1.2.0</version>
-        </dependency>-->
-       <!-- <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>uaas-dev-org</artifactId>
-            <version>1.0.0</version>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>${swagger-ui.version}</version>
-        </dependency>-->
-        <!-- <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway-core.version}</version>
-        </dependency> -->
-
-        <!--crud -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-plus</artifactId>
-            <version>${crud-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-runtime</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <!-- crud-core dependent io.springfox.swagger2, java11.x, spring-test -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-core</artifactId>
-            <version>${crud-core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-log</artifactId>
-            <version>${crud-log.version}</version>
-        </dependency>
-
-        <!-- auth -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>jwt-core</artifactId>
-            <version>${jwt-core.version}</version>
-        </dependency>
-
-        <!-- data source -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>${hutool-all.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-        <!-- <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency> -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector-java.version}</version> <!--old version 5.1.43-->
-            <scope>runtime</scope>
-        </dependency>
-
-        <!--slf4j-->
-        <!-- <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency> -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
-        </dependency>
-
-        <!--springboot-->
-        <!-- <version>2.1.2.RELEASE</version> -->
-        <!-- <version>${spring-boot-starter-web.version}</version>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -148,31 +37,48 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
-        
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.21</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>uaas-dev</artifactId>
+            <version>1.0.0</version>
+        </dependency> -->
+        <!--dependent runtime -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-plus</artifactId>
+            <version>${crud-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-core</artifactId>
+            <version>${crud-core.version}</version>
+        </dependency>
+
         <!--springboot amqp(rabbbitmq)-->
         <!-- <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency> -->
 
-        <!-- springboot jdbc-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-
         <!-- springboot cache -->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
-            <version>${ehcache-core.version}</version>
+            <version>2.6.11</version>
         </dependency>
         <!-- <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
         </dependency> -->
-        
+
         <!--springboot test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -186,36 +92,43 @@
             <scope>test</scope>
         </dependency>
 
-        <!--allow swagger support java 11 (above java9)-->
+        <!--log4j logGER-->
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>${validation-api.version}</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.29</version>
+        </dependency>
+
+        <!--allow swagger support java 11 (above java9)-->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api.version}</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-core.version}</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl.version}</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <version>${javax.activation.version}</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>${aspectjweaver.version}</version>
+            <version>1.9.4</version>
         </dependency>
     </dependencies>
 
@@ -224,7 +137,7 @@
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>${swagger-maven-plugin.version}</version>
+                <version>3.1.5</version>
                 <configuration>
                     <apiSources>
                         <apiSource>
@@ -254,7 +167,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
+                <version>3.6.0</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -263,8 +176,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot-maven-plugin.version}</version>
-                <!-- <version>1.5.4.RELEASE</version> -->
+                <version>1.5.4.RELEASE</version>
                 <configuration>
                     <skip>${skipStandalone}</skip>
                 </configuration>
