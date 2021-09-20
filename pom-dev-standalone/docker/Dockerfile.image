@@ -5,8 +5,8 @@ WORKDIR /webapps
 
 ADD target/*.jar /webapps/app.jar
 
-COPY ./tag/api+dev-standalone/config/application.yml /webapps/config/application-dev.yml
-COPY ./tag/api+dev-standalone/config/logback-spring.xml /webapps/config/logback-spring.xml
+COPY ./tag/api+dev-standalone/conf/application.yml /webapps/config/application-dev.yml
+COPY ./tag/api+dev-standalone/conf/logback-spring.xml /webapps/config/logback-spring.xml
 
 COPY ./tag/api+dev-standalone/script/deploy.sh /usr/local/bin/deploy.sh
 COPY ./tag/api+dev-standalone/script/predeploy.sh /usr/local/bin/predeploy.sh

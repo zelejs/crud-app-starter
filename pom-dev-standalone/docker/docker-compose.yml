@@ -7,7 +7,7 @@ services:
     working_dir: /webapps
     environment: 
       #JAVA_OPTS: "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
-      URL_SHORT: mysqlserver:3306/dummy
+      URL_SHORT: 172.20.0.1:3306/dummy
       USERNAME: root
       PASSWORD: root
       GREENFIELD: dummy
@@ -21,3 +21,10 @@ services:
         max-size: "5m"
     ports: 
       - 8080:8080
+    networks:
+      - dummy_net
+
+networks:
+   dummy_net:
+     external: false
+

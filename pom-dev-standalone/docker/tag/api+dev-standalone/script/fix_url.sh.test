@@ -1,0 +1,6 @@
+export URL_SHORT='192.168.3.239:3306/test'
+export TEST=./test.url.yml
+# export GREENFIELD=ok
+
+sh fix_url.sh
+

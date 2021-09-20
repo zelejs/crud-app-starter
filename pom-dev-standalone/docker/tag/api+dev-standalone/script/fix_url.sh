@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 target=/webapps/config/application-dev.yml
 
+## TEST
+ii='-i'
+if [ ${TEST} ];then
+   ii=()
+   target=${TEST}
+fi
+## end TEST
+
+
+## main
+
 if [ ! ${URL_SHORT} ];then
    exit
 fi
@@ -12,9 +23,9 @@ if [ ! -f $target ];then
 fi
 
 if [ ! -f $target ];then
+   echo $target not exists!
    exit
 fi
-
 
 #export URL_SHORT='mysqlserver:3307\/db_name'
 #export USERNAME=root
@@ -30,14 +41,16 @@ if [ ! $password ];then
    password=root  
 fi
 
-#jdbc:mysql://127.0.0.1:3306/test?
-sed -i "s/url: jdbc:mysql:\/\/[0-9\.a-z:]*\/[a-z\_]*/url: jdbc:mysql:\/\/$mysqlurl/" $target
-## 
-sed -i "s/username:.*/username: $username/" $target
-sed -i "s/password:.*/password: $password/" $targets
 
-if [ $GREENFIELD ];then 
-   sed -i "s/initialize:.*/initialize: true/" $target
+#jdbc:mysql://127.0.0.1:3306/test?
+sed $ii "s/url: jdbc:mysql:\/\/[0-9\.a-z:]*\/[a-z\_]*/url: jdbc:mysql:\/\/$mysqlurl/" $target
+
+## 
+sed $ii "s/username:.*/username: $username/" $target
+sed $ii "s/password:.*/password: $password/" $target
+
+if [ ${GREENFIELD} ];then 
+   sed $ii "s/initialize:.*/initialize: true/" $target
 else
-   sed -i "s/initialize:.*/initialize: false/" $target
+   sed $ii "s/initialize:.*/initialize: false/" $target
 fi
