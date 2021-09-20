@@ -6,11 +6,11 @@ services:
     restart: always
     working_dir: /webapps
     environment: 
+      #GREENFIELD: dummy
       #JAVA_OPTS: "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
-      URL_SHORT: 172.20.0.1:3306/dummy
+      URL_SHORT: 127.0.0.1:3306/dummy
       USERNAME: root
       PASSWORD: root
-      GREENFIELD: dummy
       ROLLBACK_KEEP_NUM: 2
     volumes: 
       - /etc/localtime:/etc/localtime:ro
