@@ -1,0 +1,9 @@
+
+touch app-standalone.jar
+touch ios-standaloen.jar
+rollback=$(ls *-standalone.jar)
+
+echo ${rollback}
+echo rollback: ${#rollback}
+
+rm -f app-standalone.jar  ios-standaloen.jar

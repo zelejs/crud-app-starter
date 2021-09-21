@@ -1,22 +1,7 @@
 #!/bin/sh
-
-## deploy.sh sample
-#standalone='alliance-api-1.0.0-standalone.jar'
-#app='app.jar'
-#
-#rollback=$standalone.rollback_$(date "+%m-%d")
-#if [ ! -f $rollback ];then
-#   cp $app $rollback
-#
-#   bash ./predeploy.sh rollback keep alliance-api-1.0.0-standalone.jar.rollback_ 6
-#fi
-#
-#if [ -f $standalone ];then
-#   mv $standalone $app
-#fi
-#
-#docker restart mall-api
-## end sample
+################################
+#export ROLLBACK_KEEP_NUM=2
+################################
 
 cmd=$1
 
@@ -25,7 +10,6 @@ usage() {
    echo '   predeploy.sh rollback keep <pattern> <num>'
    exit
 }
-
 
 cmd2=$1$2
 
