@@ -1,9 +1,34 @@
 
-touch app-standalone.jar
-touch ios-standaloen.jar
-rollback=$(ls *-standalone.jar)
+export ROLLBACK_KEEP_NUM=2
+export PATH=$PATH:./
+sh deploy.sh
+exit
+
+
+### unit test
+mkdir lib
+touch lib/app-standalone.jar
+touch lib/ios-standalone.jar
+libs=$(ls lib)
+
+if [[ -z $libs ]];then
+   echo no lib !
+else
+   echo found lib: $libs
+fi
+
+rollback=$(ls lib/*-standalone.jar 2> /dev/null)
+
+#if [ $#==0 ];then
+#  echo matches= $#
+#fi
+
+for it in $rollback;do
+   echo app: $it
+done
 
 echo ${rollback}
-echo rollback: ${#rollback}
+echo rollback num: ${#rollback}
 
-rm -f app-standalone.jar  ios-standaloen.jar
+rm -f app-standalone.jar  ios-standalone.jar
+rm -rf lib

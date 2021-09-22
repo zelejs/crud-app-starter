@@ -1,0 +1,33 @@
+
+root=../../../..
+app=$root/target/*-standalone.jar
+if [ ! -f $(basename $app) ];then
+  cp $app .
+fi
+
+## test no lib to deploy
+app=$(basename $app)
+rm -f lib/*
+sh deploy-lib.sh $app lib
+
+echo => start to test deploy lib
+## test deploy lib
+lib=$root/target/*1.0.0.jar
+if [ ! -d lib ];then
+   mkdir lib
+fi
+
+if [ ! -f lib/$(basename $lib) ];then
+  echo cp $lib lib
+  cp $lib lib
+fi
+
+if [[ -z $(ls lib) ]];then
+  echo no lib found!
+fi
+
+rm -f app-fix-standalone.jar 2>/dev/null
+echo sh deploy-lib.sh $app lib
+sh deploy-lib.sh $app lib
+
+rm -f $app
