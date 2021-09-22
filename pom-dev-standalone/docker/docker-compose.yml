@@ -1,7 +1,8 @@
 version: "3.4"
 services:
   api:
-    image: api:dummy
+    image: zelejs/api:dummy
+    #image: 192.168.3.239:5000/api:dummy
     privileged: true
     restart: always
     working_dir: /webapps
