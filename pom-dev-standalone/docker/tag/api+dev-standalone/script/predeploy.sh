@@ -13,7 +13,7 @@ usage() {
 
 cmd2=$1$2
 
-if [ "$cmd2"x == "rollbackkeep"x ];then 
+if [ $cmd2 = rollbackkeep ];then 
    pattern=$3
    num=$4
    if [ ! $num ];then
@@ -38,12 +38,11 @@ rollbackkeep() {
    done
 }
 
-
 if [ ${ROLLBACK_KEEP_NUM} ];then
    num=${ROLLBACK_KEEP_NUM}
 fi
 
-if [ "$cmd"x == "cmdrollbackkeep"x ];then 
+if [ $cmd = cmdrollbackkeep ];then 
    pattern=$3
    num=$4
    rollbackkeep $pattern $num

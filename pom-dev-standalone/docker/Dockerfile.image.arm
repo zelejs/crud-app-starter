@@ -24,4 +24,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /webapps
 
-CMD ["/bin/sh", "-c", "entrypoint.sh"]
+CMD ["/bin/sh", "-c", "/usr/local/bin/entrypoint.sh"]

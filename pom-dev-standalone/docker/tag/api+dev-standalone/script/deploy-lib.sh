@@ -104,7 +104,7 @@ search_one() {
 if [ ! -d lib ];then
   mkdir lib
 fi
-if [ -z $(ls lib) ];then
+if [ -z $(ls lib/*.jar 2>/dev/null) ];then
    echo 'no lib to deploy !' >/dev/stderr
    exit
 fi
