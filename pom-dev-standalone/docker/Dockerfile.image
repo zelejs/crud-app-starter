@@ -1,23 +1,27 @@
 #builk-stage
 FROM adoptopenjdk:11-jdk-hotspot
 
-WORKDIR /webapps
+ADD target/*.jar /usr/local/bin/app.jar
 
-ADD target/*.jar /webapps/app.jar
-
-COPY ./tag/api+dev-standalone/conf/application.yml /webapps/config/application-dev.yml
-COPY ./tag/api+dev-standalone/conf/logback-spring.xml /webapps/config/logback-spring.xml
+COPY ./tag/api+dev-standalone/conf/application.yml /var/local/application.yml  
+COPY ./tag/api+dev-standalone/conf/logback-spring.xml /var/local/logback-spring.xml
 
 COPY ./tag/api+dev-standalone/script/deploy.sh /usr/local/bin/deploy.sh
 COPY ./tag/api+dev-standalone/script/predeploy.sh /usr/local/bin/predeploy.sh
 COPY ./tag/api+dev-standalone/script/deploy-lib.sh /usr/local/bin/deploy-lib.sh
 
 COPY ./tag/api+dev-standalone/script/fix_url.sh /usr/local/bin/fix_url.sh
+COPY ./tag/api+dev-standalone/script/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+COPY ./tag/api+dev-standalone/bin/jar-dependency.jar /usr/local/lib/jar-dependency.jar
 
 RUN chmod +x /usr/local/bin/deploy.sh
 RUN chmod +x /usr/local/bin/predeploy.sh
 RUN chmod +x /usr/local/bin/deploy-lib.sh
 RUN chmod +x /usr/local/bin/fix_url.sh
 
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-CMD ["/bin/sh", "-c", "deploy-lib.sh && deploy.sh && fix_url.sh && java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080"]
+WORKDIR /webapps
+
+CMD ["/bin/sh", "-c", "entrypoint.sh"]

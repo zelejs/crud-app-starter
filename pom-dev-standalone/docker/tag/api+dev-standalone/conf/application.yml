@@ -15,3 +15,6 @@ logging:
   level: debug
   file: logs/access.log
   config: config/logback-spring.xml
+
+jar-dependency:
+  root-path: /webapps

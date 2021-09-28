@@ -59,8 +59,10 @@ logging:
     org.springframework.security: DEBUG
     com.jfeat.am.module.kehai.services.domain.dao: debug
 
----
+# jar-dependency:
+#    root-path: target
 
+---
 ##########################################################
 ###################  开发环境的profile  ###################
 ##########################################################

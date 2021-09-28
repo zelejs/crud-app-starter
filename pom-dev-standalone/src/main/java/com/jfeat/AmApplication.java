@@ -21,6 +21,6 @@ public class AmApplication{
 
     public static void main(String[] args) {
         SpringApplication.run(AmApplication.class, args);
-        logger.info("Test SaaS is success!");
+        logger.info("Dev standalone SaaS is success!");
     }
 }

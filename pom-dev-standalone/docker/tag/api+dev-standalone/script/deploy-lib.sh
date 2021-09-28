@@ -5,6 +5,21 @@
 app='app.jar'
 
 JAR_BIN=$(which jar)
+JAVA_BIN=$(which java)
+
+checkdependency() {
+  app=$1
+  jar=$2
+
+  jarlibroot=/usr/local/lib
+  ## for unit test
+  if [ ${JAR_D_ROOT} ];then
+    jarlibroot=${JAR_D_ROOT}
+  fi
+
+  result=$("$JAVA_BIN" -jar $jarlibroot/jar-dependency.jar -cm  $app $jar)
+  echo $result
+}
 
 putlocaljars() {
   app=$1
@@ -16,9 +31,19 @@ putlocaljars() {
      num=$(($num+1))
      jar=$libroot/$lib
 
+     ## check dependency, if required new dependencies, skip
+     dependencies=$(checkdependency $app  $jar)
+     if [ ${#dependencies} -gt 0 ];then
+        echo fail to depoy lib for dependencies: >/dev/stderr
+        for it in $dependencies;do
+          echo $it >/dev/stderr
+        done
+        continue
+     fi
+
      jarlib=$(basename $lib)
      jarok=$("$JAR_BIN" tf $app | grep $jarlib)
-     echo jarlib=$jarlib, jarok=$jarok
+     #echo jarlib=$jarlib, jarok=$jarok
      if [ ! $jarok ];then
          ## means new jar
          echo "+ BOOT-INF/lib/$jarlib"

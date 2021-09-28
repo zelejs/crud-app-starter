@@ -1,28 +1,28 @@
 version: "3.4"
 services:
   api:
-    image: api:dummy
-    # image: zelejs/api:dummy
+    image: zelejs/api:dummy
     privileged: true
+    restart: always
     working_dir: /webapps
     environment: 
       #GREENFIELD: dummy
-      JAVA_OPTS: "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
-      URL_SHORT: 192.168.3.239:3306/dummy
+      #JAVA_OPTS: "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+      URL_SHORT: 127.0.0.1:3306/dummy
       USERNAME: root
       PASSWORD: root
       ROLLBACK_KEEP_NUM: 2
     volumes: 
       - /etc/localtime:/etc/localtime:ro
-      - /var/api:/webapps
-      - /var/api/lib:/webapps/lib
+      - ./:/webapps
+      - ./lib:/webapps/lib
     logging:
       driver: "json-file"
       options:
         max-size: "5m"
     ports: 
       - 8080:8080
-      - 5005:5005
+      #- 5005:5005
     networks:
       - dummy_net
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-target=/webapps/config/application-dev.yml
+target='/webapps/config/application-dev.yml'
 
 ## TEST
 ii='-i'
