@@ -28,11 +28,17 @@ putlocaljars() {
   num=0
   for lib in $(ls $libroot)
   do
-     num=$(($num+1))
      jar=$libroot/$lib
+     # only .jar get jar
+     libext=${lib##*.}
+     if [ ! $libext = 'jar' ];then
+        continue
+     fi
+
+     num=$(($num+1))
 
      ## check dependency, if required new dependencies, skip
-     dependencies=$(checkdependency $app  $jar)
+     dependencies=$(checkdependency $app $jar)
      if [ ${#dependencies} -gt 0 ];then
         echo fail to depoy lib for dependencies: >/dev/stderr
         for it in $dependencies;do

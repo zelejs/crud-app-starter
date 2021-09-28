@@ -1,5 +1,5 @@
 #builk-stage
-FROM adoptopenjdk:11-jdk-hotspot
+FROM arm32v7/adoptopenjdk:11-jdk
 
 ADD target/*.jar /usr/local/bin/app.jar
 
@@ -24,4 +24,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /webapps
 
-CMD ["/bin/sh", "-c", "/usr/local/bin/entrypoint.sh"]
+CMD ["/bin/sh", "-c", "entrypoint.sh"]

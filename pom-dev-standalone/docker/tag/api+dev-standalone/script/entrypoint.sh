@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/sh
 
 APP=/webapps/app.jar
 app=/usr/local/bin/app.jar
@@ -6,17 +6,18 @@ if [ ! -f $APP ];then
    cp $app $APP
 fi
 
+echo deploy-lib.sh ...
 deploy-lib.sh
 
-if [ ! -z $(ls lib) ];then
+if [ ! -z $(ls lib/*.jar 2>/dev/null) ];then
   echo fail to deploy lib: > /dev/stderr
   for it in $(ls lib);do
      echo $it > /dev/stderr
   done
 fi
 
+echo deploy.sh ...
 deploy.sh
-
 
 ### config
 CONFIG=/webapps/config
@@ -41,8 +42,8 @@ if [ ! -f $CONFIG/logback-spring.xml ];then
    cp $config/logback-spring.xml $CONFIG/logback-spring.xml
 fi
 
+echo fix_url.sh ...
 fix_url.sh
+
+echo java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
 java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
-
-
-
