@@ -11,7 +11,7 @@ touch lib/app-standalone.jar
 touch lib/ios-standalone.jar
 libs=$(ls lib)
 
-if [[ -z $libs ]];then
+if [ -z $libs ];then
    echo no lib !
 else
    echo found lib: $libs
