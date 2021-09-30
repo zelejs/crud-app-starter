@@ -1,4 +1,4 @@
-@endpoint=http://localhost:8080
+@endpoint=http://192.168.3.204:6000
 
 ### 发送jar文件至lib目录
 POST {{endpoint}}/api/jar/dep/jars/upload/lib
@@ -91,11 +91,6 @@ Content-Type: application/json
 }
 
 
-### decompile the javaclass
-GET {{endpoint}}/api/jar/dep/decompile
-?javaclass=classes/PatchFixesHider$ExtensionMethod.class
-&dir=lib
-
 ### decompile from dir
 GET {{endpoint}}/api/jar/dep/decompile
 ?dir=lib/classes
@@ -115,6 +110,69 @@ GET {{endpoint}}/api/jar/dep/decompile
 
 
 ### deploy
+
+### depends list lib
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
+&dir=war
+
+### inspect jar
+GET {{endpoint}}/api/jar/dep/inspect
+?jar=ROOT.war
+&dir=war
+&pattern=WEB-INF/lib/wechat-application-2.3.0.jar
+
+### extra classes
+POST {{endpoint}}/api/jar/dep/extract
+Content-Type: application/json
+
+{
+    "dir" : "war",
+    "jar": "ROOT.war",
+    "pattern": "wechat-application-2.3.0.jar",
+    "target": "war/lib"
+}
+
+### check extract jars
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
+&dir=war/lib
+
+### inspect jar
+GET {{endpoint}}/api/jar/dep/inspect
+?jar=wechat-application-2.3.0.jar
+&dir=war/lib
+&pattern=com/jfeat/wechat/api/WxaLoginController.class
+
+### extra classes
+POST {{endpoint}}/api/jar/dep/extract
+Content-Type: application/json
+
+{
+    "dir" : "war/lib",
+    "jar": "wechat-application-2.3.0.jar",
+    "pattern": "com/jfeat/wechat/api/WxaLoginController.class",
+    "target": "war/classes"
+}
+
+### list extra classes
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
+&dir=war/classes
+
+### decompile java class from jar directly
+// dir: path to locate the jar
+// pattern: contains string to match the file in jar
+// target: the target path to save the ext
+// empty:  remove the file after decompile when jar is provided
+GET {{endpoint}}/api/jar/dep/decompile
+?dir=war
+&jar=lombok-1.18.8.jar
+&empty=true
+&pattern=Builder
+&target=classes
+
+
 // dir: where to locate the class
 // pattern:  pattern class files to deploy
 // target: where to locate the jar to deploy into
@@ -136,11 +194,6 @@ GET {{endpoint}}/api/jar/dep/indexes
 # &pattern=
 &recreate=true
 &target=indexes
-### depends
-GET {{endpoint}}/api/jar/dep/jars
-?all=true
-# &dir=lib
-
 
 ### deploy class file
 POST {{endpoint}}/api/jar/dep/deploy
@@ -174,52 +227,9 @@ Content-Disposition: attachment; name="file"; filename="jar-deploy-api-1.0.0.jar
 
 < ./target/jar-deploy-api-1.0.0.jar
 ------WebKitFormBoundaryAFRaG58f2nIb0mPB--
-### inspect jar
-GET {{endpoint}}/api/jar/dep/inspect
-?jar=jar-dependency-api-1.0.0.jar
-# &dir=lib
-&pattern=JarDeployEndpoint
+
 ### depends list classes
 GET {{endpoint}}/api/jar/dep/jars
 ?all=true
 &dir=classes
-### extra classes
-POST {{endpoint}}/api/jar/dep/extract
-Content-Type: application/json
 
-{
-    "jar": "jar-dependency-api-1.0.0.jar",
-    "pattern": "JarDeployEndpoint",
-    "target": "classes"
-}
-### depends list lib
-GET {{endpoint}}/api/jar/dep/jars
-?all=true
-&dir=lib
-### depends list app
-GET {{endpoint}}/api/jar/dep/jars
-?all=true
-
-
-
-## deploy
-
-### 自动查找standalone部署
-POST {{endpoint}}/api/jar/dep/from/amFyLWRlcGxveS1hcGktMS4wLjAuamFy
-Content-Type: application/json
-
-### 对比两个jar注入
-//POST {{endpoint}}/api/jar/dep/checksum/to/{prodJar}/from/{uatJar}
-POST {{endpoint}}/api/jar/dep/checksum/to/{prodJar}/from/{uatJar}
-Content-Type: application/json
-
-### 注入
-### baseJar 不支持[.jar],需转换为BASE64
-//POST {{endpoint}}/api/jar/deploy/to/{baseJar}/from/{jar}
-// jar-deploy-api-1.0.0-standalone.jar
-//  BASE64 Encode: amFyLWRlcGxveS1hcGktMS4wLjAtc3RhbmRhbG9uZS5qYXI=
-// lib/jar-deploy-api-1.0.0.jar
-//  BASE64 Encode: bGliL2phci1kZXBsb3ktYXBpLTEuMC4wLmphcg==
-//
-POST {{endpoint}}/api/jar/deploy/to/amFyLWRlcGxveS1hcGktMS4wLjAtc3RhbmRhbG9uZS5qYXI=/from/bGliL2phci1kZXBsb3ktYXBpLTEuMC4wLmphcg==
-Content-Type: application/json
