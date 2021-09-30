@@ -1,4 +1,4 @@
-@endpoint=http://192.168.3.21:8080
+@endpoint=http://192.168.3.204:8080
 
 ### 发送jar文件至lib目录
 POST {{endpoint}}/api/jar/dep/jars/upload/lib
@@ -15,12 +15,14 @@ Content-Disposition: attachment; name="file"; filename="jar-deploy-api-1.0.0.jar
 ------WebKitFormBoundaryAFRaG58f2nIb0mPB--
 
 ### 查询根目录下的JAR
+//all: 是否显示所有文件
 GET {{endpoint}}/api/jar/dep/jars
 Content-Type: application/json
 ### 查询指定目录下的JAR
 GET {{endpoint}}/api/jar/dep/jars
-?dir=lib
-Content-Type: application/json
+?all=true
+# &dir=lib
+
 
 ### 检查lib的不匹配项
 ### majar=true 跳过版本号的比较
@@ -29,21 +31,19 @@ GET {{endpoint}}/api/jar/dep/mismatch
 &jar=jar-dependency-api-1.0.0.jar
 //&major=true
 &major=false
-Content-Type: application/json
 
 ### 返回两个JAR的匹配项
 GET {{endpoint}}/api/jar/dep/match
 ?baseJar=jar-dependency-api-1.0.0-standalone.jar
 &jar=jar-dependency-api-1.0.0.jar
 &major=true
-Content-Type: application/json
 
 ### 查询jar依赖+checksum
 // type: default: md5l
 //   supported: adler32,crc32,crc32c,md5,sha1,sha256,sha512
 //   endsWith "l", means padToLong
 GET {{endpoint}}/api/jar/dep/checksum
-?jar=app.jar
+?jar=jar-dependency-api-1.0.0-standalone.jar
 &pattern=jar-dependency
 ### 查询指定目录lib下的jar依赖
 GET {{endpoint}}/api/jar/dep/checksum
@@ -56,10 +56,7 @@ GET {{endpoint}}/api/jar/dep/checksum/mismatch
 ?baseJar=jar-dependency-api-1.0.0-standalone.jar
 &jar=jar-dependency-api-1.0.0.jar
 
-### 查询指定目录lib下的jar依赖
-GET {{endpoint}}/api/jar/dep
-?jar=app.jar
-&pattern=dependency
+
 ### 查询指定目录lib下的jar依赖
 GET {{endpoint}}/api/jar/dep
 ?jar=jar-dependency-api-1.0.0.jar
@@ -71,17 +68,16 @@ POST {{endpoint}}/api/jar/dep/extract
 Content-Type: application/json
 
 {
-    "jar": "app.jar",
-    "pattern": "jar-dependency",
+    "jar": "jar-dependency-api-1.0.0-standalone.jar",
+    "pattern": "lombok",
     "target": "lib"
 }
 
 ### 查询指定目录lib下的jar的所有文件
-GET {{endpoint}}/api/jar/dep/list
-?jar=lombok-1.18.8.jar
-&dir=lib
-&pattern=PatchFixesHider$ExtensionMethod.class
-Content-Type: application/json
+GET {{endpoint}}/api/jar/dep/inspect
+?jar=jar-dependency-api-1.0.0.jar
+# &dir=lib
+&pattern=JarDeployEndpoint
 
 ### extra file from archiva
 POST {{endpoint}}/api/jar/dep/extract
@@ -99,7 +95,6 @@ Content-Type: application/json
 GET {{endpoint}}/api/jar/dep/decompile
 ?javaclass=classes/PatchFixesHider$ExtensionMethod.class
 &dir=lib
-Content-Type: application/json
 
 ### decompile from dir
 GET {{endpoint}}/api/jar/dep/decompile
@@ -108,7 +103,7 @@ GET {{endpoint}}/api/jar/dep/decompile
 
 ### decompile java class from jar directly
 // dir: path to locate the jar
-// pattern: contains string to match the file in jar 
+// pattern: contains string to match the file in jar
 // target: the target path to save the ext
 // empty:  remove the file after decompile when jar is provided
 GET {{endpoint}}/api/jar/dep/decompile
@@ -119,37 +114,104 @@ GET {{endpoint}}/api/jar/dep/decompile
 &target=classes
 
 
-### deploy javaclass
-POST {{endpoint}}/api/jar/dep/javaclass/deploy
+### deploy
+// dir: where to locate the class
+// pattern:  pattern class files to deploy
+// target: where to locate the jar to deploy into
+POST {{endpoint}}/api/jar/dep/deploy
 Content-Type: application/json
 
 {
-    "dir": "lib",
-    "jar": "lombok-1.18.8.jar",
-    "javaclass": "classes/PatchFixesHider$ExtensionMethod.class"
+    "dir": "classes",
+    "pattern": "PatchFixesHider$ExtensionMethod.class",
+    "target": "lib",
+    "jar": "lombok-1.18.8.jar"
 }
 
-### 查询指定目录lib下的jar的所有文件
-GET {{endpoint}}/api/jar/dep/list
-?jar=lombok-1.18.8.jar
+
+### create indexes
+GET {{endpoint}}/api/jar/dep/indexes
+?jar=jar-dependency-api-1.0.0.jar
+# &dir=lib
+# &pattern=
+&recreate=true
+&target=indexes
+### depends
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
+# &dir=lib
+
+
+### deploy class file
+POST {{endpoint}}/api/jar/dep/deploy
+Content-Type: application/json
+
+{
+    "dir": "classes",
+    "pattern": "JarDeployEndpoint",
+    "jar": "jar-dependency-api-1.0.0.jar"
+}
+### depends
+GET {{endpoint}}/api/jar/dep/checksum
+?jar=jar-dependency-api-1.0.0.zip.temp
+# &pattern=JarDeployEndpoint
+&pattern=.class
+# &type=crc32
+### depends checksum mismatch
+GET {{endpoint}}/api/jar/dep/checksum/mismatch
+?baseJar=jar-dependency-api-1.0.0.zip.temp
+&jar=jar-dependency-api-1.0.0.jar
+### depends 上传jar文件至lib目录
+POST {{endpoint}}/api/jar/dep/jars/upload/lib
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryAFRaG58f2nIb0mPB
+
+------WebKitFormBoundaryAFRaG58f2nIb0mPB
+Content-Disposition: form-data; name="file"
+
+title
+------WebKitFormBoundaryAFRaG58f2nIb0mPB
+Content-Disposition: attachment; name="file"; filename="jar-deploy-api-1.0.0.jar"
+
+< ./target/jar-deploy-api-1.0.0.jar
+------WebKitFormBoundaryAFRaG58f2nIb0mPB--
+### inspect jar
+GET {{endpoint}}/api/jar/dep/inspect
+?jar=jar-dependency-api-1.0.0.jar
+# &dir=lib
+&pattern=JarDeployEndpoint
+### depends list classes
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
+&dir=classes
+### extra classes
+POST {{endpoint}}/api/jar/dep/extract
+Content-Type: application/json
+
+{
+    "jar": "jar-dependency-api-1.0.0.jar",
+    "pattern": "JarDeployEndpoint",
+    "target": "classes"
+}
+### depends list lib
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
 &dir=lib
-//&pattern=PatchFixesHider$ExtensionMethod.class
+### depends list app
+GET {{endpoint}}/api/jar/dep/jars
+?all=true
 
 
 
-
-### deploy
+## deploy
 
 ### 自动查找standalone部署
 POST {{endpoint}}/api/jar/dep/from/amFyLWRlcGxveS1hcGktMS4wLjAuamFy
 Content-Type: application/json
 
-
 ### 对比两个jar注入
 //POST {{endpoint}}/api/jar/dep/checksum/to/{prodJar}/from/{uatJar}
 POST {{endpoint}}/api/jar/dep/checksum/to/{prodJar}/from/{uatJar}
 Content-Type: application/json
-
 
 ### 注入
 ### baseJar 不支持[.jar],需转换为BASE64
