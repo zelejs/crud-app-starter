@@ -58,7 +58,7 @@ get_rollback(){
    unset rollback
 
    if [ $app = $webapp ];then
-      ## no .war
+      ## for ROOT.war
       rollback=$(ls *.war 2> /dev/null)
       rollback=${rollback//$webapp/ }
       if [ ${#rollback} -eq 0 ];then
@@ -81,6 +81,7 @@ get_rollback(){
 
       rollback=$selected
    else
+      ## for app.jar
       rollback=$(ls *-standalone.jar 2> /dev/null)
       if [ ${#rollback} -eq 0 ];then
          echo no *-standalone.jar, no need to rollback ! >/dev/stderr

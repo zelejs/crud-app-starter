@@ -1,0 +1,24 @@
+root=/Users/vincenthuang/workspace/alliance/biliya/mall-webapp
+ROOT=mall-webapp-2.3.0.war
+
+if [ ! -f $root/target/$ROOT ];then
+   cd $root
+   mvn package
+fi
+
+
+webapps='webapps'
+if [ ! -d $webapps ];then
+  mkdir $webapps
+fi
+if [ ! -f $webapps/ROOT.war ];then
+   cp $root/target/$ROOT $webapps/ROOT.war
+fi
+
+### 
+cd $webapps
+sh ../script/create_indexes.sh $1
+
+
+
+

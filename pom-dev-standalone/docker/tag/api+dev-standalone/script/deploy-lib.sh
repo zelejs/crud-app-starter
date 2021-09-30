@@ -3,6 +3,7 @@
 ## define your var for lib deploy
 ################################
 app='app.jar'
+webapp='ROOT.war'
 
 JAR_BIN=$(which jar)
 JAVA_BIN=$(which java)

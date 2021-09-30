@@ -1,5 +1,6 @@
 target/
 build/
+webapps/
 /gen/
 .idea/
 .gradle/
