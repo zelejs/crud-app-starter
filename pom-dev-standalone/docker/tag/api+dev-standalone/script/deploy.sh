@@ -9,6 +9,10 @@ keep=${ROLLBACK_KEEP_NUM}  # keep rollback instances
 ## .war deploy=> ROOT.war
 app='app.jar'
 webapp='ROOT.war'
+if [ -f $app -a -f $webapp ];then
+  echo both $app and $webapp exists, skip deploy.sh
+  exit
+fi
 
 rollback() {
   app=$1
@@ -52,15 +56,12 @@ search_one() {
 }
 
 get_rollback(){
-   if [ -f $webapp ];then
-      app=$webapp
-   fi
    unset rollback
 
-   if [ $app = $webapp ];then
+   if [ -f $webapp ];then
       ## for ROOT.war
       rollback=$(ls *.war 2> /dev/null)
-      rollback=${rollback//$webapp/ }
+      rollback=${rollback//$webapp/ }    ## remove ROOT.war from .war result
       if [ ${#rollback} -eq 0 ];then
          echo no *.war, no need to rollback ! >/dev/stderr
          exit
@@ -73,7 +74,7 @@ get_rollback(){
             selected=$it
          fi
       done
-      ## 
+      ##
       if [ ${#selected} -eq 0 ];then
          echo no *.war, no need to rollback ! >/dev/stderr
          exit
@@ -110,11 +111,22 @@ get_rollback(){
 
 ## get rollback deploying app
 rollback=$(get_rollback)
+#if rollback.ext =war, app=ROOT.war else app.jar
+if [ ! $rollback ];then
+  exit
+fi
+
+rollback_ext=${rollback##*.}
+if [ $rollback_ext = 'war' ];then
+  app=$webapp  # work as ROOT.war
+fi
 
 ## rollback first
-echo => start to rollback: $app $rollback
+echo "=> start to rollback: $app $rollback"
 rollback $app $rollback
 
 ## deploy app.jar or ROOT.war
-echo mv $rollback $app
+echo "=> start deploy $rollback"
+ls -l $app
 mv $rollback $app
+ls -l $app

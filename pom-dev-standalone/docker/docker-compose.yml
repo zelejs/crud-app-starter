@@ -4,7 +4,7 @@ services:
     image: api:dummy
     # image: zelejs/api:dummy
     privileged: true
-    working_dir: /webapps
+    working_dir: /var/webapps
     environment: 
       #GREENFIELD: dummy
       JAVA_OPTS: "$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
@@ -14,8 +14,8 @@ services:
       ROLLBACK_KEEP_NUM: 2
     volumes: 
       - /etc/localtime:/etc/localtime:ro
-      - /var/api:/webapps
-      - /var/api/lib:/webapps/lib
+      - /var/api:/var/webapps
+      - /var/api/lib:/var/webapps/lib
     logging:
       driver: "json-file"
       options:

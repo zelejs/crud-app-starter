@@ -4,7 +4,7 @@ target='/webapps/config/application-dev.yml'
 ## TEST
 ii='-i'
 if [ ${TEST} ];then
-   ii=()
+   unset ii
    target=${TEST}
 fi
 ## end TEST

@@ -1,4 +1,7 @@
 #!/bin/sh
+## go to /webapps
+cd /webapps
+##
 
 APP=/webapps/app.jar
 app=/usr/local/bin/app.jar
