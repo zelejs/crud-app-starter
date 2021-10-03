@@ -2,9 +2,6 @@
 ################################
 ## define your var for lib deploy
 ################################
-app='app.jar'
-webapp='ROOT.war'
-
 JAR_BIN=$(which jar)
 JAVA_BIN=$(which java)
 
@@ -25,41 +22,48 @@ checkdependency() {
 putlocaljars() {
   app=$1
   libroot=$2
+  ext=${app##*.}
 
-  num=0
   for lib in $(ls $libroot)
   do
      jar=$libroot/$lib
+
      # only .jar get jar
      libext=${lib##*.}
      if [ ! $libext = 'jar' ];then
         continue
      fi
 
-     num=$(($num+1))
-
      ## check dependency, if required new dependencies, skip
-     dependencies=$(checkdependency $app $jar)
-     if [ ${#dependencies} -gt 0 ];then
-        echo fail to depoy lib for dependencies: >/dev/stderr
-        for it in $dependencies;do
-          echo $it >/dev/stderr
-        done
-        continue
-     fi
+        dependencies=$(checkdependency $app $jar)
+        if [ ${#dependencies} -gt 0 ];then
+            echo fail to depoy lib for dependencies: >/dev/stderr
+            for it in $dependencies;do
+              echo $'\t'$it >/dev/stderr
+            done
+            continue
+        fi
+     ## end dependency
 
+     ## main ##
      jarlib=$(basename $lib)
+     echo ...$jarlib
      jarok=$("$JAR_BIN" tf $app | grep $jarlib)
-     #echo jarlib=$jarlib, jarok=$jarok
      if [ ! $jarok ];then
-         ## means new jar
-         echo "+ BOOT-INF/lib/$jarlib"
-         jarok="BOOT-INF/lib/$jarlib"
+        ## means new jar
+        ## .war for WEB-INF, .jar for BOOT-INF
+        unset INF
+        if [ $ext = 'war' ];then
+           INF=WEB-INF
+        else
+           INF=BOOT-INF 
+        fi
+        echo "$INF/lib/$jarlib"
+        jarok="$INF/lib/$jarlib"
      fi
 
      if [ $jarok ];then
        ## update lib
-       echo $jarok
        jardir=$(dirname $jarok)
        if [ ! -d $jardir ];then
           echo mkdir -p $jardir
@@ -100,40 +104,47 @@ search_one() {
   echo ''
 }
 
+## clean up
+cleanup() {
+  if [ -d BOOT-INF ];then
+    rm -rf BOOT-INF/
+  fi
+  if [ -d WEB-INF ];then
+    rm -rf WEB-INF/
+  fi
+}
+
 
 ## main
-if [ ! -d lib ];then
-  mkdir lib
+
+#check standalone
+standalone=$(search_one "app.jar *-standalone.jar *.war")
+if [ ! $standalone ];then
+    echo 'no (or multi) -standalone.jar !' >/dev/stderr
+    exit
 fi
 if [ -z $(ls lib/*.jar 2>/dev/null) ];then
    echo 'no lib to deploy !' >/dev/stderr
    exit
 fi
+standalone_filename=${standalone%.*}
+standalone_ext=${standalone##*.}
 
-fixapp='app-fix-standalone.jar'
+
+## get fixapp to be deploy
+unset fixapp
+if [ $standalone_ext = 'war' ];then
+   fixapp=$standalone_filename-fix.war
+else
+   fixapp=$standalone_filename-fix-standalone.jar
+fi
+
 if [ ! -f $fixapp ];then
-  ## check standalone.jar
-  if [ ! -f $app ];then
-    standalone=$(search_one "*-standalone.jar")
-    if [ ! $standalone ];then
-       echo 'no (or multi) -standalone.jar !' >/dev/stderr
-       exit
-    fi
+  echo cp $standalone $fixapp
+  cp $standalone $fixapp
 
-    ## start
-    echo mv $standalone $app
-    mv $standalone $app
-  fi
-
-   echo cp $app $fixapp
-   cp $app $fixapp
-
-   echo putlocaljars $fixapp lib
-   putlocaljars $fixapp lib
+  echo putlocaljars $fixapp lib
+  putlocaljars $fixapp lib
 fi
 
-## clean up
-if [ -d BOOT-INF ];then
-  rm -rf BOOT-INF/
-fi
-
+cleanup

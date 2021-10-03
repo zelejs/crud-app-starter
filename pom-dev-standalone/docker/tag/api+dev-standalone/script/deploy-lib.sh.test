@@ -29,6 +29,8 @@ fi
 export JAR_D_ROOT=../bin
 rm -f app-fix-standalone.jar 2>/dev/null
 echo sh deploy-lib.sh $app lib
+echo ===========================
 sh deploy-lib.sh $app lib
+echo !===========================
 
 rm -f *.jar
