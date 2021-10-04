@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-target='/webapps/config/application-dev.yml'
+target='config/application-dev.yml'
 
 ## TEST
 ii='-i'
@@ -17,8 +17,8 @@ if [ ! ${URL_SHORT} ];then
 fi
 
 if [ ! -f $target ];then
-   if [ -f /webapps/config/application.yml ];then
-      mv /webapps/config/application.yml $target
+   if [ -f config/application.yml ];then
+      mv config/application.yml $target
    fi
 fi
 

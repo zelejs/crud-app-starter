@@ -1,6 +1,6 @@
 version: "3.4"
 services:
-  api:
+  dummy:
     image: zelejs/api:dummy
     privileged: true
     restart: always

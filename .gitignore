@@ -18,3 +18,4 @@ view-app/
 .settings/
 .vscode/
 config/
+.DS_Store

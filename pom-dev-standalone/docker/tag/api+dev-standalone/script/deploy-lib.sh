@@ -87,7 +87,7 @@ search_one() {
   pattern=$1
 
   result=$(ls $pattern 2> /dev/null)
-  if [[ -z $result ]];then
+  if [ -z $result ];then
     echo no $pattern files found ! > /dev/stderr
     exit
   fi
