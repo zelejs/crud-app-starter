@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/usr/bin/env bash
 ## keep workding_dir from docker-compose.yml
 
 echo deploy-lib.sh ...

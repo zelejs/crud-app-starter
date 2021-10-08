@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ################################
 ## define your var for lib deploy
 ################################
