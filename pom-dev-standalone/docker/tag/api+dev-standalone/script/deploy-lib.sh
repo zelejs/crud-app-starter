@@ -134,9 +134,9 @@ standalone_ext=${standalone##*.}
 ## get fixapp to be deploy
 unset fixapp
 if [ $standalone_ext = 'war' ];then
-   fixapp=$standalone_filename-fix.war
+   fixapp=$standalone_filename.war.FIX
 else
-   fixapp=$standalone_filename-fix-standalone.jar
+   fixapp=$standalone_filename-standalone.jar.FIX
 fi
 
 if [ ! -f $fixapp ];then

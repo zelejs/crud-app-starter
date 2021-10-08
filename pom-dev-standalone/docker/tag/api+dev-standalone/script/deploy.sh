@@ -60,7 +60,7 @@ get_rollback(){
 
    if [ -f $webapp ];then
       ## for ROOT.war
-      rollback=$(ls *.war 2> /dev/null)
+      rollback=$(ls *.war *.war.FIX 2> /dev/null)
       rollback=${rollback//$webapp/ }    ## remove ROOT.war from .war result
       if [ ${#rollback} -eq 0 ];then
          echo no *.war, no need to rollback ! >/dev/stderr
@@ -83,13 +83,13 @@ get_rollback(){
       rollback=$selected
    else
       ## for app.jar
-      rollback=$(ls *-standalone.jar 2> /dev/null)
+      rollback=$(ls *-standalone.jar *-standalone.jar.FIX 2> /dev/null)
       if [ ${#rollback} -eq 0 ];then
          echo no *-standalone.jar, no need to rollback ! >/dev/stderr
          exit
       fi
 
-      rollback=$(search_one "*-standalone.jar")
+      rollback=$(search_one "*-standalone.jar *-standalone.jar.FIX")
       if [ ! $rollback ];then
          echo 'no (or multi) -standalone.jar found !' >/dev/stderr
          exit
@@ -117,6 +117,9 @@ if [ ! $rollback ];then
 fi
 
 rollback_ext=${rollback##*.}
+if [ $rollback_ext = 'FIX' ];then
+  rollback_ext=${rollback##*.}
+fi
 if [ $rollback_ext = 'war' ];then
   app=$webapp  # work as ROOT.war
 fi
