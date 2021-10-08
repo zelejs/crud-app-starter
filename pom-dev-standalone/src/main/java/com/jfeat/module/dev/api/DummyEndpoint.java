@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import ch.qos.logback.core.joran.spi.RuleStore;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.http.HttpRequest;
@@ -53,6 +55,11 @@ public class DummyEndpoint {
         result.put("serverName", serverName);
         result.put("serverPort", serverPort);
         result.put("remoteUser", remoteUser);
+
+        // get endpoint
+        String endpoint = urlString.contains("?")?urlString.substring(0, urlString.indexOf("?")-1) : urlString;
+        endpoint.replace(endpoint, uriString);
+        result.put("endpoint", endpoint);
 
         return SuccessTip.create(result);
     }

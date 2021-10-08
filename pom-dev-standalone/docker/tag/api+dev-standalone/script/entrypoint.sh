@@ -81,5 +81,8 @@ if [ ! -f $CONFIG/logback-spring.xml ];then
    cp $config/logback-spring.xml $CONFIG/logback-spring.xml
 fi
 
-echo java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
-java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
+if [ ! $DUMMY_RUNNER ];then
+  DUMMY_RUNNER=dev
+fi
+echo java $JAVA_OPTS -jar *.jar --spring.profiles.active=${DUMMY_RUNNER} --server.port=8080
+java $JAVA_OPTS -jar *.jar --spring.profiles.active=${DUMMY_RUNNER} --server.port=8080
