@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 ## keep workding_dir from docker-compose.yml
+opt=$1
 
 echo deploy-lib.sh ...
-deploy-lib.sh
+bash /usr/local/bin/deploy-lib.sh
 
 if [ ! -z $(ls lib/*.jar 2>/dev/null) ];then
   echo fail to deploy lib: > /dev/stderr
@@ -12,18 +13,44 @@ if [ ! -z $(ls lib/*.jar 2>/dev/null) ];then
 fi
 
 echo deploy.sh ...
-deploy.sh
+bash /usr/local/bin/deploy.sh
+
+## fix url
+if [ ${URL_SHORT} ];then
+   echo fix_url.sh ...
+   bash /usr/local/bin/fix_url.sh
+fi
 
 
+docker_restart() {
+   ## docker to restart
+   if [ ${DOCKER_SOCKET} ];then 
+   curl --unix-socket ${DOCKER_SOCKET} -X POST http://localhost/containers/${DOCKER_CONTAINER}/restart
+   fi
+   if [ ${DOCKER_ENDPOINT} ];then 
+   curl -X POST http://${DOCKER_ENDPOINT}/containers/${DOCKER_CONTAINER}/restart
+   fi
+}
 
+
+## skip api for level 0
+if [ $DEPLOY_OPT = restart ];then 
+   docker_restart
+   exit
+fi
+
+
+### 
 ### start dummy:api
+### 
+
 dummy=/usr/local/dummy
 if [ ! -d $dummy ];then 
    mkdir -p $dummy
 fi
 
 cd $dummy
-echo ${pwd}
+pwd
 
 APP=app.jar
 app=/usr/local/bin/app.jar
@@ -53,9 +80,6 @@ if [ ! -f $CONFIG/logback-spring.xml ];then
    echo cp $config/logback-spring.xml $CONFIG/logback-spring.xml
    cp $config/logback-spring.xml $CONFIG/logback-spring.xml
 fi
-
-echo fix_url.sh ...
-fix_url.sh
 
 echo java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
 java $JAVA_OPTS -jar *.jar --sprint.profiles.active=dev --server.port=8080
