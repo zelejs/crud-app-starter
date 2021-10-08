@@ -116,6 +116,10 @@ cleanup() {
 
 
 ## main
+if [ -z $(ls lib/*.jar 2>/dev/null) ];then
+   echo 'no lib to deploy !' >/dev/stderr
+   exit
+fi
 
 #check standalone
 standalone=$(search_one "app.jar *-standalone.jar *.war")
@@ -123,17 +127,14 @@ if [ ! $standalone ];then
     echo 'no (or multi) -standalone.jar !' >/dev/stderr
     exit
 fi
-if [ -z $(ls lib/*.jar 2>/dev/null) ];then
-   echo 'no lib to deploy !' >/dev/stderr
-   exit
-fi
-standalone_filename=${standalone%.*}
+standalone_filename=$(basename $standalone)
+standalone_filename=${standalone_filename%.*}
 standalone_ext=${standalone##*.}
 
 ## get fixapp to be deploy
 unset fixapp
 if [ $standalone_ext = 'war' ];then
-   fixapp=$standalone_filename.war.FIX
+   fixapp=$standxsalone_filename.war.FIX
 else
    fixapp=$standalone_filename.jar.FIX
 fi

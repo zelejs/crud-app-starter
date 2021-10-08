@@ -1,0 +1,6 @@
+
+jar=/Users/vincenthuang/workspace/alliance/biliya/mall-webapp/target/mall-webapp-2.3.0.war
+
+rm -f indexes/*
+sh create-indexes.sh $jar pcd indexes
+

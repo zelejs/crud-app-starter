@@ -1,50 +1,34 @@
 #!/bin/sh
-
-app=app.jar
-webapp=ROOT.war
-if [ ! -f $app ];then
-  app=$webapp
-fi
-
-indexesroot='indexes'
-if [ ! -d $indexesroot ];then
-   mkdir $indexindexesrootes
-fi
-
 jar=$1
+entryPattern=$2
 
-create_root_indexes() {
-    entries=$(jar -tf $app)
- 
-    ## clean up first
-    rm -f $indexesroot/*
-    for entry in $entries;do
-        ## get file name
-        filename=${entry##*/}
-        if [ ! $filename ];then
-           continue
-        fi    
 
-        firstletter=${filename::1}  ##first letter
-        ext=${filename##*.}
-        
-        if [ $ext = 'jar' -o $ext = 'class' ];then
-            echo $entry
+indexes=$3
+if [ ! $indexes ];then
+   indexes='indexes'
+fi
+if [ ! -d $indexes ];then
+   mkdir indexes
+fi
 
-            if [ -f $indexes/$firstletter ];then
-               echo "$filename,$entry,$app" >> $indexesroot/$firstletter
-            else 
-               echo "$filename,$entry,$app" > $indexesroot/$firstletter
-            fi
-        fi
-    done
-}
 
-create_jar_indexes(){
-   pattern=$1
-   entries=$(jar -tf $app | grep $pattern)
+JAR_BIN=$(which jar)
+
+createjarindexes(){
+   jar=$1
+   pattern=$2
+   indexesroot=$3
+
+   unset entries
+   if [ $pattern ];then
+      entries=$("$JAR_BIN" -tf $jar | grep $pattern)
+   elif [ $pattern = '*' ];then
+      entries=$("$JAR_BIN" -tf $jar)
+   fi
+   echo $entries
+   exit
+
    for entry in $entries;do
-   echo $entry
         ## get file name
         filename=${entry##*/}
         if [ ! $filename ];then
@@ -53,10 +37,12 @@ create_jar_indexes(){
         ext=${filename##*.}
 
         if [ $ext = 'jar' ];then
+            echo $entry
+
             #echo $entry
             ## extra it
             if [ ! -f $entry ];then
-               jar xf $app $entry
+               jar xf $jar $entry
             fi
 
             indexes=$(jar tf $entry);
@@ -66,6 +52,8 @@ create_jar_indexes(){
                    continue
                 fi
                 firstletter=${name::1}  ##first letter
+                #firstletter=${firstletter,,}  ##lower case for bash >=4.0
+                # lower
                 posfix=${name##*.}
 
                 if [ $posfix = 'class' ];then
@@ -83,8 +71,7 @@ create_jar_indexes(){
 }
 
 
-if [ $jar ];then
-   create_jar_indexes $jar
-else 
-   create_root_indexes
-fi
+## main
+patternall='*'
+createjarindexes $jar $patternall $indexes
+#createjarindexes $jar $entryPattern $indexes
