@@ -34,16 +34,16 @@ putlocaljars() {
         continue
      fi
 
-     ## check dependency, if required new dependencies, skip
-        dependencies=$(checkdependency $app $jar)
-        if [ ${#dependencies} -gt 0 ];then
-            echo fail to depoy lib for dependencies: >/dev/stderr
-            for it in $dependencies;do
-              echo $'\t'$it >/dev/stderr
-            done
-            continue
-        fi
-     ## end dependency
+   #   ## check dependency, if required new dependencies, skip
+   #      dependencies=$(checkdependency $app $jar)
+   #      if [ ${#dependencies} -gt 0 ];then
+   #          echo fail to depoy lib for dependencies: >/dev/stderr
+   #          for it in $dependencies;do
+   #            echo $'\t'$it >/dev/stderr
+   #          done
+   #          continue
+   #      fi
+   #   ## end dependency
 
      ## main ##
      jarlib=$(basename $lib)
@@ -130,13 +130,12 @@ fi
 standalone_filename=${standalone%.*}
 standalone_ext=${standalone##*.}
 
-
 ## get fixapp to be deploy
 unset fixapp
 if [ $standalone_ext = 'war' ];then
    fixapp=$standalone_filename.war.FIX
 else
-   fixapp=$standalone_filename-standalone.jar.FIX
+   fixapp=$standalone_filename.jar.FIX
 fi
 
 if [ ! -f $fixapp ];then
@@ -145,6 +144,8 @@ if [ ! -f $fixapp ];then
 
   echo putlocaljars $fixapp lib
   putlocaljars $fixapp lib
+else
+  echo "deploy lib done with $fixapp!"
 fi
 
 cleanup

@@ -83,13 +83,13 @@ get_rollback(){
       rollback=$selected
    else
       ## for app.jar
-      rollback=$(ls *-standalone.jar *-standalone.jar.FIX 2> /dev/null)
+      rollback=$(ls *-standalone.jar *.jar.FIX 2> /dev/null)
       if [ ${#rollback} -eq 0 ];then
          echo no *-standalone.jar, no need to rollback ! >/dev/stderr
          exit
       fi
 
-      rollback=$(search_one "*-standalone.jar *-standalone.jar.FIX")
+      rollback=$(search_one "*-standalone.jar *.jar.FIX")
       if [ ! $rollback ];then
          echo 'no (or multi) -standalone.jar found !' >/dev/stderr
          exit
@@ -110,26 +110,26 @@ get_rollback(){
 ##
 
 ## get rollback deploying app
-rollback=$(get_rollback)
+rollback_name=$(get_rollback)
 #if rollback.ext =war, app=ROOT.war else app.jar
-if [ ! $rollback ];then
+if [ ! $rollback_name ];then
   exit
 fi
 
-rollback_ext=${rollback##*.}
+rollback_ext=${rollback_name##*.}
 if [ $rollback_ext = 'FIX' ];then
-  rollback_ext=${rollback##*.}
+  rollback_ext=${rollback_name##*.}
 fi
 if [ $rollback_ext = 'war' ];then
   app=$webapp  # work as ROOT.war
 fi
 
 ## rollback first
-echo "=> start to rollback: $app $rollback"
-rollback $app $rollback
+echo "=> start to rollback: $app $rollback_name"
+rollback $app $rollback_name
 
 ## deploy app.jar or ROOT.war
-echo "=> start deploy $rollback"
+echo "=> start deploy $rollback_name"
 ls -l $app
-mv $rollback $app
+mv $rollback_name $app
 ls -l $app
