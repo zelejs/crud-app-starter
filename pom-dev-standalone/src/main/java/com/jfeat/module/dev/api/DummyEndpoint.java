@@ -1,5 +1,7 @@
 package com.jfeat.module.dev.api;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jfeat.am.core.jwt.JWTKit;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.module.dev.model.Dummy;
@@ -28,5 +30,30 @@ public class DummyEndpoint {
         dummy.setContent("dummy");
         
         return SuccessTip.create(dummy);
+    }
+
+    @ApiOperation(value = "request info")
+    @GetMapping("/pub/dummy")
+    public Tip devService(HttpServletRequest request, HttpServletResponse response){
+
+        JSONObject result = new JSONObject();
+
+        String host = request.getHeader("Host");
+        String uriString = request.getRequestURI();
+        String urlString = request.getRequestURL().toString();
+        String schema = request.getScheme();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        String remoteUser = request.getRemoteUser();
+
+        result.put("Host", host);
+        result.put("URI", uriString);
+        result.put("URL", urlString);
+        result.put("schema", schema);
+        result.put("serverName", serverName);
+        result.put("serverPort", serverPort);
+        result.put("remoteUser", remoteUser);
+
+        return SuccessTip.create(result);
     }
 }
