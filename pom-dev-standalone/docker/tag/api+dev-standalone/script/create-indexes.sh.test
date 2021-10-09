@@ -1,0 +1,7 @@
+
+jar='/d/workspace/crud-app-starter/pom-dev-standalone/target/dev-standalone-1.0.0-standalone.jar'
+
+rm -f indexes/*
+echo create-indexes.sh $jar crud indexes
+sh create-indexes.sh $jar crud indexes
+
