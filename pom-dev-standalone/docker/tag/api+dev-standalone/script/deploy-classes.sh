@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
-
-JAR_BIN=$(which jar)
-JAVA_BIN=$(which java)
-
-
-## read indexes
-read_indexes(){
-   echo '' > /dev/null
-}
-
-indexjarlibfromclass() {
-   classname=$1
-   indexesroot=$2
-}
-
-## pu one .class file to .jar file
+## deploy the  .class files from classes dir to the standalone jar
+# declare -A hashmap
+# hashmap[key]="value"
+# hashmap[key2]="value2"
+# echo hashmap has ${#hashmap[@]} elements
+# for key in ${!hashmap[@]}; do echo $key; done
+# for value in ${hashmap[@]}; do echo $value; done
+## put one .class file to .jar file
 putclasstojar(){
    javaclass=$1
    jar=$2
+   debug=$3
 
    # only .class
    clsext=${javaclass##*.}
@@ -27,7 +20,7 @@ putclasstojar(){
 
    ## main ##
    classname=$(basename $javaclass)
-   echo ...$classname
+   # echo ...$classname
    classok=$("$JAR_BIN" tf $targetjar | grep $classname)
    if [ $classok ];then
       ## update lib
@@ -38,10 +31,15 @@ putclasstojar(){
       fi
 
       # core
-      echo mv $javaclass $classdir > /dev/stderr
-      mv $javaclass $classdir
+      if [ $debug ];then
+         echo cp $javaclass $classdir > /dev/stderr
+         cp $javaclass $classdir
+      else 
+         echo mv $javaclass $classdir > /dev/stderr
+         mv $javaclass $classdir
+      fi
       echo jar 0uf $targetjar $classok > /dev/stderr
-      "$JAR_BIN" 0uf $targetjar $classok > /dev/null
+      "$JAR_BIN" 0uf $targetjar $classok
 
       echo rm -r $classok > /dev/stderr
       rm -f $classok
@@ -50,45 +48,77 @@ putclasstojar(){
    fi
 }
 
-## put classes/*.class to jar
-putlocalclassestojar() {
-   targetjar=$1
-   classesroot=$2
-   indexesroot=$2
 
-   indexes=()
+## start scripts
 
-  for cls in $(ls $classesroot)
-  do
-     javaclass=$classesroot/$cls
-     classname=${basename $javaclass}
+JAR_BIN=$(which jar)
+JAVA_BIN=$(which java)
 
-     index=$(indexjarlibfromclass $classname $indexes)
+get_javaclass_hash_line_on_index_file(){
+   local input=$1
+   local class=$2
 
-     #classdone=$(putclasstojar $targetjar $javaclass)
-     ## means continer to indexes into jar lib
-  done
+   declare -A map
+
+   lines=$(cat $input)
+   for line in $lines;do
+      # echo ... $line
+      key=${line%%,*} value=${line#*,}
+      map[$key]=$value
+      # echo key=$key value=${map[$key]}
+   done
+
+   # echo key=$class  ${map[$class]}
+   echo ${map[$class]}
+   
+   # map[Sunday]="星期天"
+   # map[Monday]="星期一"
+   # for key in ${!map[@]};do
+   #    value=${map[$key]}
+   #    echo $key, $value
+   # done
 }
 
-search_one() {
-  pattern=$1
+put_classes_to_jar_on_indexes(){
+   classesroot=$1
+   indexesroot=$2
+   libroot=$3
 
-  result=$(ls $pattern 2> /dev/null)
-  if [ -z $result ];then
-    echo no $pattern files found ! > /dev/stderr
-    exit
-  fi
+   for javaclass in $(ls $classespath/*.class);do
 
-  ## error
-  num=0
-  for it in $result;do
-     num=$(($num+1))
-  done
+      ## get the first letter of javaclass
+      firstletter=${javaclass::1}  ##first letter
+      indexinput="$indexesroot/$firstletter"
 
-  if [ $num -eq 1 ];then
-     echo $result
-  fi
-  echo ''
+      #jarindex=com/jfeat/common/PcdModelMapping.class,pcd-domain-2.3.0.jar
+      classindex=$(get_javaclass_hash_line_on_index_file $indexinput $javaclass)
+
+      entry=${classindex%%,*} jar=${classindex##*,} 
+      entrypath=$(dirname $entry)
+      if [ ! -d $entrypath ];then
+         mkdir -p $entrypath
+      fi
+      echo mv $javaclass $entrypath
+      mv $javaclass $entrypath
+
+      ## get jar from standalone jar
+      libjar=$libroot/$jar
+      if [ ! -f $libjar ];then
+         jarfirstletter=${jar::1}  ##first letter
+         jarindexinput="$indexesroot/$jarfirstletter"
+         jarindex=$(get_javaclass_hash_line_on_index_file $jarindexinput $jar)
+
+         jarentry=${jarindex%%,*} rootjar=${jarindex##*,} 
+         echo "jar xf $rootjar $jarentry" > /dev/stderr
+         "$JAR_BIN" xf $rootjar $jarentry
+
+         echo mv $jarentry $libjar > /dev/stderr
+         mv $jarentry $libjar
+      fi
+
+      echo "jar 0uf $libjar $entry" > /dev/stderr
+      "$JAR_BIN" 0uf $libjar -C $classesroot $entry
+   done
 }
 
 ## clean up
@@ -107,45 +137,11 @@ if [ -z $(ls classes/*.class 2>/dev/null) ];then
    exit
 fi
 
-#check standalone
-standalone=$(search_one "app.jar *-standalone.jar *.war")
-if [ ! $standalone ];then
-    echo 'no (or multi) -standalone.jar !' >/dev/stderr
-    exit
-fi
-standalone_filename=$(basename $standalone)
-standalone_filename=${standalone_filename%.*}
-standalone_ext=${standalone##*.}
-
-
-## get fixapp to be deploy
-unset fixapp
-if [ $standalone_ext = 'war' ];then
-   fixapp=$standalone_filename.war.FIX
-else
-   fixapp=$standalone_filename.jar.FIX
-fi
-
-if [ ! -f $fixapp ];then
-  echo cp $standalone $fixapp
-  cp $standalone $fixapp
-
-  ## check to find 
-  echo putlocalclassestojar $fixapp classes
-  putlocalclassestojar $fixapp classes
-
-else
-  echo "deploy lib done with $fixapp!"
-fi
-
-
-
-## test deploy 
-jar=/Users/vincenthuang/workspace/zelejs/crud-app-starter/pom-dev-standalone/target/dev-standalone-1.0.0-standalone.jar
-classpath=/Users/vincenthuang/workspace/zelejs/crud-app-starter/pom-dev-standalone/target/classes
-
-echo putlocalclassestojar $jar $classpath
-putlocalclassestojar $jar $classpath
-
+## main
+   # classesroot=$1
+   # indexesroot=$2
+   # libroot=$3
+echo put_classes_to_jar_on_indexes classes indexes lib
+put_classes_to_jar_on_indexes classes indexes lib
 
 cleanup

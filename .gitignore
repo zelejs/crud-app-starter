@@ -19,3 +19,8 @@ view-app/
 .vscode/
 config/
 .DS_Store
+
+## 
+BOOT-INF/
+WEB-INF/
+indexes/

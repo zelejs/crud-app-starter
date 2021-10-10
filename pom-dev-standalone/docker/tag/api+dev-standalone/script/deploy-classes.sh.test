@@ -1,3 +1,6 @@
 
 jar=/Users/vincenthuang/workspace/zelejs/crud-app-starter/pom-dev-standalone/target/dev-standalone-1.0.0-standalone.jar
 classpath=/Users/vincenthuang/workspace/zelejs/crud-app-starter/pom-dev-standalone/target/classes
+
+
+bash deploy-classes.sh $jar $classpath
