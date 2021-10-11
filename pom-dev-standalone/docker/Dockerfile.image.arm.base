@@ -16,7 +16,8 @@ COPY --from=data /usr/local/bin/deploy-lib.sh /usr/local/bin/deploy-lib.sh
 COPY --from=data /usr/local/bin/fix_url.sh /usr/local/bin/fix_url.sh
 COPY --from=data /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-COPY --from=data /usr/local/lib/jar-dependency.jar /usr/local/lib/jar-dependency.jar
+# COPY --from=data /usr/local/lib/jar-dependency.jar /usr/local/lib/jar-dependency.jar
+COPY --from=data /usr/local/bin/deploy-classes.sh /usr/local/bin/deploy-classes.sh
 
 
 WORKDIR /webapps

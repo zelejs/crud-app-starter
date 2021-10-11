@@ -2,6 +2,16 @@
 ## keep workding_dir from docker-compose.yml
 opt=$1
 
+echo deploy-classes.sh ...
+bash /usr/local/bin/deploy-classes.sh
+
+if [ ! -z $(ls classes/*.class 2>/dev/null) ];then
+  echo fail to deploy classes: > /dev/stderr
+  for it in $(ls classes);do
+     echo $it > /dev/stderr
+  done
+fi
+
 echo deploy-lib.sh ...
 bash /usr/local/bin/deploy-lib.sh
 

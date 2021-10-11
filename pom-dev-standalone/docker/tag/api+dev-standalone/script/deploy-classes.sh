@@ -173,6 +173,11 @@ if [ -z $(ls classes/*.class 2>/dev/null) ];then
    exit
 fi
 
+if [ -z $(ls indexes/* 2>/dev/null) ];then
+   echo 'no indexes, skip deploy !' >/dev/stderr
+   exit
+fi
+
 ## main
    # classesroot=$1
    # indexesroot=$2

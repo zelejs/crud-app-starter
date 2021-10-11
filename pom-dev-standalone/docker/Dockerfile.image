@@ -9,15 +9,17 @@ COPY ./tag/api+dev-standalone/conf/logback-spring.xml /var/local/logback-spring.
 COPY ./tag/api+dev-standalone/script/deploy.sh /usr/local/bin/deploy.sh
 COPY ./tag/api+dev-standalone/script/predeploy.sh /usr/local/bin/predeploy.sh
 COPY ./tag/api+dev-standalone/script/deploy-lib.sh /usr/local/bin/deploy-lib.sh
+COPY ./tag/api+dev-standalone/script/deploy-classes.sh /usr/local/bin/deploy-classes.sh
 
 COPY ./tag/api+dev-standalone/script/fix_url.sh /usr/local/bin/fix_url.sh
 COPY ./tag/api+dev-standalone/script/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-COPY ./tag/api+dev-standalone/bin/jar-dependency.jar /usr/local/lib/jar-dependency.jar
+# COPY ./tag/api+dev-standalone/bin/jar-dependency.jar /usr/local/lib/jar-dependency.jar
 
 RUN chmod +x /usr/local/bin/deploy.sh
 RUN chmod +x /usr/local/bin/predeploy.sh
 RUN chmod +x /usr/local/bin/deploy-lib.sh
+RUN chmod +x /usr/local/bin/deploy-classes.sh
 RUN chmod +x /usr/local/bin/fix_url.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
