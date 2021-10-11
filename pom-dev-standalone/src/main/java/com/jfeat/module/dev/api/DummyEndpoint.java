@@ -53,7 +53,7 @@ public class DummyEndpoint {
 
         // get endpoint
         String endpoint = urlString.contains("?")?urlString.substring(0, urlString.indexOf("?")-1) : urlString;
-        endpoint.replace(endpoint, uriString);
+        endpoint = endpoint.replace(uriString, "");
         result.put("endpoint", endpoint);
 
         return SuccessTip.create(result);

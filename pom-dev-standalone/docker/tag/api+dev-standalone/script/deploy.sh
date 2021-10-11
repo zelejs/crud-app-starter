@@ -63,7 +63,7 @@ get_rollback(){
       rollback=$(ls *.war *.war.FIX 2> /dev/null)
       rollback=${rollback//$webapp/ }    ## remove ROOT.war from .war result
       if [ ${#rollback} -eq 0 ];then
-         echo no *.war, no need to rollback ! >/dev/stderr
+         echo no *.war to rollback ! >/dev/stderr
          exit
       fi
 
@@ -76,7 +76,7 @@ get_rollback(){
       done
       ##
       if [ ${#selected} -eq 0 ];then
-         echo no *.war, no need to rollback ! >/dev/stderr
+         echo no *.war to rollback ! >/dev/stderr
          exit
       fi
 
@@ -85,7 +85,7 @@ get_rollback(){
       ## for app.jar
       rollback=$(ls *-standalone.jar *.jar.FIX 2> /dev/null)
       if [ ${#rollback} -eq 0 ];then
-         echo no *-standalone.jar, no need to rollback ! >/dev/stderr
+         echo no *-standalone.jar *.war to rollback ! >/dev/stderr
          exit
       fi
 

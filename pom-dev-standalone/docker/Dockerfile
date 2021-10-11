@@ -1,7 +1,7 @@
 FROM zelejs/allin-web:alpine-m2 AS M2
 
 #builk-stage
-FROM maven:3.6.0-jdk-11-slim AS build
+FROM maven:3.6-openjdk-11-slim AS build
 
 # init .m2 from alpine-m2 image first
 WORKDIR /root/.m2

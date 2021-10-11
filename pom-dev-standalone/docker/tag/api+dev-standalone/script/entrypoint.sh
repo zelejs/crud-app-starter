@@ -44,7 +44,7 @@ docker_restart() {
 
 
 ## skip api for level 0
-if [ $DEPLOY_OPT = restart ];then 
+if [ restart = $DEPLOY_OPT ];then 
    docker_restart
    exit
 fi

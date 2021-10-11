@@ -1,6 +1,6 @@
 version: "3.4"
 services:
-  api:
+  dummy:
     image: api:dummy
     # image: zelejs/api:dummy
     privileged: true
@@ -13,7 +13,7 @@ services:
       # PASSWORD: root
       DUMMY_RUNNER: test  # spring.profiles.active=${DUMMY_RUNNER}
       ROLLBACK_KEEP_NUM: 2
-      DEPLOY_OPT: restart # dummy: only deploy,cli;  restart: restart the container
+      DEPLOY_OPT: dummy # dummy: only deploy,cli;  restart: restart the container
       # DOCKER_SOCKET: /var/run/docker.sock
       DOCKER_ENDPOINT: http://localhost:2375
       DOCKER_CONTAINER: api
