@@ -41,7 +41,7 @@ createjarindexes(){
             echo "$entryname,$entrynew,$jarname"
 
             firstletter=${entryname::1}  ##first letter
-            #firstletter=${firstletter,,}  ##lower case for bash >=4.0
+            firstletter=${firstletter,,}  ##lower case for bash >=4.0
             if [ -f $indexesroot/$firstletter ];then
                 echo "$entryname,$entrynew,$jarname" >> $indexesroot/$firstletter
             else

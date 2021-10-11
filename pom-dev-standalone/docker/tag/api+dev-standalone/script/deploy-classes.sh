@@ -6,11 +6,13 @@
 # echo hashmap has ${#hashmap[@]} elements
 # for key in ${!hashmap[@]}; do echo $key; done
 # for value in ${hashmap[@]}; do echo $value; done
+
+opt=$1
+
 ## put one .class file to .jar file
 putclasstojar(){
    javaclass=$1
    jar=$2
-   debug=$3
 
    # only .class
    clsext=${javaclass##*.}
@@ -31,7 +33,7 @@ putclasstojar(){
       fi
 
       # core
-      if [ $debug ];then
+      if [ $opt = debug ];then
          echo cp $javaclass $classdir > /dev/stderr
          cp $javaclass $classdir
       else 
@@ -58,6 +60,11 @@ get_javaclass_hash_line_on_index_file(){
    local input=$1
    local class=$2
 
+   if [ ! -f $input ];then
+     echo $input not exists ! > /dev/stderr
+     exit
+   fi
+
    declare -A map
 
    lines=$(cat $input)
@@ -65,7 +72,7 @@ get_javaclass_hash_line_on_index_file(){
       # echo ... $line
       key=${line%%,*} value=${line#*,}
       map[$key]=$value
-      # echo key=$key value=${map[$key]}
+#      echo key=$key value=${map[$key]}
    done
 
    # echo key=$class  ${map[$class]}
@@ -84,40 +91,69 @@ put_classes_to_jar_on_indexes(){
    indexesroot=$2
    libroot=$3
 
-   for javaclass in $(ls $classespath/*.class);do
+   for javaclass in $(ls $classesroot/*.class);do
+      javaclassname=$(basename $javaclass)
 
       ## get the first letter of javaclass
-      firstletter=${javaclass::1}  ##first letter
+      firstletter=${javaclassname::1}  ##first letter
+      firstletter=${firstletter,,}
       indexinput="$indexesroot/$firstletter"
 
       #jarindex=com/jfeat/common/PcdModelMapping.class,pcd-domain-2.3.0.jar
-      classindex=$(get_javaclass_hash_line_on_index_file $indexinput $javaclass)
+      classindex=$(get_javaclass_hash_line_on_index_file $indexinput $javaclassname)
+      entry=${classindex%%,*} jar=${classindex##*,}
 
-      entry=${classindex%%,*} jar=${classindex##*,} 
-      entrypath=$(dirname $entry)
+      entrypath=$classesroot/$(dirname $entry)
       if [ ! -d $entrypath ];then
          mkdir -p $entrypath
       fi
-      echo mv $javaclass $entrypath
-      mv $javaclass $entrypath
+      if [ $opt = debug ];then
+        echo cp $javaclass $entrypath
+        cp $javaclass $entrypath
+      else
+        echo mv $javaclass $entrypath
+        mv $javaclass $entrypath
+      fi
+      #echo entry=$entry, entrypath=$entrypath, javaclass=$javaclass, jar=$jar
 
       ## get jar from standalone jar
-      libjar=$libroot/$jar
-      if [ ! -f $libjar ];then
-         jarfirstletter=${jar::1}  ##first letter
-         jarindexinput="$indexesroot/$jarfirstletter"
-         jarindex=$(get_javaclass_hash_line_on_index_file $jarindexinput $jar)
+      ## how about jar is root jar?
+      local targetjar
+      if [ ! -f $jar ];then
+        libjar=$libroot/$jar
 
-         jarentry=${jarindex%%,*} rootjar=${jarindex##*,} 
-         echo "jar xf $rootjar $jarentry" > /dev/stderr
-         "$JAR_BIN" xf $rootjar $jarentry
+        if [ ! -f $libjar ];then
+           jarfirstletter=${jar::1}  ##first letter
+           jarindexinput="$indexesroot/$jarfirstletter"
+           jarindex=$(get_javaclass_hash_line_on_index_file $jarindexinput $jar)
 
-         echo mv $jarentry $libjar > /dev/stderr
-         mv $jarentry $libjar
+           jarentry=${jarindex%%,*} rootjar=${jarindex##*,}
+           echo "jar xf $rootjar $jarentry" > /dev/stderr
+           "$JAR_BIN" xf $rootjar $jarentry
+
+          if [ $opt = debug ];then
+            echo cp $jarentry $libjar > /dev/stderr
+            cp $jarentry $libjar
+          else
+            echo mv $jarentry $libjar > /dev/stderr
+            mv $jarentry $libjar
+          fi
+        fi
+
+        ## check again
+        if [ ! -f $libjar ];then
+          echo $libjar not found! > /dev/stderr
+          exit
+        fi
+
+        ## get the final
+        targetjar=$libjar
+      else
+        targetjar=$jar
       fi
 
-      echo "jar 0uf $libjar $entry" > /dev/stderr
-      "$JAR_BIN" 0uf $libjar -C $classesroot $entry
+      echo "jar 0uf $targetjar -C $classesroot $entry" > /dev/stderr
+      "$JAR_BIN" 0uf $targetjar -C $classesroot $entry
    done
 }
 
