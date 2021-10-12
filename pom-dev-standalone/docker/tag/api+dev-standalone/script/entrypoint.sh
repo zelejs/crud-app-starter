@@ -44,11 +44,10 @@ docker_restart() {
 
 
 ## skip api for level 0
-if [ $DEPLOY_OPT = restart ];then 
+if [ $DEPLOY_OPT -a $DEPLOY_OPT = restart ];then 
    docker_restart
    exit
 fi
-
 
 ### 
 ### start dummy:api
@@ -67,7 +66,6 @@ app=/usr/local/bin/app.jar
 if [ ! -f $APP ];then
    cp $app $APP
 fi
-
 
 CONFIG=config
 config=/var/local

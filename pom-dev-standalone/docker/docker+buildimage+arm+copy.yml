@@ -5,4 +5,4 @@ services:
     image: arm32v7/api:dummy
     build:
       context: .
-      dockerfile: ./Dockerfile.image.arm.base
+      dockerfile: ./Dockerfile.image.arm.copy
