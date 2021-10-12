@@ -1,6 +1,6 @@
 ---
 spring:
-  profiles: dev
+  profiles: dummy
   datasource:
     url: jdbc:mysql://mysqlserver:3306/dummy?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&azeroDateTimeBehavior=convertToNull&llowPublicKeyRetrieval=true
     username: root

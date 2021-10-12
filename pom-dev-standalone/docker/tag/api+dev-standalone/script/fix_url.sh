@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 runner=${RUNNER}
 
-local target
+unset target
 if [ $runner ];then
-  target='config/application-$runner.yml'
+  target="config/application-$runner.yml"
 else
   target='config/application.yml'
 fi

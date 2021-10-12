@@ -25,7 +25,8 @@ fi
 echo deploy.sh ...
 bash /usr/local/bin/deploy.sh
 
-## fix url
+
+## fix url if require by docker-compose.yml
 if [ ${URL_SHORT} ];then
    echo fix_url.sh ...
    bash /usr/local/bin/fix_url.sh
@@ -42,12 +43,19 @@ docker_restart() {
    fi
 }
 
-
 ## skip api for level 0
 if [ $DEPLOY_OPT -a $DEPLOY_OPT = restart ];then 
+   echo deploy option= $DEPLOY_OPT ... restart container ${DOCKER_CONTAINER}$ !
    docker_restart
+   echo Done with docker restart !
    exit
+elif [ $DEPLOY_OPT -a $DEPLOY_OPT = deploy ];then
+   echo Deploy option= $DEPLOY_OPT ... Done with deploy !
+   exit
+elif [ $DEPLOY_OPT -a $DEPLOY_OPT = dummy ];then
+   echo Deploy option= $DEPLOY_OPT ... Continue ...
 fi
+
 
 ### 
 ### start dummy:api
@@ -73,30 +81,28 @@ if [ ! -d $CONFIG ];then
    mkdir $CONFIG
 fi
 
-## aplication-dev.yml
-if [ ! -f $CONFIG/application-dev.yml ];then
-   if [ -f /webapps/config/application.yml ];then
-      mv /webapps/config/application.yml $target
-   else
-      echo cp $config/application.yml $CONFIG/application-dev.yml
-      cp $config/application.yml $CONFIG/application-dev.yml
-   fi
+if [ ! $DUMMY_RUNNER ];then
+  DUMMY_RUNNER=dummy
+fi
+configYml=$CONFIG/application-$DUMMY_RUNNER.yml
+
+## dummy api do not effect current /webapps
+if [ ! -f $configYml ];then
+   echo cp $config/application.yml $configYml
+   cp $config/application.yml $configYml
 fi
 
-## logback-spring.xml
+# logback-spring.xml
 if [ ! -f $CONFIG/logback-spring.xml ];then
    echo cp $config/logback-spring.xml $CONFIG/logback-spring.xml
    cp $config/logback-spring.xml $CONFIG/logback-spring.xml
 fi
 
-if [ ! $DUMMY_RUNNER ];then
-  DUMMY_RUNNER=test
-fi
 if [ ${DUMMY_URL} ];then
   export RUNNER=${DUMMY_RUNNER}
   export URL_SHORT=${DUMMY_URL}
 
-  echo fix_url.sh ...
+  echo fix_url.sh ... URL_SHORT=${URL_SHORT}, 
   bash /usr/local/bin/fix_url.sh
 fi
 
