@@ -1,5 +1,7 @@
 package com.jfeat.module.dev.model;
 
+import com.alibaba.fastjson.JSON;
+
 public class Dummy {
     private Integer status;
     private String uri;
@@ -36,5 +38,10 @@ public class Dummy {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

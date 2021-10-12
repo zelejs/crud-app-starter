@@ -50,18 +50,48 @@
                 <executions>
                     <execution>
                         <id>notify</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                              <target name="dummy">
-                                <get dest="target/dummy.json"
-                                src="http://192.168.3.239:6000/api/dummy"
-                                verbose="off" 
-                                quiet="true" 
-                                usetimestamp="false" 
-                                ignoreerrors="true"/>
+                                <!--<get dest="target/dummy.json"
+                                src="http://localhost:8080/api/dummy"
+                                verbose="off"
+                                quiet="true"
+                                usetimestamp="false"
+                                ignoreerrors="true"/>-->
+                               <!--<exec executable="curl">
+                                    <arg value="-H"/>
+                                    <arg value="Content-Type: application/json"/>
+                                    <arg value="-s"/>
+                                    <arg value="-X"/>
+                                    <arg value="POST"/>
+                                    <arg value="http://localhost:8080/api/dummy"/>
+                                    <arg value="-d"/>
+                                    <arg value="{&quot;content&quot;:&quot;work&quot;}"/>
+                                </exec>-->
+                                <!-- http://ant-contrib.sourceforge.net/tasks/tasks/post_task.html -->
+                                 <exec executable="curl">
+                                    <arg value="-H"/>
+                                    <arg value="Content-Type: application/x-www-form-urlencoded"/>
+                                     <arg value="-s"/>
+                                     <arg value="-X"/>
+                                    <arg value="POST"/>
+                                    <arg value="http://localhost:8080/api/dummy/form"/>
+                                    <arg value="-d"/>
+                                    <arg value="content=work"/>
+                               </exec>
+                                 <!--<post to="http://localhost:8080/api/dummy/upload/test"
+                                    rawFile="True"
+                                    file="target/dummy.json">
+                                </post>-->
+                                <!--<zip destfile="${project.basedir}/package.zip"
+                                    basedir="${project.build.directory}" 
+                                    includes="*.jar" />-->
+                                <property name="my.val" value="just some test value"/>
+                                <mkdir dir="${basedir}/target/destination-folder"/>
                             </target>
                         </configuration>
                     </execution>

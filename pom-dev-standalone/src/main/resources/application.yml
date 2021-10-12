@@ -20,7 +20,7 @@ am:
 ###################  spring配置  ###################
 spring:
   profiles:
-    active: dev
+    active: test
   mvc:
     static-path-pattern: /static/**
     view:
