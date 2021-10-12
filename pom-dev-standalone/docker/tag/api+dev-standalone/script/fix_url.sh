@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-target='config/application-dev.yml'
+runner=${RUNNER}
+
+local target
+if [ $runner ];then
+  target='config/application-$runner.yml'
+else
+  target='config/application.yml'
+fi
 
 ## TEST
 ii='-i'
@@ -13,6 +20,7 @@ fi
 ## main
 
 if [ ! ${URL_SHORT} ];then
+   echo URL_SHORT not defined, no need to fix url! > /dev/stderr
    exit
 fi
 
@@ -23,7 +31,7 @@ if [ ! -f $target ];then
 fi
 
 if [ ! -f $target ];then
-   echo $target not exists!
+   echo $target not exists, no need to fix url! > /dev/stderr
    exit
 fi
 

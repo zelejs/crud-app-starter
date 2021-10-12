@@ -92,7 +92,15 @@ if [ ! -f $CONFIG/logback-spring.xml ];then
 fi
 
 if [ ! $DUMMY_RUNNER ];then
-  DUMMY_RUNNER=dev
+  DUMMY_RUNNER=test
 fi
+if [ ${DUMMY_URL} ];then
+  export RUNNER=${DUMMY_RUNNER}
+  export URL_SHORT=${DUMMY_URL}
+
+  echo fix_url.sh ...
+  bash /usr/local/bin/fix_url.sh
+fi
+
 echo java $JAVA_OPTS -jar *.jar --spring.profiles.active=${DUMMY_RUNNER} --server.port=8080
 java $JAVA_OPTS -jar *.jar --spring.profiles.active=${DUMMY_RUNNER} --server.port=8080
