@@ -39,8 +39,35 @@
         </dependency>
     </dependencies>
 
+    <!-- https://stackoverflow.com/questions/7551711/maven-plugin-to-call-or-invoke-a-rest-web-service -->
     <build>
         <plugins>
+            <!-- run ant plugin for upload file  -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>notify</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                             <target name="dummy">
+                                <get dest="target/dummy.json"
+                                src="http://192.168.3.239:6000/api/dummy"
+                                verbose="off" 
+                                quiet="true" 
+                                usetimestamp="false" 
+                                ignoreerrors="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
