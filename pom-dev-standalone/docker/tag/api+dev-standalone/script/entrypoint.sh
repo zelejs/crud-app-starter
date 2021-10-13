@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 ## keep workding_dir from docker-compose.yml
-opt=$1
+# DEPLOY_OPT: [deploy, restart, dummy]
+# deploy   -  deploy the classes, libs, standalone only without restart docker container
+# restart  -  deploy the classes, libs, standalone only with restarting docker container
+# dummy    -  deploy only without restart, and go on startup dummy api
+
+echo get started .............................
 
 echo deploy-classes.sh ...
 bash /usr/local/bin/deploy-classes.sh
@@ -32,25 +37,12 @@ if [ ${URL_SHORT} ];then
    bash /usr/local/bin/fix_url.sh
 fi
 
-
-docker_restart() {
-   ## docker to restart
-   if [ ${DOCKER_SOCKET} ];then 
-   curl --unix-socket ${DOCKER_SOCKET} -X POST http://localhost/containers/${DOCKER_CONTAINER}/restart
-   fi
-   if [ ${DOCKER_ENDPOINT} ];then 
-   curl -X POST http://${DOCKER_ENDPOINT}/containers/${DOCKER_CONTAINER}/restart
-   fi
-}
-
 ## skip api for level 0
-if [ $DEPLOY_OPT -a $DEPLOY_OPT = restart ];then 
-   echo deploy option= $DEPLOY_OPT ... restart container ${DOCKER_CONTAINER}$ !
-   docker_restart
-   echo Done with docker restart !
+if [ $DEPLOY_OPT -a $DEPLOY_OPT = deploy ];then
+   # echo Deploy option= $DEPLOY_OPT ... Done with deploy !
    exit
-elif [ $DEPLOY_OPT -a $DEPLOY_OPT = deploy ];then
-   echo Deploy option= $DEPLOY_OPT ... Done with deploy !
+elif [ $DEPLOY_OPT -a $DEPLOY_OPT = restart ];then
+   # echo Deploy option= $DEPLOY_OPT ... Done with restart !
    exit
 elif [ $DEPLOY_OPT -a $DEPLOY_OPT = dummy ];then
    echo Deploy option= $DEPLOY_OPT ... Continue ...
