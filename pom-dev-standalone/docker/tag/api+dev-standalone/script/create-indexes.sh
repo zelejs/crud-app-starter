@@ -1,6 +1,18 @@
-#!/bin/sh
+#!/usr/bin/env bash
 jar=$1
 entryPattern=$2
+opt=$3
+
+usage() {
+  echo 'usage: create-indexes.sh <jar> <pattern> [OPTION]'
+  echo '  OPTION:'
+  echo '    -     create all the indexes'
+  exit
+}
+
+if [ ! $entryPattern ];then
+  usage
+fi
 
 
 indexes=$3
@@ -89,5 +101,9 @@ createjarindexes_with_entries(){
 
 
 ## main
-createjarindexes $jar $indexes
+if [ $opt -a $opt = '-' ];then
+   rm -f $indexes/*
+   createjarindexes $jar $indexes
+fi
+
 createjarindexes_with_entries $jar $entryPattern $indexes
