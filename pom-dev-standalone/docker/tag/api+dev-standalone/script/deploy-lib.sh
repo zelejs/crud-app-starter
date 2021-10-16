@@ -52,7 +52,7 @@ putlocaljars() {
      if [ ! $jarok ];then
         ## means new jar
         ## .war for WEB-INF, .jar for BOOT-INF
-        unset INF
+        local INF
         if [ $ext = 'war' ];then
            INF=WEB-INF
         else
@@ -106,11 +106,17 @@ search_one() {
 
 ## clean up
 cleanup() {
-  if [ -d BOOT-INF ];then
-    rm -rf BOOT-INF/
+  ext=$1
+  if [ $ext = jar ];then 
+    if [ -d BOOT-INF ];then
+      rm -rf BOOT-INF/
+    fi
   fi
-  if [ -d WEB-INF ];then
-    rm -rf WEB-INF/
+  
+  if [ $ext = war ];then
+    if [ -d WEB-INF ];then
+      rm -rf WEB-INF/
+    fi
   fi
 }
 
@@ -127,14 +133,14 @@ if [ ! $standalone ];then
     echo 'no (or multi) -standalone.jar !' >/dev/stderr
     exit
 fi
-standalone_filename=$(basename $standalone)
-standalone_filename=${standalone_filename%.*}
+standalone_basename=$(basename $standalone)
+standalone_filename=${standalone_basename%.*}
 standalone_ext=${standalone##*.}
 
 ## get fixapp to be deploy
 unset fixapp
 if [ $standalone_ext = 'war' ];then
-   fixapp=$standxsalone_filename.war.FIX
+   fixapp=$standalone_filename.war.FIX
 else
    fixapp=$standalone_filename.jar.FIX
 fi
@@ -143,10 +149,10 @@ if [ ! -f $fixapp ];then
   echo cp $standalone $fixapp
   cp $standalone $fixapp
 
-  echo putlocaljars $fixapp lib
+  #echo putlocaljars $fixapp lib
   putlocaljars $fixapp lib
 else
   echo "deploy lib done with $fixapp!"
 fi
 
-cleanup
+cleanup $standalone_ext
