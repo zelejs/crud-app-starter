@@ -9,36 +9,19 @@ keep=${ROLLBACK_KEEP_NUM}  # keep rollback instances
 ## .war deploy=> ROOT.war
 app='app.jar'
 webapp='ROOT.war'
+#################################
 if [ -f $app -a -f $webapp ];then
   echo both $app and $webapp exists, skip deploy.sh > /dev/stderr
   exit
 fi
 
-rollback() {
-  app=$1
-  rollback=$2
 
-  if [ ! -f $app ];then
-     echo mv $rollback $app > /dev/stderr
-     mv $rollback $app
-     echo 'Done'
-     exit
-  fi
-
-  ROLLBACK=$app.rollback_$(date "+%m-%d")
-  if [ ! -f $ROLLBACK ];then
-     echo cp $app $ROLLBACK > /dev/stderr
-     cp $app $ROLLBACK
-     echo predeploy.sh rollback keep $app.rollback_ $keep > /dev/stderr
-     predeploy.sh rollback keep $app.rollback_ $keep
-  fi
-}
-
+# functions 
 search_one() {
   local pattern=$1
 
   result=$(ls $pattern 2> /dev/null)
-  if [ ${#result} -eq 0 ];then
+  if [ -z $result ];then
     echo no $pattern file found ! > /dev/stderr
     exit
   fi
@@ -51,85 +34,101 @@ search_one() {
 
   if [ $num -eq 1 ];then
      echo $result
+  else
+     echo ''
   fi
-  echo ''
 }
 
-get_rollback(){
-   local rollback
-
+# the the app name to be rollback
+deploy_check(){
    if [ -f $webapp ];then
+      local war_arr=()
       ## for ROOT.war
-      rollback=$(ls *.war *.war.FIX 2> /dev/null)
-      rollback=${rollback//$webapp/ }    ## remove ROOT.war from .war result
-      if [ ${#rollback} -eq 0 ];then
-         echo no *.war to rollback ! >/dev/stderr
-         exit
-      fi
-
-      ## two, correct
-      local selected
-      for it in $rollback;do
-         if [ ! $it = $webapp ];then
-            selected=$it
+      # rollback_check=${rollback_lines//$webapp/ } ## remove ROOT.war from $rollback_lines
+      local wars=$(ls *.war *.war.FIX 2> /dev/null)
+      for war in $wars;do
+         if [ $war = $webapp ];then 
+            continue
          fi
+         war_arr=("${war_arr[@]}" $war)
       done
-      ##
-      if [ ${#selected} -eq 0 ];then
-         echo no *.war to rollback ! >/dev/stderr
-         exit
-      fi
 
-      rollback=$selected
+      length=${#war_arr[@]}
+      if [ $length = 1 ];then
+        echo ${war_arr[0]}
+      else 
+        echo "no additional .war .war.FIX found, no need to deploy" > /dev/stderr
+      fi
    else
-      rollback=$(search_one "*-standalone.jar *.war *.jar.FIX")
-      if [ ! $rollback ];then
-         echo 'no (or multi) -standalone.jar .war .jar.FIX found !' >/dev/stderr
-         exit
+      local standalone=$(search_one "*-standalone.jar *.jar.FIX")
+      if [ -z $standalone ];then
+         echo "no additional -standanone.jar .jar.FIX found, no need to deploy" > /dev/stderr
+      else 
+         echo $standalone        
       fi
    fi
+}
 
-   ## wether app.jar or ROOT.war
-   # warornot=${rollback}
-   # warornot=${rollback##*.}  ## get ext
-   # if [ $warornot = war ];then
-   #    app=$webapp
-   # fi
-   echo $rollback 
+## real rollback app
+rollback() {
+   local app_war=$1
+  ## start to rollback
+#   rollback_name=$1
+#   rollback_ext=${rollback_name##*.}
+#   if [ $rollback_ext = 'FIX' ];then
+#      rollback_ext=${rollback_name##*.}
+#   fi
+#   if [ $rollback_ext = 'war' ];then
+#      app=$webapp  # work as ROOT.war
+#   fi
+
+#   if [ ! -f $app ];then
+#      echo mv $rollback $app > /dev/stderr
+#      echo mv $rollback $app
+#      echo 'Done'
+#      exit
+#   fi
+
+  ROLLBACK=$app_war.rollback_$(date "+%m-%d")
+  if [ ! -f $ROLLBACK ];then
+     echo cp $app_war $ROLLBACK > /dev/stderr
+     cp $app_war $ROLLBACK
+     # echo predeploy.sh rollback keep $app.rollback_ $keep > /dev/stderr
+     ls *.rollback_* -l
+     predeploy.sh rollback keep $app_war.rollback_ $keep
+     ls *.rollback_*
+  else 
+     ls $ROLLBACK
+  fi
 }
 
 ##
 ## main
-##
-
-## get rollback deploying app
-rollback_name=$(get_rollback)
-#if rollback.ext =war, app=ROOT.war else app.jar
-if [ ! $rollback_name ];then
+rollback_name=$(deploy_check)
+if [ -z $rollback_name ];then
   exit
 fi
 
-rollback_ext=${rollback_name##*.}
-if [ $rollback_ext = 'FIX' ];then
-  rollback_ext=${rollback_name##*.}
-fi
-if [ $rollback_ext = 'war' ];then
-  app=$webapp  # work as ROOT.war
-fi
-
 ## rollback first
-echo "=> start to rollback: $app $rollback_name" > /dev/stderr
-rollback $app $rollback_name
+echo "=> start to rollback ..." > /dev/stderr
+rollback $rollback_name
 
-## deploy app.jar or ROOT.war
+## deploy rollback_name= app.jar.FIX or ROOT.war.FIX
 echo "=> start deploy $rollback_name" > /dev/stderr
-ls -l $app > /dev/stderr
-mv $rollback_name $app
-ls -l $app > /dev/stderr
-
-echo 'Done'
-
-
+if [ -f $app ];then
+   app_name=$app
+elif [ -f $webapp ];then
+   app_name=$webapp
+fi
+if [ -f $app_name ];then
+   ls -l $app_name > /dev/stderr
+   # echo mv $rollback_name $app_name
+   mv $rollback_name $app_name
+   ls -l $app_name > /dev/stderr
+   echo 'Done'
+else 
+   echo $app_name no found ! > /dev/stderr
+fi
 
 ## docker restart 
 docker_restart() {
@@ -145,9 +144,10 @@ docker_restart() {
 }
 
 ## skip api for level 0
+echo DEPLOY_OPT=$DEPLOY_OPT
 if [ $DEPLOY_OPT -a $DEPLOY_OPT = restart ];then
    # if [ $deploy_result -a $deploy_result = Done ];then
-      echo deploy option= $DEPLOY_OPT, restart container ${DOCKER_CONTAINER} ...
+      echo restart container ${DOCKER_CONTAINER} ...
       docker_restart
       echo Done with docker restart ${DOCKER_CONTAINER} !
    # fi

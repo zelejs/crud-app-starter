@@ -47,7 +47,7 @@ putlocaljars() {
 
      ## main ##
      jarlib=$(basename $lib)
-     echo ...$jarlib
+     echo + $jarlib
      jarok=$("$JAR_BIN" tf $app | grep $jarlib)
      if [ ! $jarok ];then
         ## means new jar
