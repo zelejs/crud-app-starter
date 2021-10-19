@@ -4,6 +4,7 @@
 ################################
 JAR_BIN=$(which jar)
 JAVA_BIN=$(which java)
+opt=$1  # -f --force  --- force to add new jar
 
 checkdependency() {
   app=$1
@@ -45,41 +46,47 @@ putlocaljars() {
    #      fi
    #   ## end dependency
 
-     ## main ##
-     jarlib=$(basename $lib)
-     echo + $jarlib
-     jarok=$("$JAR_BIN" tf $app | grep $jarlib)
-     if [ ! $jarok ];then
+    ## main ##
+    jarlib=$(basename $lib)
+    echo + $jarlib
+    jarok=$("$JAR_BIN" tf $app | grep $jarlib)
+     
+    if [ ! $jarok ];then
+      if [ $opt -a $opt = '-f' ];then
         ## means new jar
         ## .war for WEB-INF, .jar for BOOT-INF
         local INF
         if [ $ext = 'war' ];then
-           INF=WEB-INF
+          INF=WEB-INF
         else
-           INF=BOOT-INF 
+          INF=BOOT-INF 
         fi
         echo "$INF/lib/$jarlib"
         jarok="$INF/lib/$jarlib"
-     fi
+      else
+        echo "$jarlib no found in $app, use \'-f\' to force to add into" > /dev/stderr
+        continue
+      fi
+    fi
 
-     if [ $jarok ];then
-       ## update lib
-       jardir=$(dirname $jarok)
-       if [ ! -d $jardir ];then
-          echo mkdir -p $jardir
-          mkdir -p $jardir
-       fi
+    if [ $jarok ];then
+      ## update lib
+      jardir=$(dirname $jarok)
+      if [ ! -d $jardir ];then
+        echo mkdir -p $jardir
+        mkdir -p $jardir
+      fi
 
-       # core
-       echo mv $jar $jardir
-       mv $jar $jardir
-       echo jar 0uf $app $jarok
-       "$JAR_BIN" 0uf $app $jarok
+      # core
+      echo mv $jar $jardir
+      mv $jar $jardir
+      echo jar 0uf $app $jarok
+      "$JAR_BIN" 0uf $app $jarok
 
-       ## rm after jar updated
-       echo rm -f $jarok
-       rm -f $jarok
-     fi
+      ## rm after jar updated
+      echo rm -f $jarok
+      rm -f $jarok
+    fi
   done
 }
 
