@@ -72,34 +72,29 @@ deploy_check(){
 ## real rollback app
 rollback() {
    local app_war=$1
-  ## start to rollback
-#   rollback_name=$1
-#   rollback_ext=${rollback_name##*.}
-#   if [ $rollback_ext = 'FIX' ];then
-#      rollback_ext=${rollback_name##*.}
-#   fi
-#   if [ $rollback_ext = 'war' ];then
-#      app=$webapp  # work as ROOT.war
-#   fi
 
-#   if [ ! -f $app ];then
-#      echo mv $rollback $app > /dev/stderr
-#      echo mv $rollback $app
-#      echo 'Done'
-#      exit
-#   fi
+   ROLLBACK=$app_war.rollback_$(date "+%m-%d")
+   if [ -f $ROLLBACK ];then
+      ## if exists, get hour
+      ROLLBACK=$app_war.rollback_$(date "+%m-%d-%H")
+      ## if H exists, get min
+      if [ -f $ROLLBACK ];then
+         ROLLBACK=$app_war.rollback_$(date "+%m-%d-%H-%M")
+      fi
+   fi
 
-  ROLLBACK=$app_war.rollback_$(date "+%m-%d")
-  if [ ! -f $ROLLBACK ];then
-     echo cp $app_war $ROLLBACK > /dev/stderr
-     cp $app_war $ROLLBACK
-     # echo predeploy.sh rollback keep $app.rollback_ $keep > /dev/stderr
-     ls *.rollback_* -l
-     predeploy.sh rollback keep $app_war.rollback_ $keep
-     ls *.rollback_*
-  else 
-     ls $ROLLBACK
-  fi
+   if [ ! -f $ROLLBACK ];then
+      echo cp $app_war $ROLLBACK > /dev/stderr
+      cp $app_war $ROLLBACK > /dev/stderr
+      # echo predeploy.sh rollback keep $app.rollback_ $keep > /dev/stderr
+      ls *.rollback_* -l  > /dev/stderr
+      predeploy.sh rollback keep $app_war.rollback_ $keep > /dev/stderr
+      ls *.rollback_* > /dev/stderr
+
+      echo $ROLLBACK
+   else 
+      echo "$ROLLBACK exists, pls wait for one more minute !" > /dev/stderr
+   fi
 }
 
 ##
@@ -111,7 +106,10 @@ fi
 
 ## rollback first
 echo "=> start to rollback ..." > /dev/stderr
-rollback $rollback_name
+rollback_result=$(rollback $rollback_name)
+if [ -z "$rollback_result" ];then 
+   exit
+fi
 
 ## deploy rollback_name= app.jar.FIX or ROOT.war.FIX
 echo "=> start deploy $rollback_name" > /dev/stderr
@@ -129,6 +127,9 @@ if [ -f $app_name ];then
 else 
    echo $app_name no found ! > /dev/stderr
 fi
+
+
+
 
 ## docker restart 
 docker_restart() {
