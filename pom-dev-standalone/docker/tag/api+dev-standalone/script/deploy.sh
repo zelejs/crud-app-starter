@@ -72,6 +72,7 @@ deploy_check(){
 ## real rollback app
 rollback() {
    local app_war=$1
+   app_war=${app_war%.FIX*}  # remove .FIX
 
    ROLLBACK=$app_war.rollback_$(date "+%m-%d")
    if [ -f $ROLLBACK ];then
