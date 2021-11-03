@@ -6,6 +6,17 @@
 # dummy    -  deploy only without restart, and go on startup dummy api
 
 echo get started .............................
+## prepare /webapps/lib, /webapps/classes
+if [ -d /var/webapps/classes ];then 
+   if [ ! -z $(ls /var/webapps/classes) ];then 
+      mv /var/webapps/classes/*.class /webapps/classes
+   fi
+fi
+if [ -d /var/webapps/lib ];then 
+   if [ ! -z $(ls /var/webapps/lib) ];then 
+      mv /var/webapps/lib/*.jar /webapps/lib
+   fi
+fi
 
 echo deploy-classes.sh ...
 bash /usr/local/bin/deploy-classes.sh
