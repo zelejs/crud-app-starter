@@ -64,7 +64,7 @@ putlocaljars() {
         echo "$INF/lib/$jarlib"
         jarok="$INF/lib/$jarlib"
       else
-        echo "$jarlib no found in $app, use \'-f\' to force to add into" > /dev/stderr
+        echo "$jarlib no found in $app, use '-f' to force to add into" > /dev/stderr
         continue
       fi
     fi
