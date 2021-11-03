@@ -52,7 +52,7 @@ putlocaljars() {
     jarok=$("$JAR_BIN" tf $app | grep $jarlib)
      
     if [ ! $jarok ];then
-      if [ $opt -a $opt = '-f' ];then
+      if [[ $opt && $opt = '-f' ]];then
         ## means new jar
         ## .war for WEB-INF, .jar for BOOT-INF
         local INF
@@ -116,13 +116,13 @@ cleanup() {
   ext=$1
   if [ $ext = jar ];then 
     if [ -d BOOT-INF ];then
-      rm -rf BOOT-INF/
+      rm -rf BOOT-INF/*
     fi
   fi
   
   if [ $ext = war ];then
     if [ -d WEB-INF ];then
-      rm -rf WEB-INF/
+      rm -rf WEB-INF/*
     fi
   fi
 }
@@ -159,7 +159,7 @@ if [ ! -f $fixapp ];then
   #echo putlocaljars $fixapp lib
   putlocaljars $fixapp lib
 else
-  echo "deploy lib done with $fixapp!"
+  echo "$fixapp exists, means deployed lib done !"
 fi
 
 cleanup $standalone_ext
