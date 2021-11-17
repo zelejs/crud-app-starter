@@ -83,7 +83,8 @@
         <jjwt.version>0.7.0</jjwt.version>
         <jedis.version>2.9.0</jedis.version>
         <fst.version>2.50</fst.version>
-        <h2.version>1.4.196</h2.version>
+        <!-- <h2.version>1.4.196</h2.version> not support ON UPDATE -->
+        <h2.version>1.4.200</h2.version>
         <guava.version>18.0</guava.version>
     </properties>
 
