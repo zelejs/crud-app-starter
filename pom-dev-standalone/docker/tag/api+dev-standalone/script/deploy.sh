@@ -113,15 +113,19 @@ if [ -z "$rollback_result" ];then
 fi
 
 ## deploy rollback_name= app.jar.FIX or ROOT.war.FIX
-echo "=> start deploy $rollback_name" > /dev/stderr
+echo "=> start to deploy $rollback_name" > /dev/stderr
 if [ -f $app ];then
    app_name=$app
 elif [ -f $webapp ];then
    app_name=$webapp
+elif [ $rollback_name = *-standalone.jar ];then
+   app_name=$app
+elif [ $rollback_name = *.war ];then
+   app_name=$webapp
 fi
-if [ -f $app_name ];then
-   ls -l $app_name > /dev/stderr
-   # echo mv $rollback_name $app_name
+if [[ -f $app_name || -f $rollback_name ]];then
+   ls -l $app_name 2> /dev/null
+   echo mv $rollback_name $app_name
    mv $rollback_name $app_name
    ls -l $app_name > /dev/stderr
    echo 'Done'

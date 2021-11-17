@@ -29,8 +29,8 @@
         </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
-            <artifactId>jar-dependency-api</artifactId>
-            <version>1.0.0</version>
+            <artifactId>dev-dependency</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

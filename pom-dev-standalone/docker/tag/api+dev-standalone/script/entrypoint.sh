@@ -8,13 +8,18 @@
 echo get started .............................
 ## prepare /webapps/lib, /webapps/classes
 if [ -d /var/webapps/classes ];then 
-   if [ ! -z $(ls /var/webapps/classes) ];then 
+   if [ ! -z $(ls /var/webapps/classes/*.class) ];then 
       mv /var/webapps/classes/*.class /webapps/classes
    fi
 fi
 if [ -d /var/webapps/lib ];then 
-   if [ ! -z $(ls /var/webapps/lib) ];then 
+   if [ ! -z $(ls /var/webapps/lib/*.jar) ];then 
       mv /var/webapps/lib/*.jar /webapps/lib
+   fi
+fi
+if [ -d /var/webapps/app ];then 
+   if [ ! -z $(ls /var/webapps/app/*-standalone.jar) ];then 
+      mv /var/webapps/app/*-standalone.jar /webapps
    fi
 fi
 
