@@ -8,25 +8,25 @@
 checksame(){
    app1=$1
    app2=$2
+#    echo app1=$app1, app2=$app2 > /dev/stderr
    
    app1_sum=$(sha256sum $app1)
-   app1_sum=${app1_sum%%\ *}
-
+   app1_sum=${app1_sum%% *}
    app2_sum=$(sha256sum $app2)
-   app2_sum=${app2_sum%%\ *}
+   app2_sum=${app2_sum%% *}
+    #   echo app1_sum=$app1_sum, app2_sum=$app2_sum > /dev/stderr
 
    if [[ $app1_sum = $app2_sum ]];then
-       echo $app1_sum 
+       echo $app1_sum
    fi
 }
-
 
 rollback() {
    local app_war=$1
    app_dir=${app_war%\/*}
    app_name=${app_war##*\/}
-   app_sum=$(sha256sum $app_war)
-   app_sum=${stand_sum%%\ *}
+#    app_sum=$(sha256sum $app_war)
+#    app_sum=${app_sum%% *}
 
    ##### dayly
    ROLLBACK=$app_name.rollback_$(date "+%m-%d")
@@ -38,11 +38,12 @@ rollback() {
    fi
    ## ROLLBACK exists, check if sha256 the same
    shasum=$(checksame $app_war $app_dir/$ROLLBACK)
-   if [ $shasum ];then
+   if [ ! -z $shasum ];then
        # is the same jar, just return 
+       echo "no rollback required, the same rollback $app_dir/$ROLLBACK exists !" > /dev/stderr
+       echo sha256:$shasum > /dev/stderr
        return 
    fi
-
 
    ##### hourly
    ## means not the same file, get the hourly ROLLBACK
@@ -55,11 +56,12 @@ rollback() {
    fi
    ## ROLLBACK exists, check if sha256 the same
    shasum=$(checksame $app_war $app_dir/$ROLLBACK)
-   if [ $shasum ];then
-      # is the same jar, just return 
+   if [ ! -z $shasum ];then
+       # is the same jar, just return 
+       echo "no rollback required, the same rollback $app_dir/$ROLLBACK exists !" > /dev/stderr
+       echo sha256:$shasum > /dev/stderr
        return 
    fi
-
 
    ##### minutely
    ## means not the same file, get the minutely ROLLBACK
@@ -72,8 +74,10 @@ rollback() {
    fi
    ## ROLLBACK exists, check if sha256 the same
    shasum=$(checksame $app_war $app_dir/$ROLLBACK)
-   if [ $shasum ];then
-      # is the same jar, just return 
+   if [ ! -z $shasum ];then
+       # is the same jar, just return 
+       echo "no rollback required, the same rollback $app_dir/$ROLLBACK exists !" > /dev/stderr
+       echo sha256:$shasum > /dev/stderr
        return 
    fi
 
@@ -108,8 +112,8 @@ if [ -d /var/webapps/app ];then
       if [[ $standalone_name = $app_name ]];then
          shasum=$(checksame $standalonel $appl)
          if [ $shasum ];then
-            echo "the sample jar: $standalone_name ... do nothing !" > /dev/stderr
-         else 
+            echo "the sample fatjar: $standalone_name@sha256:$shasum ... do nothing !" > /dev/stderr
+         else
             ## difference checksum sha256, roll it back
             rollback $appl
 

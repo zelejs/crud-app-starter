@@ -27,16 +27,19 @@ search_one() {
   fi
 
   ## error
-  local num=0
-  for it in $result;do
-     num=$(($num+1))
-  done
+#   local num=0
+#   for it in $result;do
+#      num=$(($num+1))
+#   done
 
-  if [ $num -eq 1 ];then
-     echo $result
-  else
-     echo ''
-  fi
+#   if [ $num -eq 1 ];then
+#      echo $result
+#   else
+#      echo ''
+#   fi
+   if [ ${#result[@]} -eq 1 ];then
+      echo $result
+   fi 
 }
 
 # the the app name to be rollback
