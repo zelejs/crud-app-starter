@@ -79,7 +79,6 @@
         <!-- <zxing.version>3.2.1</zxing.version> -->
         <druid.version>1.1.12</druid.version>
         <beetl.version>2.7.15</beetl.version>
-        <swagger.version>2.2.2</swagger.version>
         <jjwt.version>0.7.0</jjwt.version>
         <jedis.version>2.9.0</jedis.version>
         <fst.version>2.50</fst.version>
