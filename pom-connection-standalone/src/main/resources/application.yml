@@ -6,6 +6,7 @@ server:
 jwt:
   encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
   normal-encoded-key: bm9ybWFsLWVuY29kZWQta2V5
+
 ###################  am配置  ###################
 am:
   swagger-open: true #是否开启swagger (true/false)
@@ -15,8 +16,10 @@ am:
   worker-id: 0 # id gen service machine id 0~1023
   redis-host: 127.0.0.1
   redis-port: 6379
+  shiro-cache-redis: false
   #fastjson 格式化时间的格式，如不配置，默认用yyyy-MM-dd HH:mm:ss
   #json-serialize-date-format: MM/dd/yyyy HH:mm:ss
+  # environment: dev  #[dev,development,production] 开发环境还是生产环增，默认开发环境
 
 ###################  spring配置  ###################
 spring:
@@ -28,6 +31,9 @@ spring:
       prefix: /WEB-INF/view/
       suffix: .html
   http:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB  
     encoding:
       force: true
       charset: UTF-8
@@ -57,9 +63,8 @@ mybatis-plus:
 ###################  日志配置  ###################
 logging:
   level:
-    org.springframework.security: DEBUG
-    com.jfeat.am.module.kehai.services.domain.dao: debug
-
+    org.springframework.security: warn
+    # com.jfeat: debug
 ---
 
 ##########################################################
@@ -73,16 +78,13 @@ spring:
       username: sa
       password:
       filters: log4j,wall,mergeStat
-      initialize: true
       schema: classpath*:sql/*-schema.sql
       data: classpath*:sql/*-data.sql
+      initialize: true
 
 logging:
   level: debug
   file: logs/access.log
-
-am:
-  shiro-cache-redis: false
 ---
 
 ##########################################################
@@ -91,7 +93,7 @@ am:
 spring:
   profiles: dev
   datasource:
-      url: jdbc:mysql://localhost:3306/dummy?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://localhost:3306/test?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       username: root
       password: root
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -104,9 +106,6 @@ spring:
 logging:
   level: debug
   file: logs/access.log
-
-am:
-  shiro-cache-redis: false
 ---
 
 ##########################################################
@@ -115,14 +114,20 @@ am:
 spring:
   profiles: produce
   datasource:
-      url: jdbc:mysql://127.0.0.1:3306/sbinfrastructure?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://172.17.0.1:3306/dummy?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
       username: root
       password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
       filters: log4j,wall,mergeStat
+      sql-script-encoding: UTF-8
+      schema: classpath*:sql/**/*-schema.sql
+      data: classpath*:sql/**/*-data.sql
+      initialize: false
 
 logging:
   level: warn
   file: logs/access.log
+  config: config/logback-spring.xml
 
 am:
   shiro-cache-redis: true
