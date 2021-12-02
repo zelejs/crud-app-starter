@@ -22,6 +22,11 @@ am:
   shiro-cache-redis: false
   # environment: dev  #[dev,development,production] 开发环境还是生产环增，默认开发环境
 
+crud-plus:
+  features:
+    - image
+    - tag
+
 ###################  logging配置  ###################
 logging:
   level:
