@@ -42,15 +42,14 @@
         <ehcache-core.version>2.6.11</ehcache-core.version>
         <ehcache.version>3.3.1</ehcache.version>
 
-        <!-- dev -->
-        <flyway-core.version>5.2.4</flyway-core.version>
-        <io.swagger.version>1.5.9</io.swagger.version>
+        <!-- swagger -->
+        <io.swagger.version>1.5.20</io.swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
-        <!-- dev@deprecated -->
+        <!-- swagger@deprecated -->
         <io.springfox.version>2.9.2</io.springfox.version>
         <swagger.version>2.9.2</swagger.version>
 
-
+        
         <!-- java 11  -->
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.activation.version>1.1.1</javax.activation.version>
@@ -69,7 +68,9 @@
         <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
         <spring-test.version>5.3.9</spring-test.version>
 
+
         <!-- legacy  -->
+        <flyway-core.version>5.2.4</flyway-core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
