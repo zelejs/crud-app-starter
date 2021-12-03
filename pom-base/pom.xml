@@ -58,6 +58,11 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway-core.version}</version>
         </dependency> -->
+        <!--<dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-runtime</artifactId>
+            <version>${crud-runtime.version}</version>
+        </dependency>-->
 
         <!--crud -->
         <dependency>
@@ -67,44 +72,28 @@
         </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
-            <artifactId>crud-runtime</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <!-- crud-core dependent io.springfox.swagger2, java11.x, spring-test -->
-        <dependency>
-            <groupId>com.jfeat</groupId>
             <artifactId>crud-core</artifactId>
             <version>${crud-core.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-log</artifactId>
-            <version>${crud-log.version}</version>
-        </dependency>
-
-        <!-- auth -->
+        <!-- Permission -->
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>jwt-core</artifactId>
             <version>${jwt-core.version}</version>
         </dependency>
 
+
         <!-- data source -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>${hutool-all.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
-        <!-- <dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
-        </dependency> -->
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -156,10 +145,10 @@
         </dependency> -->
 
         <!-- springboot jdbc-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- springboot cache -->
         <dependency>
@@ -179,6 +168,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
