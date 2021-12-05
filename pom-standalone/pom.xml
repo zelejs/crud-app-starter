@@ -197,6 +197,7 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <include>com/jfeat/module/**/*.java</include>
                 </configuration>
             </plugin>
             <plugin>
