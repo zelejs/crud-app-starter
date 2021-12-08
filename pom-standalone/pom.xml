@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-plus</artifactId>
             <version>${crud-plus.version}</version>
@@ -32,12 +37,12 @@
             <artifactId>crud-core</artifactId>
             <version>${crud-core.version}</version>
         </dependency>
-        <!-- crud runtime  -->
+        <!-- crud runtime
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>crud-runtime</artifactId>
             <version>0.0.1</version>
-        </dependency>
+        </dependency> -->
         <!-- tag,image service  -->
         <!-- <dependency>
             <groupId>com.jfeat</groupId>
@@ -127,7 +132,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
         </dependency>
 
         <!--allow swagger support java 11 (above java9)-->
@@ -155,6 +160,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

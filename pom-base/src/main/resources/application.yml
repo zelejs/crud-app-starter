@@ -20,7 +20,7 @@ am:
 ###################  spring配置  ###################
 spring:
   profiles:
-    active: dev
+    active: test
   mvc:
     static-path-pattern: /static/**
     view:
@@ -57,8 +57,24 @@ mybatis-plus:
 logging:
   level:
     org.springframework.security: DEBUG
-    com.jfeat.am.module.kehai.services.domain.dao: debug
+    com.jfeat.*: debug
+---
 
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    filters: log4j,wall,mergeStat
+    sql-script-encoding: UTF-8
+    schema: classpath*:sql/*-schema.sql
+    data: classpath*:sql/*-data.sql
+    initialize: true
 ---
 
 ##########################################################

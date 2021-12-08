@@ -19,9 +19,15 @@
 
     <properties>
         <skipStandalone>true</skipStandalone>
+        <lombok.version>1.18.4</lombok.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
 <!-- do not introduce config table -->
 <!--        <dependency>
             <groupId>com.jfeat</groupId>
@@ -173,7 +179,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
-            <scope>test</scope>
+           <scope>te`st</scope>
         </dependency>
 
         <!--allow swagger support java 11 (above java9)-->
