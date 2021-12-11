@@ -3,12 +3,13 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>webjar-starter</artifactId>
+    <groupId>com.jfeat</groupId>
+    <artifactId>webjar</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>webjar-starter</name>
-    <description>webjar-starter</description>
+    <name>pom-webjar</name>
+    <description>pom-webjar</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -57,7 +58,7 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <classifier>standalone</classifier>
+                            <classifier>all</classifier>
                         </configuration>
                     </execution>
                 </executions>
@@ -76,4 +77,12 @@
             </resource>
         </resources>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>archiva-internal</id>
+            <name>Internal Repository</name>
+            <url>http://120.79.49.72:8081/repository/internal</url>
+        </repository>
+    </distributionManagement>
 </project>
