@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jfeat</groupId>
     <artifactId>webjar</artifactId>
-    <version>1.0.0</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>pom-webjar</name>
@@ -50,6 +50,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.4.RELEASE</version>
                 <configuration>
+                    <finalName>${project.artifactId}</finalName>
                     <skip>${skipStandalone}</skip>
                 </configuration>
                 <executions>
@@ -58,11 +59,37 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <classifier>all</classifier>
+                            <classifier>RELEASE</classifier>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <finalName>${project.artifactId}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.jfeat.jar.dependency.cli.MainMethod</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
 
         <resources>

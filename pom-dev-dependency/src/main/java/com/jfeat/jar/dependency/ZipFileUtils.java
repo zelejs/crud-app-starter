@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -434,6 +436,54 @@ public class ZipFileUtils {
         return entries;
     }
 
+    public static Map<String, List<String>> getJarArchiveTreeData(File file, boolean checksum){
+        Map<String, List<String>> tree = new HashMap<String, List<String>>();
+
+        try(JarFile jarFile = new JarFile(file);
+            CheckedInputStream cs =
+                    new CheckedInputStream(new FileInputStream(file), new Adler32());
+            JarInputStream jarInputStream =
+                    new JarInputStream(new BufferedInputStream(cs));
+        ) {
+            JarEntry jarEntry = null;
+            while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
+                if(!jarEntry.isDirectory()) {
+
+                    var jarEntryLine = (checksum && jarEntry.getCrc() > 0) ?
+                            String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
+                            : jarEntry.getName();
+                    tree.put(jarEntryLine, new ArrayList<String>());
+
+                    if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
+                            FileUtils.extension(jarEntry.getName()).equals("zip")) {
+                        try (InputStream is = jarFile.getInputStream(jarEntry)) {
+                            JarInputStream jis = new JarInputStream(is);
+                            ZipEntry entry = null;
+                            while ((entry = jis.getNextEntry()) != null) {
+                                if(!entry.isDirectory()) {
+                                    if(!tree.containsKey(jarEntry.getName())){
+                                        tree.put(jarEntry.getName(), new ArrayList<String>());
+                                    }
+                                    var entryList = tree.get(jarEntry.getName());
+
+                                    var treeEntry = (checksum && entry.getCrc() > 0) ?
+                                            String.join("@", ("+- " + entry.getName()), String.valueOf(entry.getCrc()))
+                                            : "+- " + entry.getName();
+
+                                    entryList.add(treeEntry);
+                                }
+                            }
+                        } catch (IOException e) {
+                        }
+                    }
+
+                } // not dir
+            }
+        }catch(IOException e){
+        }
+        return tree;
+    }
+
     public static List<String> getJarArchiveTree(File file, boolean checksum){
         List<String> tree = new ArrayList<>();
 
@@ -460,7 +510,7 @@ public class ZipFileUtils {
                                 if(!entry.isDirectory()) {
                                     tree.add((checksum && entry.getCrc() > 0) ?
                                             String.join("@", ("+- " + entry.getName()), String.valueOf(entry.getCrc()))
-                                            : entry.getName());
+                                            : "+- " + entry.getName());
                                 }
                             }
                         } catch (IOException e) {
