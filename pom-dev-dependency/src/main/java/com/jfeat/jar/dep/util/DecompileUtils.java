@@ -1,5 +1,6 @@
 package com.jfeat.jar.dep.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 
@@ -45,9 +46,11 @@ public class DecompileUtils {
                         org.codehaus.plexus.util.FileUtils.fileDelete(filePath);
                         try {
                             String dirname = org.codehaus.plexus.util.FileUtils.dirname(filePath);
-                            File dirFile = new File(dirname);
-                            if (dirFile.listFiles().length == 0) {
-                                org.codehaus.plexus.util.FileUtils.forceDelete(dirFile);
+                            if(StringUtils.isNotBlank(dirname)) {
+                                File dirFile = new File(dirname);
+                                if (dirFile.listFiles().length == 0) {
+                                    org.codehaus.plexus.util.FileUtils.forceDelete(dirFile);
+                                }
                             }
                         }catch (IOException e){
                         }
