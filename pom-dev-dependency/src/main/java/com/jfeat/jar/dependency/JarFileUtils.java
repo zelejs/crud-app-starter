@@ -14,7 +14,6 @@ import java.util.zip.*;
 
 import static com.jfeat.jar.dependency.FileUtils.getRelativeFilePath;
 
-@Deprecated
 public class JarFileUtils {
 
     /**

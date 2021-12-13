@@ -2,7 +2,7 @@ package com.jfeat.jar.dep.api;
 
 import com.jfeat.jar.dep.properties.JarDeployProperties;
 import com.jfeat.jar.dep.request.JarRequest;
-import com.jfeat.jar.dep.util.DecompileUtils;
+import com.jfeat.jar.dependency.DecompileUtils;
 import com.jfeat.jar.dep.util.DepUtils;
 import com.jfeat.jar.dep.util.UploadUtils;
 import com.jfeat.crud.base.exception.BusinessCode;

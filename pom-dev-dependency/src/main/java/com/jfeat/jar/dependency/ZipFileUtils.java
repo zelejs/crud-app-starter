@@ -6,8 +6,10 @@ import com.google.common.io.Files;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
+import org.springframework.util.Assert;
 
 import java.io.*;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.*;
+
+import static com.jfeat.jar.dependency.FileUtils.getRelativeFilePath;
 
 public class ZipFileUtils {
     /*
@@ -391,7 +395,7 @@ public class ZipFileUtils {
     public static String getZipEntryContent(File file, String entryName) {
         StringBuilder content = new StringBuilder();
         try(JarFile jarFile = new JarFile(file)) {
-            Manifest manifest = jarFile.getManifest();
+            //Manifest manifest = jarFile.getManifest();
 
             ZipEntry zipEntry = jarFile.getEntry(entryName);
             BufferedReader r = new BufferedReader(
@@ -407,8 +411,110 @@ public class ZipFileUtils {
             }
         }catch (Exception e){
         }
+
         return content.toString();
     }
+    public static String getZipEntryContent(JarFile jarFile, ZipEntry zipEntry) {
+        StringBuilder content = new StringBuilder();
+        try {
+            //Manifest manifest = jarFile.getManifest();
+            BufferedReader r = new BufferedReader(
+                    new InputStreamReader(jarFile.getInputStream(zipEntry)));
+            String line = r.readLine();
+            String NewLine = "\n";
+            while (line != null) {
+                line = r.readLine();
+                if(line!=null) {
+                    content.append(line);
+                    content.append(NewLine);
+                }
+            }
+        }catch (Exception e){
+        }
+
+        return content.toString();
+    }
+    public static String getZipEntryContent(InputStream jarInputStream) {
+        StringBuilder content = new StringBuilder();
+        try {
+            //Manifest manifest = jarFile.getManifest();
+            BufferedReader r = new BufferedReader(new InputStreamReader(jarInputStream));
+            String line = r.readLine();
+            String NewLine = "\n";
+            while (line != null) {
+                line = r.readLine();
+                if(line!=null) {
+                    content.append(line);
+                    content.append(NewLine);
+                }
+            }
+        }catch (Exception e){
+        }
+        return content.toString();
+    }
+
+    public static String unzipEntryFromJarInputStream(InputStream zipInputStream, ZipEntry entry, File outputFile) throws IOException {
+        // Read each entry from the ZipInputStream until no more entry
+        // found indicated by a null return value of the getNextEntry()
+        // method.
+        //long size = entry.getCrc();
+        long size = 0L;
+        //if (size > 0) {
+            byte[] buffer = new byte[1048];
+            try (FileOutputStream fos =
+                         new FileOutputStream(outputFile);
+                 BufferedOutputStream bos =
+                         new BufferedOutputStream(fos, buffer.length)) {
+
+                while ((size = zipInputStream.read(buffer, 0, buffer.length)) != -1) {
+                    bos.write(buffer, 0, (int) size);
+                }
+                bos.flush();
+            }
+        //}
+        return outputFile.getAbsolutePath();
+    }
+
+    public static String unzipFilesFromArchiva(File zipFile, String entryName, File targetPath) throws IOException {
+        try (
+                InputStream zipStream = new FileInputStream(zipFile);
+                // Creating input stream that also maintains the checksum of
+                // the data which later can be used to validate data
+                // integrity.
+                CheckedInputStream cs =
+                        new CheckedInputStream(zipStream, new Adler32());
+                ZipInputStream zis =
+                        new ZipInputStream(new BufferedInputStream(cs))) {
+
+            // within try
+            ZipEntry entry = null;
+            List<String> files = new ArrayList<>();
+
+            // Read each entry from the ZipInputStream until no more entry
+            // found indicated by a null return value of the getNextEntry()
+            // method.
+            while ((entry = zis.getNextEntry()) != null) {
+                if(entry.getName().equals(entryName)){
+                    long size=0L;
+                    byte[] buffer = new byte[1048];
+                    try (FileOutputStream fos =
+                                 new FileOutputStream(targetPath);
+                         BufferedOutputStream bos =
+                                 new BufferedOutputStream(fos, buffer.length)) {
+
+                        while ((size = zis.read(buffer, 0, buffer.length)) != -1) {
+                            bos.write(buffer, 0, (int) size);
+                        }
+                        bos.flush();
+                    }
+                }
+            }
+
+            // Print out the checksum value
+            return targetPath.getAbsolutePath();
+        }
+    }
+
 
     public static String getJarManifestContent(File jarFile) {
         return getZipEntryContent(jarFile, "META-INF/MANIFEST.MF");
@@ -436,7 +542,7 @@ public class ZipFileUtils {
         return entries;
     }
 
-    public static Map<String, List<String>> getJarArchiveTreeData(File file, boolean checksum){
+    public static Map<String, List<String>> getJarArchiveTreeData(File file, String criteria, boolean checksum){
         Map<String, List<String>> tree = new HashMap<String, List<String>>();
 
         try(JarFile jarFile = new JarFile(file);
@@ -449,10 +555,12 @@ public class ZipFileUtils {
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
-                    var jarEntryLine = (checksum && jarEntry.getCrc() > 0) ?
-                            String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
-                            : jarEntry.getName();
-                    tree.put(jarEntryLine, new ArrayList<String>());
+                    if(criteria==null || criteria.length()==0 || jarEntry.getName().contains(criteria)) {
+                        var jarEntryLine = (checksum && jarEntry.getCrc() > 0) ?
+                                String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
+                                : jarEntry.getName();
+                        tree.put(jarEntryLine, new ArrayList<String>());
+                    }
 
                     if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
                             FileUtils.extension(jarEntry.getName()).equals("zip")) {
@@ -461,16 +569,17 @@ public class ZipFileUtils {
                             ZipEntry entry = null;
                             while ((entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
-                                    if(!tree.containsKey(jarEntry.getName())){
-                                        tree.put(jarEntry.getName(), new ArrayList<String>());
+                                    if(criteria==null || criteria.length()==0 || entry.getName().contains(criteria)) {
+                                        if (!tree.containsKey(jarEntry.getName())) {
+                                            tree.put(jarEntry.getName(), new ArrayList<String>());
+                                        }
+                                        var entryList = tree.get(jarEntry.getName());
+
+                                        var treeEntry = (checksum && entry.getCrc() > 0) ?
+                                                String.join("@", (entry.getName()), String.valueOf(entry.getCrc()))
+                                                : entry.getName();
+                                        entryList.add(treeEntry);
                                     }
-                                    var entryList = tree.get(jarEntry.getName());
-
-                                    var treeEntry = (checksum && entry.getCrc() > 0) ?
-                                            String.join("@", ("+- " + entry.getName()), String.valueOf(entry.getCrc()))
-                                            : "+- " + entry.getName();
-
-                                    entryList.add(treeEntry);
                                 }
                             }
                         } catch (IOException e) {
@@ -540,24 +649,85 @@ public class ZipFileUtils {
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
+                    if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
+                            FileUtils.extension(jarEntry.getName()).equals("zip")) {
+
+                        try (InputStream is = jarFile.getInputStream(jarEntry)) {
+                            JarInputStream jis = new JarInputStream(is);
+
+                            ZipEntry entry = null;
+                            while ((entry = jis.getNextEntry()) != null) {
+                                if(!entry.isDirectory()) {
+                                    if(entry.getName().contains(criteria)){
+                                        //criterias.add((checksum && entry.getCrc() > 0) ?
+                                        //        String.join("\n", jarEntry.getName(), "+- "+String.join("@",entry.getName(), String.valueOf(entry.getCrc())))
+                                        //        : String.join("\n", jarEntry.getName(), "+- "+entry.getName()));
+                                        criterias.add(
+                                                (checksum && entry.getCrc() > 0) ?
+                                                        String.join("", jarEntry.getName(), "!", String.join("@", entry.getName(), String.valueOf(entry.getCrc())))
+                                                        : String.join("", jarEntry.getName(), "!" + entry.getName()));
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                        }
+                    }else
+
                     if(jarEntry.getName().contains(criteria)) {
                         criterias.add((checksum && jarEntry.getCrc() > 0) ?
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
                                 : jarEntry.getName());
                     }
 
-                    if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
-                            FileUtils.extension(jarEntry.getName()).equals("zip")) {
+                } // not dir
+            }
+        }catch(IOException e){
+        }
 
+        return criterias;
+    }
+
+    public static String inspectJarEntryContentWithinArchive(File file, String criteria){
+        String content = null;
+
+        // parse criteria: BOOT-INF/lib/JarEntry.jar!com/jar/JarEntry.class@3451433
+        criteria = criteria.contains("@")?criteria.substring(0, criteria.indexOf("@")):criteria;
+        String jarEntryName, entryName;
+        {
+            jarEntryName = criteria.contains("!") ? criteria.substring(0, criteria.indexOf("!")) : "";
+            entryName = criteria.contains("!") ? criteria.substring(criteria.indexOf("!") + 1) : criteria;
+        }
+
+        try(JarFile jarFile = new JarFile(file);
+            CheckedInputStream cs =
+                    new CheckedInputStream(new FileInputStream(file), new Adler32());
+            JarInputStream jarInputStream =
+                    new JarInputStream(new BufferedInputStream(cs));
+        ) {
+            JarEntry jarEntry = null;
+            while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
+                if(!jarEntry.isDirectory()) {
+
+                    if(jarEntry.getName().contains(entryName)) {
+                        if(jarEntry.getName().endsWith(".class")){
+                            // required download
+                            long size = jarEntry.getCrc();
+                            content = getJarEntryContent(jarInputStream, jarEntry, null);
+                        }else{
+                            // directly get content from entry
+                            content = getZipEntryContent(jarFile, jarEntry);
+                        }
+                    }
+
+                    if (jarEntryName.length()>0 && jarEntry.getName().equals(jarEntryName)){
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
                             JarInputStream jis = new JarInputStream(is);
+
                             ZipEntry entry = null;
                             while ((entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
-                                    if(entry.getName().contains(criteria)){
-                                        criterias.add((checksum && entry.getCrc() > 0) ?
-                                                String.join("\n", jarEntry.getName(), "+- "+String.join("@",entry.getName(), String.valueOf(entry.getCrc())))
-                                                : String.join("\n", jarEntry.getName(), "+- "+entry.getName()));
+                                    if(entry.getName().contains(entryName)){
+                                        content = getJarEntryContent(jarInputStream, jarEntry, entry);
                                     }
                                 }
                             }
@@ -570,8 +740,51 @@ public class ZipFileUtils {
         }catch(IOException e){
         }
 
-        return criterias;
+        return content;
     }
+
+    public static String getJarEntryContent(JarInputStream jarInputStream, ZipEntry jarEntry, ZipEntry entry) throws IOException  {
+        String content = null;
+
+        String jarEntryExtension = FileUtils.extension(jarEntry.getName());
+        if(jarEntryExtension.equals("class")){
+            File tempFile = File.createTempFile("dev-dep-","."+jarEntryExtension);
+            content = unzipEntryFromJarInputStream(jarInputStream, jarEntry, tempFile);
+
+        }else if(jarEntryExtension.equals("jar") && entry!=null) {
+            File tempFile = File.createTempFile("dev-dep-", "." + jarEntryExtension);
+            content = unzipEntryFromJarInputStream(jarInputStream, jarEntry, tempFile);
+
+            // first download jarEntry.jar
+            if (entry.getName().endsWith(".class")) {
+                //CheckedInputStream cs =
+                //        new CheckedInputStream(new FileInputStream(tempFile), new Adler32());
+                //JarInputStream tempJarInputStream =
+                //        new JarInputStream(new BufferedInputStream(cs));
+                //content = getJarEntryContent(tempJarInputStream, jarFile.getEntry(entry.getName()), null);
+                //content = unzipEntryFromJarInputStream(jarInputStream, jarEntry, tempFile);
+
+                File classTempFile = File.createTempFile("dev-dep-", ".class");
+                content = unzipFilesFromArchiva(tempFile, entry.getName(), classTempFile);
+
+            } else {
+                try (JarFile jarFile = new JarFile(tempFile)) {
+                    // directly get content
+                    content = getZipEntryContent(jarFile, jarFile.getEntry(entry.getName()));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        }else{
+            Assert.isTrue(false, "Bad request!");
+        }
+
+        return content;
+    }
+
+
+
+
 
     public static String getJarPomContent(File jarFile) {
         final String NewLine = "\n";

@@ -1,4 +1,4 @@
-package com.jfeat.jar.dep.util;
+package com.jfeat.jar.dependency;
 
 import org.apache.commons.lang3.StringUtils;
 import org.benf.cfr.reader.api.CfrDriver;
@@ -12,7 +12,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class DecompileUtils {
-    public static List<String> decompileFiles(List<String> files, Boolean forceClean){
+        public static List<String> decompileFiles(String file, Boolean forceClean) {
+            var files = new ArrayList<String>();
+            files.add(file);
+
+            return decompileFiles(files, forceClean);
+        }
+
+        public static List<String> decompileFiles(List<String> files, Boolean forceClean){
         if(forceClean==null) forceClean = false;
 
         // decompile

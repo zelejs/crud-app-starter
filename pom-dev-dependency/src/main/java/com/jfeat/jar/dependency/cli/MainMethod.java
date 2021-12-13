@@ -2,7 +2,7 @@ package com.jfeat.jar.dependency.cli;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.jfeat.jar.dep.util.DecompileUtils;
+import com.jfeat.jar.dependency.DecompileUtils;
 import com.jfeat.jar.dependency.DependencyUtils;
 import com.jfeat.jar.dependency.ZipFileUtils;
 import org.apache.commons.cli.*;
@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.function.Predicate.not;
 
 /**
  * @author zxchengb

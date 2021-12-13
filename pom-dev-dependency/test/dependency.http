@@ -1,0 +1,15 @@
+@endpoint=http://localhost:8080
+
+
+### get jar entries tree
+GET {{endpoint}}/api/dev/dependency/json
+# ?pattern=UploadUtils.class
+?pattern=ClassElementValue.class
+
+
+### get jar entries tree
+GET {{endpoint}}/api/dev/dependency/decompile
+# ?pattern=LICENSE
+# ?pattern=UploadUtils.class
+?pattern=NameConvertor.class
+

@@ -1,18 +1,13 @@
-###################  am配置  ###################
-am:
-  swagger-open: true #是否开启swagger (true/false)
+#### jar-dependency
+jar-dependency:
+  root-path: jar-dependency-api/target
+  container: testapi
+  docker-api-endpoint: http://192.168.3.239:2375
 
-###################  jwt配置  ###################
-jwt:
-  encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
-  normal-encoded-key: bm9ybWFsLWVuY29kZWQta2V5
-  #tll-mills:
-  #token-type: Bearer
-
-###################  项目启动配置  ###################
+#### default
 server:
   port: 8080
-###################  spring配置  ###################
+
 spring:
   profiles:
     active: dev
@@ -29,8 +24,22 @@ spring:
     converters:
       preferred-json-mapper: fastjson
 
-jar-dependency:
-   root-path: jar-dependency-api/target
-   container: testapi
-   docker-api-endpoint: http://192.168.3.239:2375
-   
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    filters: log4j,wall,mergeStat
+    sql-script-encoding: UTF-8
+    schema: classpath*:sql/*-schema.sql
+    data: classpath*:sql/*-data.sql
+    initialize: true
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+        trace: false
