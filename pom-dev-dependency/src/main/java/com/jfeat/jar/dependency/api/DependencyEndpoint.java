@@ -1,16 +1,12 @@
 package com.jfeat.jar.dependency.api;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.jar.dependency.DecompileUtils;
-import com.jfeat.jar.dependency.DependencyUtils;
 import com.jfeat.jar.dependency.ZipFileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -21,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +45,10 @@ public class DependencyEndpoint {
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
         logger.info("jarPath: "+jarPath);
-        var tree = ZipFileUtils.getJarArchiveTreeData(new File(jarPath), pattern,false);
+        File jarFile = new File(jarPath);
+        Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
+
+        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern,false);
 
         JSONArray jsonArray = new JSONArray();
         for (Map.Entry<String,List<String>> entry : tree.entrySet()){

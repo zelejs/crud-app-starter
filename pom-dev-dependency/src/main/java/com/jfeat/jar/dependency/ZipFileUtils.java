@@ -554,7 +554,10 @@ public class ZipFileUtils {
             JarEntry jarEntry = null;
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
+                    boolean patternIsJar = FileUtils.extension(jarEntry.getName()).equals("jar")
+                            && jarEntry.getName().equals(criteria);
 
+                    if(!patternIsJar) // is the jar, skip entry
                     if(criteria==null || criteria.length()==0 || jarEntry.getName().contains(criteria)) {
                         var jarEntryLine = (checksum && jarEntry.getCrc() > 0) ?
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
@@ -562,6 +565,8 @@ public class ZipFileUtils {
                         tree.put(jarEntryLine, new ArrayList<String>());
                     }
 
+
+                    if(criteria!=null)  // if criteria ==null, do not search within .jar
                     if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
                             FileUtils.extension(jarEntry.getName()).equals("zip")) {
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
@@ -569,7 +574,7 @@ public class ZipFileUtils {
                             ZipEntry entry = null;
                             while ((entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
-                                    if(criteria==null || criteria.length()==0 || entry.getName().contains(criteria)) {
+                                    if(patternIsJar || criteria.length()==0 || entry.getName().contains(criteria)) {
                                         if (!tree.containsKey(jarEntry.getName())) {
                                             tree.put(jarEntry.getName(), new ArrayList<String>());
                                         }
