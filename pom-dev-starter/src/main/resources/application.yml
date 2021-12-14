@@ -26,7 +26,7 @@ logging:
 ###################  spring配置  ###################
 spring:
   profiles:
-    active: dev
+    active: test
   mvc:
     static-path-pattern: /**
     # resources:
@@ -72,7 +72,7 @@ mybatis-plus:
 spring:
   profiles: test
   datasource:
-      url: jdbc:h2:mem:power;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+      url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
       driver-class-name: org.h2.Driver
       username: sa
       password:
