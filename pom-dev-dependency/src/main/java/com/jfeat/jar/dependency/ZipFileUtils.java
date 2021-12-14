@@ -663,7 +663,7 @@ public class ZipFileUtils {
                             ZipEntry entry = null;
                             while ((entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
-                                    if(entry.getName().contains(criteria)){
+                                    if(criteria==null || criteria.length()==0 || entry.getName().contains(criteria)){
                                         //criterias.add((checksum && entry.getCrc() > 0) ?
                                         //        String.join("\n", jarEntry.getName(), "+- "+String.join("@",entry.getName(), String.valueOf(entry.getCrc())))
                                         //        : String.join("\n", jarEntry.getName(), "+- "+entry.getName()));
@@ -678,7 +678,7 @@ public class ZipFileUtils {
                         }
                     }else
 
-                    if(jarEntry.getName().contains(criteria)) {
+                    if(criteria==null || criteria.length()==0 || jarEntry.getName().contains(criteria)) {
                         criterias.add((checksum && jarEntry.getCrc() > 0) ?
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
                                 : jarEntry.getName());
