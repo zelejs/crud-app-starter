@@ -27,8 +27,8 @@ logging:
 spring:
   profiles:
     active: dev
-  mvc:
-    static-path-pattern: /**
+#  mvc:
+#    static-path-pattern: /**
     # resources:
     #  static-locations: classpath:/static,classpath:/resources,classpath:/public,classpath:/META-INF,classpath:/WEB-INF
     # view:

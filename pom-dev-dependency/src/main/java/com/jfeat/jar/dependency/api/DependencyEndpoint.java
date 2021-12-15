@@ -65,6 +65,58 @@ public class DependencyEndpoint {
         return SuccessTip.create(jsonArray);
     }
 
+    @GetMapping("/decompile/json")
+    @ApiOperation(value = "反编译指定的文件(pattern空,即显示jar所有文件")
+    public void decompileJarFileJson(@RequestParam(value = "pattern", required = false) String pattern,
+                                HttpServletResponse response
+    ) throws IOException {
+        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if(jarPath.contains("!")){
+            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+        }else{
+            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+        }
+        File jarFile = new File(jarPath);
+        if(!jarFile.exists()){
+            ServletOutputStream out = response.getOutputStream();
+            out.println(jarPath + " not exists!");
+            out.close();
+            return;
+        }
+
+        List<String> entries = ZipFileUtils.searchWithinJarArchive(jarFile, pattern, true);
+
+        if(entries.size()==1) {
+            String singleEntryPattern = entries.get(0);
+            String filesOrContent = ZipFileUtils.inspectJarEntryContentWithinArchive(jarFile, singleEntryPattern);
+
+            boolean requiredDecompile = filesOrContent.lines().count()==1 && new File(filesOrContent.trim()).exists();
+
+            // start to decompile
+            List<String> lines = requiredDecompile ? DecompileUtils.decompileFiles(filesOrContent, false) : filesOrContent.lines().collect(Collectors.toList());
+
+            // output to browser
+            // PrintWriter writer = new PrintWriter(response.getOutputStream());
+            // for (String line : lines) {
+            //     writer.println(line);
+            // }
+            // writer.flush();
+
+
+        }else {
+            // PrintWriter writer = new PrintWriter(response.getOutputStream());
+            // for (String line : entries) {
+            //     writer.println(line);
+            // }
+            // writer.flush();
+        }
+
+//            ServletOutputStream out = response.getOutputStream();
+//            for(String line : decompiles){
+//                out.println(line);
+//            }
+//            out.close();
+    }
 
     @GetMapping("/decompile")
     @ApiOperation(value = "反编译指定的文件(pattern空,即显示jar所有文件")
