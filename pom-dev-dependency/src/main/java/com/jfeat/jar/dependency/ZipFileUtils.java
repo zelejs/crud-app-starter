@@ -542,7 +542,7 @@ public class ZipFileUtils {
         return entries;
     }
 
-    public static Map<String, List<String>> getJarArchiveTreeData(File file, String criteria, boolean checksum){
+    public static Map<String, List<String>> getJarArchiveTreeData(File file, String criteria, boolean verbose, boolean checksum){
         Map<String, List<String>> tree = new HashMap<String, List<String>>();
 
         try(JarFile jarFile = new JarFile(file);
@@ -566,7 +566,7 @@ public class ZipFileUtils {
                     }
 
 
-                    if(criteria!=null)  // if criteria ==null, do not search within .jar
+                    if(verbose)  // if verbose, search all entries within .jar entry
                     if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
                             FileUtils.extension(jarEntry.getName()).equals("zip")) {
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
@@ -643,6 +643,21 @@ public class ZipFileUtils {
      */
     public static List<String> searchWithinJarArchive(File file, String criteria, boolean checksum){
         List<String> criterias = new ArrayList<>();
+        if(criteria==null)  { criteria = "";}
+
+        // parse criteria
+        // remove @checksum
+        String inputJarEntry = null;
+        String inputEntry = criteria;
+        if(criteria!=null){
+            if(criteria.contains("@")){
+                criteria = criteria.substring(0, criteria.indexOf("@"));
+            }
+            if(criteria.contains("!")){
+                inputJarEntry  = criteria.substring(0, criteria.indexOf("!"));
+                inputEntry = criteria.substring(criteria.indexOf("!"));
+            }
+        }
 
         try(JarFile jarFile = new JarFile(file);
             CheckedInputStream cs =
@@ -654,16 +669,33 @@ public class ZipFileUtils {
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
+                    if(criteria.length()==0 || jarEntry.getName().contains(criteria)) {
+                        criterias.add((checksum && jarEntry.getCrc() > 0) ?
+                                String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
+                                : jarEntry.getName());
+                    }
+
                     if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
                             FileUtils.extension(jarEntry.getName()).equals("zip")) {
+
+                        // if input entry exactly the entryName, return all its entries
+                        boolean queryJarAllEntries =  inputJarEntry==null && jarEntry.getName().equals(inputEntry);
 
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
                             JarInputStream jis = new JarInputStream(is);
 
                             ZipEntry entry = null;
                             while ((entry = jis.getNextEntry()) != null) {
-                                if(!entry.isDirectory()) {
-                                    if(criteria==null || criteria.length()==0 || entry.getName().contains(criteria)){
+                                if (!entry.isDirectory()) {
+
+                                    // just find within the input jar entry, ignore others.
+                                    if(inputJarEntry!=null){
+                                        if(!jarEntry.getName().equals(inputEntry)){
+                                            continue;
+                                        }
+                                    }
+
+                                    if (queryJarAllEntries || criteria.length() == 0 || entry.getName().contains(inputEntry)) {
                                         //criterias.add((checksum && entry.getCrc() > 0) ?
                                         //        String.join("\n", jarEntry.getName(), "+- "+String.join("@",entry.getName(), String.valueOf(entry.getCrc())))
                                         //        : String.join("\n", jarEntry.getName(), "+- "+entry.getName()));
@@ -676,12 +708,6 @@ public class ZipFileUtils {
                             }
                         } catch (IOException e) {
                         }
-                    }else
-
-                    if(criteria==null || criteria.length()==0 || jarEntry.getName().contains(criteria)) {
-                        criterias.add((checksum && jarEntry.getCrc() > 0) ?
-                                String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
-                                : jarEntry.getName());
                     }
 
                 } // not dir

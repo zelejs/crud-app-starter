@@ -8,6 +8,7 @@ import com.jfeat.jar.dependency.DecompileUtils;
 import com.jfeat.jar.dependency.ZipFileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +45,14 @@ public class DependencyEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DependencyEndpoint.class);
 
     @GetMapping("/json")
-    @ApiOperation(value = "反回所有的依赖文件")
-    public Tip getDependencyJson(@RequestParam(value = "pattern", required = false) String pattern,
+    @ApiOperation(value = "返回所有的依赖文件")
+    public Tip getDependencyJson(
+            @ApiParam(name = "pattern", value = "搜索过滤条件")
+            @RequestParam(value = "pattern", required = false) String pattern,
+                                 @ApiParam(name = "verbose", value = "是否深度搜索所有文件,默认为 True")
+                                 @RequestParam(value = "verbose", required = false) Boolean verbose,
                                  HttpServletResponse response) throws IOException {
+        if(verbose==null){            verbose = true;        }
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
@@ -57,7 +63,7 @@ public class DependencyEndpoint {
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
-        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern,false);
+        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern, verbose,false);
 
         JSONArray jsonArray = new JSONArray();
         for (Map.Entry<String,List<String>> entry : tree.entrySet()){
@@ -106,7 +112,14 @@ public class DependencyEndpoint {
 
             // start to decompile
             List<String> lines = requiredDecompile ? DecompileUtils.decompileFiles(filesOrContent, false) : filesOrContent.lines().collect(Collectors.toList());
+
             if(format.equals("json")){
+                if(requiredDecompile){
+                    // convert into newlines
+                    String content = lines.stream().collect(Collectors.joining("\n"));
+                    return SuccessTip.create(content);
+                }
+
                 return SuccessTip.create(lines);
             }
 
