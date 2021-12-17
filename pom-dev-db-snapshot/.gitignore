@@ -1,0 +1,6 @@
+.idea/
+target/
+*.iml
+db/snapshots/*.sql
+LOG_PATH_*
+.gradle/
