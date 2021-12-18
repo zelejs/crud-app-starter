@@ -17,6 +17,7 @@
         <module>pom-connection-standalone</module>
         <module>pom-dev-cors</module>
         <module>pom-dev-dependency</module>
+        <module>pom-dev-starter</module>
         <module>pom-standalone</module>
             <!-- <module>pom-runtime</module> -->
             <!-- <module>pom-uaas</module> -->
