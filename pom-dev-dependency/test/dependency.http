@@ -1,15 +1,38 @@
 @endpoint=http://localhost:8080
+# @endpoint=http://portainer.host.smallsaas.cn:8084
+
+### get jar entries tree with pattern as json
+GET {{endpoint}}/dev/dependency/json
+?pattern=UploadUtils.class
+
+### get jar entries tree with pattern
+GET {{endpoint}}/dev/dependency
+?pattern=UploadUtils.class
+
+
+
+
+## decompile
+
+### get all dependencies include jar entries
+GET {{endpoint}}/dev/dependency/decompile/json
+
+### get mulit entries with pattern as json
+GET {{endpoint}}/dev/dependency/decompile/json
+?pattern=ElementValue.class
+
+
+### get mulit entries with pattern
+GET {{endpoint}}/dev/dependency/decompile
+?pattern=ElementValue.class
+
+
+### get jar entries with specific jar entry
+GET {{endpoint}}/dev/dependency/decompile
+?pattern=BOOT-INF/lib/mapstruct-1.2.0.Final.jar
 
 
 ### get jar entries tree
-GET {{endpoint}}/api/dev/dependency/json
-# ?pattern=UploadUtils.class
-?pattern=ClassElementValue.class
-
-
-### get jar entries tree
-GET {{endpoint}}/api/dev/dependency/decompile
-# ?pattern=LICENSE
-# ?pattern=UploadUtils.class
-?pattern=NameConvertor.class
+GET {{endpoint}}/dev/dependency/decompile
+?pattern=BOOT-INF/lib/mapstruct-1.2.0.Final.jar!org/mapstruct/MappingTarget.class
 

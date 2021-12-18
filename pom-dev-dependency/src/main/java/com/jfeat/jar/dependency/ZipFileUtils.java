@@ -543,6 +543,7 @@ public class ZipFileUtils {
     }
 
     public static Map<String, List<String>> getJarArchiveTreeData(File file, String criteria, boolean verbose, boolean checksum){
+        if(criteria==null){criteria="";}
         Map<String, List<String>> tree = new HashMap<String, List<String>>();
 
         try(JarFile jarFile = new JarFile(file);
@@ -655,7 +656,10 @@ public class ZipFileUtils {
             }
             if(criteria.contains("!")){
                 inputJarEntry  = criteria.substring(0, criteria.indexOf("!"));
-                inputEntry = criteria.substring(criteria.indexOf("!"));
+                inputEntry = criteria.substring(criteria.indexOf("!")+1);
+            }
+            if(criteria.endsWith(".jar")||criteria.endsWith(".zip")){
+                inputJarEntry = criteria;
             }
         }
 
@@ -669,17 +673,32 @@ public class ZipFileUtils {
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
+                    if(inputJarEntry==null)
                     if(criteria.length()==0 || jarEntry.getName().contains(criteria)) {
                         criterias.add((checksum && jarEntry.getCrc() > 0) ?
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
                                 : jarEntry.getName());
                     }
 
+                    if(criteria.length()==0){
+                        // just ignore jar entries
+                        continue;
+                    }
+
                     if (FileUtils.extension(jarEntry.getName()).equals("jar") ||
                             FileUtils.extension(jarEntry.getName()).equals("zip")) {
 
                         // if input entry exactly the entryName, return all its entries
-                        boolean queryJarAllEntries =  inputJarEntry==null && jarEntry.getName().equals(inputEntry);
+                        boolean targetToQueryJarEntries =  jarEntry.getName().equals(inputEntry);
+
+                        // criteria means decompile
+                        boolean targetToDecompile = inputJarEntry!=null && inputEntry.endsWith(".class");
+                        if(targetToDecompile){
+                            if(!jarEntry.getName().equals(inputJarEntry)){
+                                // not equal to input jar, continue
+                                continue;
+                            }
+                        }
 
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
                             JarInputStream jis = new JarInputStream(is);
@@ -689,13 +708,13 @@ public class ZipFileUtils {
                                 if (!entry.isDirectory()) {
 
                                     // just find within the input jar entry, ignore others.
-                                    if(inputJarEntry!=null){
-                                        if(!jarEntry.getName().equals(inputEntry)){
+                                    if(targetToDecompile && inputJarEntry!=null){
+                                        if(!entry.getName().equals(inputEntry)){
                                             continue;
                                         }
                                     }
 
-                                    if (queryJarAllEntries || criteria.length() == 0 || entry.getName().contains(inputEntry)) {
+                                    if (targetToQueryJarEntries || criteria.length() == 0 || entry.getName().contains(inputEntry)) {
                                         //criterias.add((checksum && entry.getCrc() > 0) ?
                                         //        String.join("\n", jarEntry.getName(), "+- "+String.join("@",entry.getName(), String.valueOf(entry.getCrc())))
                                         //        : String.join("\n", jarEntry.getName(), "+- "+entry.getName()));
@@ -742,7 +761,7 @@ public class ZipFileUtils {
                     if(jarEntry.getName().contains(entryName)) {
                         if(jarEntry.getName().endsWith(".class")){
                             // required download
-                            long size = jarEntry.getCrc();
+                            //long size = jarEntry.getCrc();
                             content = getJarEntryContent(jarInputStream, jarEntry, null);
                         }else{
                             // directly get content from entry

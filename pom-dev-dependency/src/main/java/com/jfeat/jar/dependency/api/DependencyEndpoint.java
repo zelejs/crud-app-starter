@@ -44,8 +44,25 @@ import java.util.stream.Collectors;
 public class DependencyEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DependencyEndpoint.class);
 
+    private JSONArray getDependencyEntries(File jarFile, String pattern, Boolean verbose){
+        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern, verbose,false);
+
+        JSONArray jsonArray = new JSONArray();
+        for (Map.Entry<String,List<String>> entry : tree.entrySet()){
+            if(entry.getValue().size()==0){
+                jsonArray.add(entry.getKey());
+            }else{
+                entry.getValue().stream().forEach(subEntry-> {
+                    jsonArray.add(String.join("", entry.getKey(), "!", subEntry));
+                });
+            }
+        }
+        jsonArray.sort((Comparator<Object>)(s1,s2)->{return s1.toString().compareTo(s2.toString());});
+        return jsonArray;
+    }
+
     @GetMapping("/json")
-    @ApiOperation(value = "返回所有的依赖文件")
+    @ApiOperation(value = "返回所有的依赖文件[JSON格式]")
     public Tip getDependencyJson(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
@@ -63,32 +80,41 @@ public class DependencyEndpoint {
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
-        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern, verbose,false);
-
-        JSONArray jsonArray = new JSONArray();
-        for (Map.Entry<String,List<String>> entry : tree.entrySet()){
-            if(entry.getValue().size()==0){
-                jsonArray.add(entry.getKey());
-            }else{
-                entry.getValue().stream().forEach(subEntry-> {
-                    jsonArray.add(String.join("", entry.getKey(), "!", subEntry));
-                });
-            }
+        return SuccessTip.create(getDependencyEntries(jarFile, pattern, verbose));
+    }
+    
+    @GetMapping
+    @ApiOperation(value = "返回所有的依赖文件")
+    public void printDependencyEntries(
+            @ApiParam(name = "pattern", value = "搜索过滤条件")
+            @RequestParam(value = "pattern", required = false) String pattern,
+                                 @ApiParam(name = "verbose", value = "是否深度搜索所有文件,默认为 True")
+                                 HttpServletResponse response) throws IOException {
+        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if(jarPath.contains("!")){
+            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+        }else{
+            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
-        jsonArray.sort((Comparator<Object>)(s1,s2)->{return s1.toString().compareTo(s2.toString());});
+        logger.info("jarPath: "+jarPath);
+        File jarFile = new File(jarPath);
+        Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
-        return SuccessTip.create(jsonArray);
+        boolean verbose = StringUtils.isNotBlank(pattern); // means not search, just return the dependencies
+        JSONArray entries = getDependencyEntries(jarFile, pattern, verbose);
+        
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        entries.stream().forEach(line->writer.println(line));
+        writer.flush();
     }
 
+
+
     @GetMapping("/decompile")
-    @ApiOperation(value = "反编译指定的文件(pattern空,即显示jar所有文件, format:[json,print]")
-    public Tip decompileJarFile(@RequestParam(value = "pattern", required = false) String pattern,
-                                 @RequestParam(value = "format", required = false) String format,
+    @ApiOperation(value = "反编译指定的文件")
+    public void decompileJarFile(@RequestParam(value = "pattern", required = false) String pattern,
                                 HttpServletResponse response
     ) throws IOException {
-        if(StringUtils.isBlank(format)){            format = "json";        }
-        Assert.isTrue(format.equals("json") || format.equals("print"), "format must be: [json, print]");
-
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
@@ -96,11 +122,7 @@ public class DependencyEndpoint {
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
         File jarFile = new File(jarPath);
-        if(!jarFile.exists()){
-            ServletOutputStream out = response.getOutputStream();
-            out.println(jarPath + " not exists!");
-            out.close();
-        }
+        Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
         List<String> entries = ZipFileUtils.searchWithinJarArchive(jarFile, pattern, true);
 
@@ -113,16 +135,6 @@ public class DependencyEndpoint {
             // start to decompile
             List<String> lines = requiredDecompile ? DecompileUtils.decompileFiles(filesOrContent, false) : filesOrContent.lines().collect(Collectors.toList());
 
-            if(format.equals("json")){
-                if(requiredDecompile){
-                    // convert into newlines
-                    String content = lines.stream().collect(Collectors.joining("\n"));
-                    return SuccessTip.create(content);
-                }
-
-                return SuccessTip.create(lines);
-            }
-
             // output to browser
             PrintWriter writer = new PrintWriter(response.getOutputStream());
             for (String line : lines) {
@@ -131,18 +143,52 @@ public class DependencyEndpoint {
             writer.flush();
 
         }else {
-            if(format.equals("json")){
-                return SuccessTip.create(entries);
-            }
-
             PrintWriter writer = new PrintWriter(response.getOutputStream());
             for (String line : entries) {
                 writer.println(line);
             }
             writer.flush();
         }
+    }
 
-        return SuccessTip.create();
+
+    @GetMapping("/decompile/json")
+    @ApiOperation(value = "反编译指定的文件[JSON格式]")
+    public Tip decompileJarFileIntoJson(@RequestParam(value = "pattern", required = false) String pattern,
+                                HttpServletResponse response
+    ) throws IOException {
+        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if(jarPath.contains("!")){
+            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+        }else{
+            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+        }
+        File jarFile = new File(jarPath);
+        Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
+
+
+        List<String> entries = ZipFileUtils.searchWithinJarArchive(jarFile, pattern, true);
+
+        if(entries.size()==1) {
+            String singleEntryPattern = entries.get(0);
+            String filesOrContent = ZipFileUtils.inspectJarEntryContentWithinArchive(jarFile, singleEntryPattern);
+
+            boolean requiredDecompile = filesOrContent.lines().count()==1 && new File(filesOrContent.trim()).exists();
+
+            // start to decompile
+            List<String> lines = requiredDecompile ? DecompileUtils.decompileFiles(filesOrContent, false) : filesOrContent.lines().collect(Collectors.toList());
+
+            if(requiredDecompile){
+                // convert into newlines
+                String content = lines.stream().collect(Collectors.joining("\n"));
+                return SuccessTip.create(content);
+            }
+
+            return SuccessTip.create(lines);
+
+        }
+
+        return SuccessTip.create(entries);
     }
 
 }
