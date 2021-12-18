@@ -19,6 +19,7 @@ view-app/
 .vscode/
 config/
 .DS_Store
+*.jar
 
 ## 
 BOOT-INF/
