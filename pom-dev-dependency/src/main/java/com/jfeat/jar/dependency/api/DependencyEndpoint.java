@@ -72,7 +72,7 @@ public class DependencyEndpoint {
         if(verbose==null){            verbose = true;        }
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
-            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+            jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
@@ -92,7 +92,7 @@ public class DependencyEndpoint {
                                  HttpServletResponse response) throws IOException {
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
-            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+            jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
@@ -117,7 +117,7 @@ public class DependencyEndpoint {
     ) throws IOException {
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
-            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+            jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
@@ -159,7 +159,7 @@ public class DependencyEndpoint {
     ) throws IOException {
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
-            jarPath = jarPath.substring("file:/".length(), jarPath.indexOf("!"));
+            jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
