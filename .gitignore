@@ -25,3 +25,5 @@ config/
 BOOT-INF/
 WEB-INF/
 indexes/
+.tarignore
+*.tar

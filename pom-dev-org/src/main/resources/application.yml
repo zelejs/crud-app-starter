@@ -1,0 +1,184 @@
+##########################################################
+##################  所有profile共有的配置  #################
+##########################################################
+
+################## 腾讯云发送信息配置 ###################
+q-cloud-sms-config:
+  appid: 1400083239
+  appkey: 2eed6e1aea662fba7f9be205c01dd179
+  templ-id: 107517
+  msg: 你的验证码为{1},请妥善保存,切勿泄露,以免被他人盗用!
+
+
+
+###################  am配置  ###################
+am:
+  swagger-open: true #是否开启swagger (true/false)
+  kaptcha-open: false #是否开启登录时验证码 (true/false)
+  #file-upload-path: d:/tmp  #文件上传目录(不配置的话为java.io.tmpdir目录)
+  #file-host: http://localhost:8080
+  worker-id: 0 # id gen service machine id 0~1023
+  redis-host: 127.0.0.1
+  redis-port: 6379
+  #fastjson 格式化时间的格式，如不配置，默认用yyyy-MM-dd HH:mm:ss
+  #json-serialize-date-format: MM/dd/yyyy HH:mm:ss
+
+account:
+  #是否启动时重置管理员权限
+  reset-admin-perms: false
+  enable-captcha: true
+  allow-platform-user-register: false
+  allow-app-user-register: true
+
+###################  jwt配置  ###################
+jwt:
+  encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
+  #tll-mills:
+  #token-type: Bearer
+  #enable-attempt-login: false
+
+###################  项目启动端口  ###################
+server:
+  port: 8080
+  ssl:
+    enabled: false
+    key-store: classpath:sb.keystore
+    key-store-password: changeme
+    key-store-type: JKS
+    key-alias: sbkey
+#https://my.oschina.net/kingchen8080/blog/994367
+
+
+###################  beetl配置  ###################
+beetl:
+  delimiter-statement-start: \@   #开始结束标签(yaml不允许@开头)
+  delimiter-statement-end: null
+  resource-tagroot: common/tags   #自定义标签文件Root目录和后缀
+  resource-tagsuffix: tag
+
+
+###################  spring配置  ###################
+spring:
+  profiles:
+    active: dev
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /WEB-INF/view
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+    converters:
+      preferred-json-mapper: fastjson
+
+
+###################  mybatis-plus配置  ###################
+mybatis-plus:
+  mapper-locations: classpath*:com/jfeat/**/mapping/*.xml
+  type-aliases-package: com.jfeat.**.model
+  global-config:
+    id-type: 2  #0:数据库ID自增   1:用户输入id   2:全局唯一id(IdWorker)   3:全局唯一ID(uuid)  4: 该类型为未设置主键类型(none)
+    db-column-underline: true
+    refresh-mapper: true
+    logic-delete-value: -1
+    logic-not-delete-value: 1
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+---
+
+
+
+##########################################################
+###################  测试环境的profile  ###################
+##########################################################
+spring:
+  profiles: test
+  datasource:
+      url: jdbc:h2:mem:sbaccount;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+      filters: log4j,wall,mergeStat
+      schema: classpath*:sql/*-schema.sql
+      data: classpath*:sql/*-data.sql
+
+logging:
+  level: debug
+  file: logs/sbcommon.log
+
+am:
+  shiro-cache-redis: false
+---
+
+
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+spring:
+  profiles: dev
+  datasource:
+      url: jdbc:mysql://localhost:3307/uaas-saas?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
+      filters: log4j,wall,mergeStat
+      sql-script-encoding: UTF-8
+      schema: classpath*:sql/*-schema.sql
+      data: classpath*:sql/*-data.sql
+      initialize: true
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+logging:
+  level: debug
+  file: logs/sbcommon.log
+
+am:
+  shiro-cache-redis: false
+
+domain:
+  serverName: test.cloud.smallsaas.cn
+  mode: single
+  ##########################################################
+  ###################  etcd-client 配置  ###################
+  ##########################################################
+etcd:
+   etcdEndpoints: http://120.79.77.207:2379   # etcd端口，多个用“,”隔开
+   serviceName: uaas-test                        # 服务名称
+   serviceEndpoint: http://120.79.77.207:8080     # 服务地址
+   provideService: true                      # 是否对外提供服务
+   subscribeServices: uaas                    # 订阅服务，多个用“,”隔开
+---
+
+
+##########################################################
+###################  正式环境的profile  ###################
+##########################################################
+spring:
+  profiles: produce
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/sbaccount?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
+      filters: log4j,wall,mergeStat
+
+logging:
+  level: warn
+  file: logs/sbcommon.log
+
+am:
+  shiro-cache-redis: true
+
+domain:
+  serverName: test.cloud.smallsaas.cn
+  mode: single
