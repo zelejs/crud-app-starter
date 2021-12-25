@@ -28,6 +28,7 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
         </dependency>
+		
 <!-- do not introduce config table -->
 <!--        <dependency>
             <groupId>com.jfeat</groupId>
@@ -44,20 +45,10 @@
 
         <!-- uaas 相关 uaas-dev：uaas功能    -->
         <!-- uaas-dev-org：测试初始化用户数据 -->
-        <!--<dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>uaas-dev</artifactId>
-            <version>1.2.0</version>
-        </dependency>-->
        <!-- <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>uaas-dev-org</artifactId>
             <version>1.0.0</version>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>${swagger-ui.version}</version>
         </dependency>-->
         <!-- <dependency>
             <groupId>org.flywaydb</groupId>
@@ -88,6 +79,17 @@
             <version>${jwt-core.version}</version>
         </dependency>
 
+<!--        swagger-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
 
         <!-- data source -->
         <dependency>
