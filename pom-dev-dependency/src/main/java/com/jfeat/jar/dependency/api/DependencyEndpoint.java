@@ -117,6 +117,7 @@ public class DependencyEndpoint {
                                  @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
                                  @RequestParam(value = "all", required = false) Boolean all,
                                  HttpServletResponse response) throws IOException {
+        if(all==null){all=false;}
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
@@ -146,6 +147,7 @@ public class DependencyEndpoint {
                                  @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
                                  @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
+        if(all==null){all=false;}
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
