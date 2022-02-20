@@ -177,4 +177,33 @@ public class DependencyEndpoint {
         }
         writer.flush();
     }
+
+
+    @GetMapping("/extra")
+    @ApiOperation(value = "从jar文件中获取指定的Entry文件")
+    public void extraDependencyEntry(
+            @ApiParam(name = "pattern", value = "搜索过滤条件")
+            @RequestParam(value = "pattern", required = false) String pattern,
+            HttpServletResponse response) throws IOException {
+
+        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        if(jarPath.contains("!")){
+            jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
+        }else{
+            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+        }
+        logger.info("jarPath: "+jarPath);
+        File jarFile = new File(jarPath);
+        Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
+
+        var list = ZipFileUtils.listEntriesFromArchive(jarFile, "", pattern);
+        if(list.size()==0 || list.size()>1){
+            throw new RuntimeException("no entry or multi entries, not supported !");
+        }
+        String entryName = list.get(0);
+
+        response.setContentType("application/octet-stream");
+        response.addHeader("Content-Disposition", "attachment; " + entryName);
+        ZipFileUtils.extraJarEntries(jarFile, "", pattern, response.getOutputStream());
+    }
 }

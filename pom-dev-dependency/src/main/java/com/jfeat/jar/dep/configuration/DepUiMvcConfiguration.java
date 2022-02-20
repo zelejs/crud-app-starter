@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+// set it in standalone 
 // @Configuration
 public class DepUiMvcConfiguration extends WebMvcConfigurationSupport {
     @Override

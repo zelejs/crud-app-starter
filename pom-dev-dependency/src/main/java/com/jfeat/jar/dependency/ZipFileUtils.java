@@ -268,6 +268,31 @@ public class ZipFileUtils {
     /**
      * extra jar entry within jar
      */
+    public static List<String> extraJarEntries(File jarFile, String extension, String pattern, OutputStream outputStream) {
+        List<String> entries = new ArrayList<>();
+        try(JarFile jar = new JarFile(jarFile)) {
+            Enumeration enumEntries = jar.entries();
+            while (enumEntries.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) enumEntries.nextElement();
+                if((StringUtils.isBlank(extension) || FileUtils.extension(jarEntry.getName()).equals(extension)) &&
+                        StringUtils.isBlank(pattern) || jarEntry.getName().contains(pattern)) {
+
+                    java.io.InputStream is = jar.getInputStream(jarEntry); // get the input stream
+                    while (is.available() > 0) {  // write contents of 'is' to 'fos'
+                        outputStream.write(is.read());
+                        outputStream.flush();
+                    }
+                    outputStream.close();
+                    is.close();
+
+                    entries.add(jarEntry.getName());
+                }
+            }
+        }catch (IOException e){
+        }
+        return entries;
+    }
+
     public static List<String> extraJarEntries(File jarFile, String extension, String pattern, String destDir) {
         List<String> entries = new ArrayList<>();
         try(JarFile jar = new JarFile(jarFile)) {
