@@ -198,7 +198,11 @@ public class DependencyEndpoint {
 
         var list = ZipFileUtils.listEntriesFromArchive(jarFile, "", pattern);
         if(list.size()==0 || list.size()>1){
-            throw new RuntimeException("no entry or multi entries, not supported !");
+            PrintWriter writer = new PrintWriter(response.getOutputStream());
+            for (String line : list) {
+                writer.println(line);
+            }
+            writer.flush();
         }
         String entryName = list.get(0);
 
