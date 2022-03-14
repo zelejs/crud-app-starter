@@ -50,7 +50,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.4.RELEASE</version>
                 <configuration>
-                    <finalName>${project.artifactId}</finalName>
+                    <finalName>${project.artifactId}-${version}</finalName>
                     <skip>${skipStandalone}</skip>
                 </configuration>
                 <executions>
