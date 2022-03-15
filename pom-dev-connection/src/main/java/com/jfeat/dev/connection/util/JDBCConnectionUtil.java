@@ -1,7 +1,12 @@
 
 package com.jfeat.dev.connection.util;
 
+import java.io.*;
+import java.sql.*;
+
 public class JDBCConnectionUtil {
+
+    Connection conn = null;
 
     public ResultSet executeQuery(String sql) {
         ResultSet rs=null;
