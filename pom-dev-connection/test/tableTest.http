@@ -1,0 +1,5 @@
+###获取数据库数据
+GET {{endpoint}}/dev/connection
+
+###按数据表获取数据
+GET {{endpoint}}/dev/connection?pattern=<table_name>

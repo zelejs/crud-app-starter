@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,24 @@ public class TableServer {
     DataSource dataSource;
 
     Connection conn = null;
+
+    public byte[] changToByte(List<String> list){
+        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                    arrayOutputStream);
+            objectOutputStream.writeObject(list);
+            objectOutputStream.flush();
+            byte[] data = arrayOutputStream.toByteArray();
+            objectOutputStream.close();
+            arrayOutputStream.close();
+            return data;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String handleResult(String sql){
         ResultSet rs = executeQuery(sql);
@@ -171,7 +191,10 @@ public class TableServer {
                             str.append("null");
                             break;
                         case Types.LONGVARBINARY:
-                            str.append("[IMAGE]");
+                            str.append("'"+rs.getString(i)+"'");
+                            break;
+                        case Types.LONGVARCHAR:
+                            str.append('"'+rs.getString(i)+'"');
                             break;
                         default:
                             System.out.print("Unknown type: " + md.getColumnType(i));
