@@ -59,36 +59,47 @@ public class DevConnectionEndpoint {
 
     @GetMapping
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip query(@RequestParam(name = "pattern", required = false) String pattern,HttpServletResponse response) throws IOException {
+    public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
+            @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if(pattern!=null) {
-            String sql = "show create table " + pattern;
-            var str = tableServer.handleResult(sql) + ";";
-            writer.println(str + "</br>");
-            String sql1 = "SELECT * FROM " + pattern;
-            var test = tableServer.handleResult2(sql1);
+        if(sql!=null) {
+            String sql3 = "SELECT * from nft_land";
+            var test = tableServer.handleResult2(sql);
             for (String st : test) {
                 writer.println(st + "</br>");
             }
             writer.flush();
         }else{
-            var list = queryTablesDao.queryAllTables();;
-            List<String> file = new ArrayList<>();
-            for (String tableName : list) {
-//            var line = queryTablesDao.queryCreateTableSql(tableName);
-//            writer.println(line);
-                String sql = "show create table " + tableName;
-                var str = tableServer.handleResult(sql) + ";";
-                file.add(str);
+            if (pattern != null) {
+                String sql1 = "show create table " + pattern;
+                var str = tableServer.handleResult(sql1) + ";";
                 writer.println(str + "</br>");
-                String sql1 = "SELECT * FROM " + tableName;
-                var test = tableServer.handleResult2(sql1);
+                String sql2 = "SELECT * FROM " + pattern;
+                var test = tableServer.handleResult2(sql2);
                 for (String st : test) {
                     writer.println(st + "</br>");
-                    file.add(st);
                 }
                 writer.flush();
+            } else {
+                var list = queryTablesDao.queryAllTables();
+                ;
+                List<String> file = new ArrayList<>();
+                for (String tableName : list) {
+//            var line = queryTablesDao.queryCreateTableSql(tableName);
+//            writer.println(line);
+                    String sql1 = "show create table " + tableName;
+                    var str = tableServer.handleResult(sql1) + ";";
+                    file.add(str);
+                    writer.println(str + "</br>");
+                    String sql2 = "SELECT * FROM " + tableName;
+                    var test = tableServer.handleResult2(sql2);
+                    for (String st : test) {
+                        writer.println(st + "</br>");
+                        file.add(st);
+                    }
+                    writer.flush();
+                }
             }
         }
 //        String[] strs1=file.toArray(new String[file.size()]);
@@ -108,12 +119,24 @@ public class DevConnectionEndpoint {
 
     @GetMapping("/schema")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public void queryTableSchema(@RequestParam(name = "pattern", required = false) String pattern,HttpServletResponse response) throws IOException {
+    public void queryTableSchema(@RequestParam(name = "pattern", required = false) String pattern, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         String sql = "show create table " + pattern;
         var str = tableServer.handleResult(sql) + ";";
         writer.println(str + "</br>");
+        writer.flush();
+    }
+
+    @GetMapping("/tables")
+    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
+    public void queryAllTable(@RequestParam(name = "pattern", required = false) String pattern,HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        var list = queryTablesDao.queryAllTables();
+        for (String tableName : list) {
+            writer.println(tableName + "</br>");
+        }
         writer.flush();
     }
 }
