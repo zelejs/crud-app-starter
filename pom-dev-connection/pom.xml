@@ -48,12 +48,12 @@
         </dependency>
         <!--H2数据库-->
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-        <dependency>
+        <!-- <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

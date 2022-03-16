@@ -1,0 +1,18 @@
+@endpoint=http://localhost:8080
+
+
+### 显示所有表
+GET {{endpoint}}/dev/connection/tables
+
+
+### 执行SQL语句，仅支持 SELECT/select
+GET {{endpoint}}/dev/connection?sql="select now()"
+
+
+### 仅用于获取SCHEMA
+GET {{endpoint}}/dev/connection/schema?pattern=
+
+
+### 获取数据库数据 pattern=<table_name>
+GET {{endpoint}}/dev/connection?pattern=
+
