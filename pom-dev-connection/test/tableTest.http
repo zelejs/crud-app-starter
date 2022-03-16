@@ -1,5 +1,9 @@
+@endpoint=http://localhost:8080
+
 ###获取数据库数据
 GET {{endpoint}}/dev/connection
 
 ###按数据表获取数据
-GET {{endpoint}}/dev/connection?pattern=<table_name>
+GET {{endpoint}}/dev/connection?pattern=nft_land
+
+GET {{endpoint}/dev/connection/schema?pattern=nft_land
