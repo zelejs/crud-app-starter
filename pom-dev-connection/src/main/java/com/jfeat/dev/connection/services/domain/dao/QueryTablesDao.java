@@ -17,4 +17,7 @@ public interface QueryTablesDao {
     @Select("SELECT * FROM #{tableName}")
     String queryTableInfo(@Param("tableName") String tableName);
 
+    @Select("select database()")
+    String queryDataBase();
+
 }

@@ -180,7 +180,8 @@ public class DevConnectionEndpoint {
             }
         }
         var data = tableServer.changToByte(file);
-        response.setHeader(CONTENT_DISPOSITION,"attachment; filename="+"nft"+".sql");
+        var dataBase = queryTablesDao.queryDataBase();
+        response.setHeader(CONTENT_DISPOSITION,"attachment; filename="+dataBase+".sql");
         IOUtils.write(data,response.getOutputStream());
 //        writer.flush();
         return null;
