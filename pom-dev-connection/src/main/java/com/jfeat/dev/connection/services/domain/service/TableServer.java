@@ -1,11 +1,15 @@
 package com.jfeat.dev.connection.services.domain.service;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Utf8;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import javax.xml.stream.events.Characters;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,21 +23,27 @@ public class TableServer {
     Connection conn = null;
 
     public byte[] changToByte(List<String> list){
-        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-                    arrayOutputStream);
-            objectOutputStream.writeObject(list);
-            objectOutputStream.flush();
-            byte[] data = arrayOutputStream.toByteArray();
-            objectOutputStream.close();
-            arrayOutputStream.close();
+//        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+//        try {
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+//                    arrayOutputStream);
+//            objectOutputStream.writeObject(list);
+////            objectOutputStream.writeUTF(list);
+//            objectOutputStream.flush();
+            StringBuilder b = new StringBuilder();
+            for(String st:list){
+                b.append(st);
+            }
+            byte[] data =b.toString().getBytes(StandardCharsets.UTF_8);
+//            byte[] data = arrayOutputStream.toString(StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8);
+//            objectOutputStream.close();
+//            arrayOutputStream.close();
             return data;
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     public String handleResult(String sql){
@@ -180,9 +190,9 @@ public class TableServer {
                             byte[] bytes = rs.getBytes(i);
                             if(bytes!=null) {
                                 String hex="";
-                                for (int c = 0; c < bytes.length; c++) {
-                                    hex += String.format("%02X", bytes[c]);
-                                }
+//                                for (int c = 0; c < bytes.length; c++) {
+//                                    hex += String.format("%02X", bytes[c]);
+//                                }
                                 str.append("'"+ hex +"'");
                             }
                         }

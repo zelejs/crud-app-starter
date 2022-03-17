@@ -1,5 +1,7 @@
 package com.jfeat.dev.connection.api;
 
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
@@ -28,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.BindException;
 import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -65,14 +68,18 @@ public class DevConnectionEndpoint {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
-            String sql3 = "SELECT * from nft_land";
             var test = tableServer.handleResult2(sql);
+            if(test.size()==0){
+                throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT语句");
+            }
             for (String st : test) {
                 writer.println(st);
             }
             writer.flush();
         }else{
             if (pattern != null) {
+                String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
+                writer.println(dropSql);
                 String sql1 = "show create table " + pattern;
                 var str = tableServer.handleResult(sql1) + ";";
                 writer.println(str);
@@ -88,6 +95,8 @@ public class DevConnectionEndpoint {
                 for (String tableName : list) {
 //            var line = queryTablesDao.queryCreateTableSql(tableName);
 //            writer.println(line);
+                    String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
+                    writer.println(dropSql);
                     String sql1 = "show create table " + tableName;
                     var str = tableServer.handleResult(sql1) + ";";
                     file.add(str);
@@ -119,6 +128,8 @@ public class DevConnectionEndpoint {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(pattern!=null) {
+            String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
+            writer.println(dropSql);
             String sql = "show create table " + pattern;
             var str = tableServer.handleResult(sql) + ";";
             writer.println(str);
@@ -126,6 +137,8 @@ public class DevConnectionEndpoint {
         }else{
             var list = queryTablesDao.queryAllTables();
             for (String tableName : list) {
+                String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
+                writer.println(dropSql);
                 String sql = "show create table " + tableName;
                 var str = tableServer.handleResult(sql) + ";";
                 writer.println(str);
@@ -148,31 +161,28 @@ public class DevConnectionEndpoint {
 
     @GetMapping("/down")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip down(@RequestParam(name = "pattern", required = false) String pattern,
-                     @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
+    public Tip down(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
+//        PrintWriter writer = new PrintWriter(response.getOutputStream());
         var list = queryTablesDao.queryAllTables();
-        List<String> file = new ArrayList<>();
+        List<String> file = new ArrayList<String>();
         for (String tableName : list) {
-            String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
+            String dropSql = "DROP TABLE IF EXISTS " +tableName +";\n";
             file.add(dropSql);
             String sql1 = "show create table " + tableName;
-            var str = tableServer.handleResult(sql1) + ";";
+            var str = tableServer.handleResult(sql1) + ";\n";
             file.add(str);
             String sql2 = "SELECT * FROM " + tableName;
             var test = tableServer.handleResult2(sql2);
             for (String st : test) {
-                file.add(st);
+                file.add(st+"\n");
             }
         }
         var data = tableServer.changToByte(file);
-        response.reset();
-        response.setContentType("text/plain;charset=utf-8");
         response.setHeader(CONTENT_DISPOSITION,"attachment; filename="+"nft"+".sql");
         IOUtils.write(data,response.getOutputStream());
-        writer.flush();
+//        writer.flush();
         return null;
     }
 }
