@@ -20,8 +20,8 @@ GET {{endpoint}}/dev/connection?pattern=
 ### 获取所有数据库数据
 GET {{endpoint}}/dev/connection
 
-###down所有的数据库
-GET {{endpoint}}/dev/connection/down
+###下载所有的数据库
+GET {{endpoint}}/dev/connection/sql
 
 
 

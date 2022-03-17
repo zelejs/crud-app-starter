@@ -68,23 +68,24 @@ public class DevConnectionEndpoint {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
-            var test = tableServer.handleResult2(sql);
-            if(test.size()==0){
-                throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT语句");
+            if(sql.startsWith("SELECT") || sql.startsWith("select")){
+                var test = tableServer.handleResult2(sql);
+                for (String st : test) {
+                    writer.println(st);
+                }
+                writer.flush();
+            }else{
+                throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT查询语句");
             }
-            for (String st : test) {
-                writer.println(st);
-            }
-            writer.flush();
         }else{
             if (pattern != null) {
                 String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
                 writer.println(dropSql);
-                String sql1 = "show create table " + pattern;
-                var str = tableServer.handleResult(sql1) + ";";
+                String createSql = "show create table " + pattern;
+                var str = tableServer.handleResult(createSql) + ";";
                 writer.println(str);
-                String sql2 = "SELECT * FROM " + pattern;
-                var test = tableServer.handleResult2(sql2);
+                String insertSql = "SELECT * FROM " + pattern;
+                var test = tableServer.handleResult2(insertSql);
                 for (String st : test) {
                     writer.println(st);
                 }
@@ -97,12 +98,12 @@ public class DevConnectionEndpoint {
 //            writer.println(line);
                     String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
                     writer.println(dropSql);
-                    String sql1 = "show create table " + tableName;
-                    var str = tableServer.handleResult(sql1) + ";";
+                    String createSql = "show create table " + tableName;
+                    var str = tableServer.handleResult(createSql) + ";";
                     file.add(str);
                     writer.println(str);
-                    String sql2 = "SELECT * FROM " + tableName;
-                    var test = tableServer.handleResult2(sql2);
+                    String insertSql = "SELECT * FROM " + tableName;
+                    var test = tableServer.handleResult2(insertSql);
                     for (String st : test) {
                         writer.println(st);
                         file.add(st);
@@ -130,8 +131,8 @@ public class DevConnectionEndpoint {
         if(pattern!=null) {
             String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
             writer.println(dropSql);
-            String sql = "show create table " + pattern;
-            var str = tableServer.handleResult(sql) + ";";
+            String createSql = "show create table " + pattern;
+            var str = tableServer.handleResult(createSql) + ";";
             writer.println(str);
             writer.flush();
         }else{
@@ -139,8 +140,8 @@ public class DevConnectionEndpoint {
             for (String tableName : list) {
                 String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
                 writer.println(dropSql);
-                String sql = "show create table " + tableName;
-                var str = tableServer.handleResult(sql) + ";";
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql) + ";";
                 writer.println(str);
                 writer.flush();
             }
@@ -159,7 +160,7 @@ public class DevConnectionEndpoint {
         writer.flush();
     }
 
-    @GetMapping("/down")
+    @GetMapping("/sql")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip down(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
@@ -168,13 +169,13 @@ public class DevConnectionEndpoint {
         var list = queryTablesDao.queryAllTables();
         List<String> file = new ArrayList<String>();
         for (String tableName : list) {
-            String dropSql = "DROP TABLE IF EXISTS " +tableName +";\n";
+            String dropSql = "\nDROP TABLE IF EXISTS " +tableName +";\n";
             file.add(dropSql);
-            String sql1 = "show create table " + tableName;
-            var str = tableServer.handleResult(sql1) + ";\n";
+            String createSql = "show create table " + tableName;
+            var str = tableServer.handleResult(createSql) + ";\n\n";
             file.add(str);
-            String sql2 = "SELECT * FROM " + tableName;
-            var test = tableServer.handleResult2(sql2);
+            String insertSql = "SELECT * FROM " + tableName;
+            var test = tableServer.handleResult2(insertSql);
             for (String st : test) {
                 file.add(st+"\n");
             }

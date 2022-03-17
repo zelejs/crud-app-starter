@@ -206,6 +206,9 @@ public class TableServer {
                         case Types.LONGVARCHAR:
                             str.append('"'+rs.getString(i)+'"');
                             break;
+                        case Types.TIME:
+                            str.append(rs.getTime(i));
+                            break;
                         default:
                             System.out.print("Unknown type: " + md.getColumnType(i));
                     }
