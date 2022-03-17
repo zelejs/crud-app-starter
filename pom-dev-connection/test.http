@@ -1,4 +1,4 @@
-@endpoint=http://localhost:8084
+@endpoint=http://localhost:8080
 
 
 ### 显示所有表
@@ -19,6 +19,9 @@ GET {{endpoint}}/dev/connection?pattern=
 
 ### 获取所有数据库数据
 GET {{endpoint}}/dev/connection
+
+###down所有的数据库
+GET {{endpoint}}/dev/connection/down
 
 
 
