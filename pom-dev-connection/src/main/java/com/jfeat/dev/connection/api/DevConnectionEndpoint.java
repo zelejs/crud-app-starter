@@ -51,6 +51,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
 @RequestMapping("/dev/connection")
 public class DevConnectionEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DevConnectionEndpoint.class);
+    private final String SCHEDULE = "schema";
 
     @Autowired
     DataSource dataSource;
@@ -74,6 +75,12 @@ public class DevConnectionEndpoint {
                     writer.println(st);
                 }
                 writer.flush();
+            }else if(sql.startsWith("SHOW") || sql.startsWith("show")){
+                var test = tableServer.show(sql);
+                for (String st : test) {
+                    writer.println(st);
+                }
+                writer.flush();
             }else{
                 throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT查询语句");
             }
@@ -92,26 +99,13 @@ public class DevConnectionEndpoint {
                 writer.flush();
             } else {
                 var list = queryTablesDao.queryAllTables();
-                List<String> file = new ArrayList<>();
                 for (String tableName : list) {
-//            var line = queryTablesDao.queryCreateTableSql(tableName);
-//            writer.println(line);
-                    String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
-                    writer.println(dropSql);
-                    String createSql = "show create table " + tableName;
-                    var str = tableServer.handleResult(createSql) + ";";
-                    file.add(str);
-                    writer.println(str);
-                    String insertSql = "SELECT * FROM " + tableName;
-                    var test = tableServer.handleResult2(insertSql);
-                    for (String st : test) {
-                        writer.println(st);
-                        file.add(st);
-                    }
-                    writer.flush();
+                    writer.println(tableName);
+                }
+                writer.flush();
                 }
             }
-        }
+
 //        String[] strs1=file.toArray(new String[file.size()]);
 //        byte[] bytes=new byte[strs1.length];
 //        for (int i=0; i<strs1.length; i++) {
@@ -148,36 +142,66 @@ public class DevConnectionEndpoint {
         }
     }
 
-    @GetMapping("/tables")
+    @GetMapping("/print")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public void queryAllTable(@RequestParam(name = "pattern", required = false) String pattern,HttpServletResponse response) throws IOException {
+    public void queryAllTable(@RequestParam(name = "filter", required = false) String filter,HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         var list = queryTablesDao.queryAllTables();
-        for (String tableName : list) {
-            writer.println(tableName);
+        if (filter!=null && filter.equals(SCHEDULE)) {
+            for (String tableName : list) {
+                String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
+                writer.println(dropSql);
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql) + ";";
+                writer.println(str);
+                writer.flush();
+            }
+        } else {
+            for (String tableName : list) {
+                String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
+                writer.println(dropSql);
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql) + ";";
+                writer.println(str);
+                String insertSql = "SELECT * FROM " + tableName;
+                var test = tableServer.handleResult2(insertSql);
+                for (String st : test) {
+                    writer.println(st);
+                }
+                writer.flush();
+            }
         }
-        writer.flush();
     }
 
     @GetMapping("/sql")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip down(HttpServletResponse response) throws IOException {
+    public Tip down(@RequestParam(name = "filter", required = false) String filter,HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
 //        PrintWriter writer = new PrintWriter(response.getOutputStream());
         var list = queryTablesDao.queryAllTables();
         List<String> file = new ArrayList<String>();
-        for (String tableName : list) {
-            String dropSql = "\nDROP TABLE IF EXISTS " +tableName +";\n";
-            file.add(dropSql);
-            String createSql = "show create table " + tableName;
-            var str = tableServer.handleResult(createSql) + ";\n\n";
-            file.add(str);
-            String insertSql = "SELECT * FROM " + tableName;
-            var test = tableServer.handleResult2(insertSql);
-            for (String st : test) {
-                file.add(st+"\n");
+        if(filter!=null && filter.equals(SCHEDULE)){
+            for (String tableName : list) {
+                String dropSql = "\nDROP TABLE IF EXISTS " +tableName +";\n";
+                file.add(dropSql);
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql) + ";\n\n";
+                file.add(str);
+            }
+        }else {
+            for (String tableName : list) {
+                String dropSql = "\nDROP TABLE IF EXISTS " + tableName + ";\n";
+                file.add(dropSql);
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql) + ";\n\n";
+                file.add(str);
+                String insertSql = "SELECT * FROM " + tableName;
+                var test = tableServer.handleResult2(insertSql);
+                for (String st : test) {
+                    file.add(st + "\n");
+                }
             }
         }
         var data = tableServer.changToByte(file);
