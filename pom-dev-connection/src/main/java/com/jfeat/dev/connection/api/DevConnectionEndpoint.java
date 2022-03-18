@@ -75,12 +75,21 @@ public class DevConnectionEndpoint {
                     writer.println(st);
                 }
                 writer.flush();
-            }else if(sql.startsWith("SHOW") || sql.startsWith("show")){
+            }else if(sql.startsWith("SHOW") || sql.startsWith("show")) {
+                if (sql.startsWith("SHOW CREATE") || sql.startsWith("show create") || sql.startsWith("SHOW create") || sql.startsWith("show Create")){
+                    var test = tableServer.handleResult(sql);
+//                for (String st : test) {
+                    writer.println(test);
+//                }
+                writer.flush();
+                }else{
                 var test = tableServer.show(sql);
                 for (String st : test) {
+                    st = st.replace("'","");
                     writer.println(st);
                 }
                 writer.flush();
+                }
             }else{
                 throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT查询语句");
             }
