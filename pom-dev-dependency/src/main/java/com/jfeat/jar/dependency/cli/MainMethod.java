@@ -58,7 +58,7 @@ public class MainMethod {
      */
     private static final String LIST_OPTION = "t";
     /*
-    Show all entries from archive as tree
+    Show all entries from archive with all jar entries
      */
     private static final String TREE_OPTION = "T";
     /*
@@ -186,6 +186,10 @@ public class MainMethod {
                 printOut(d1, cmd.hasOption(JSON_OPTION));
             }catch (IOException e){
             }
+        }else if(cmd.hasOption(TREE_OPTION)){
+            List<String> d1 = ZipFileUtils.getJarArchiveTree(jar1, cmd.hasOption(CHECKSUM_OPTION));
+            printOut(d1, false);
+            
         }else if(cmd.hasOption(SEARCH_OPTION)){
             List<String> d1 = ZipFileUtils.searchWithinJarArchive(jar1, cmd.getOptionValue(SEARCH_OPTION), cmd.hasOption(CHECKSUM_OPTION));
 
@@ -227,11 +231,7 @@ public class MainMethod {
             /// end group
             printOut(d2, cmd.hasOption(JSON_OPTION));
 
-        }else if(cmd.hasOption(TREE_OPTION)){
-            List<String> d1 = ZipFileUtils.getJarArchiveTree(jar1, cmd.hasOption(CHECKSUM_OPTION));
-            printOut(d1, false);
-        }
-        else if(cmd.hasOption(DIFF_OPTION)){
+        }else if(cmd.hasOption(DIFF_OPTION)){
             try {
                 List<String> result = new ArrayList<>();
 

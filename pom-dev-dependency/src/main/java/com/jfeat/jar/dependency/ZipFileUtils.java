@@ -649,8 +649,8 @@ public class ZipFileUtils {
                             while ((entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
                                     tree.add((checksum && entry.getCrc() > 0) ?
-                                            String.join("@", ("+- " + entry.getName()), String.valueOf(entry.getCrc()))
-                                            : "+- " + entry.getName());
+                                            String.join("@", (jarEntry.getName() + "!" + entry.getName()), String.valueOf(entry.getCrc()))
+                                            : jarEntry.getName() + "!" + entry.getName());
                                 }
                             }
                         } catch (IOException e) {
@@ -665,8 +665,8 @@ public class ZipFileUtils {
     }
 
     /*
-    在archive中搜索隐含在jar entry中文件
-     */
+        在archive中搜索隐含在jar entry中文件
+    */
     public static List<String> searchWithinJarArchive(File file, String criteria, boolean checksum){
         List<String> criterias = new ArrayList<>();
         if(criteria==null)  { criteria = "";}
