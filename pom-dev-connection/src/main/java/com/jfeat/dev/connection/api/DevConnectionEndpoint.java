@@ -2,12 +2,14 @@ package com.jfeat.dev.connection.api;
 
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 import com.jfeat.dev.connection.util.DataSourceUtil;
+import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
@@ -66,12 +68,16 @@ public class DevConnectionEndpoint {
     @GetMapping
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
+                     @RequestParam(name = "sign", required = true) String sign,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
+        if (! SignatureKit.parseSignature(sign, "514528",180000L) ){
+            return ErrorTip.create(9010,"身份验证错误");
+        }
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
             if(sql.startsWith("SELECT") || sql.startsWith("select")){
-                var test = tableServer.handleResult2(sql);
+                var test = tableServer.show(sql);
                 for (String st : test) {
                     writer.println(st);
                 }
@@ -129,64 +135,83 @@ public class DevConnectionEndpoint {
 
     @GetMapping("/schema")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public void queryTableSchema(@RequestParam(name = "pattern", required = false) String pattern, HttpServletResponse response) throws IOException {
+    public void queryTableSchema(@RequestParam(name = "pattern", required = false) String pattern,
+                                 @RequestParam(name = "sign", required = true) String sign,
+                                 HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if(pattern!=null) {
-            String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
-            writer.println(dropSql);
-            String createSql = "show create table " + pattern;
-            var str = tableServer.handleResult(createSql) + ";";
-            writer.println(str);
+        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+            writer.println("身份信息错误");
             writer.flush();
-        }else{
-            var list = queryTablesDao.queryAllTables();
-            for (String tableName : list) {
-                String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
+        }else {
+            if (pattern != null) {
+                String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
                 writer.println(dropSql);
-                String createSql = "show create table " + tableName;
+                String createSql = "show create table " + pattern;
                 var str = tableServer.handleResult(createSql) + ";";
                 writer.println(str);
                 writer.flush();
+            } else {
+                var list = queryTablesDao.queryAllTables();
+                for (String tableName : list) {
+                    String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
+                    writer.println(dropSql);
+                    String createSql = "show create table " + tableName;
+                    var str = tableServer.handleResult(createSql) + ";";
+                    writer.println(str);
+                    writer.flush();
+                }
             }
         }
     }
 
     @GetMapping("/print")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public void queryAllTable(@RequestParam(name = "filter", required = false) String filter,HttpServletResponse response) throws IOException {
+    public void queryAllTable(@RequestParam(name = "filter", required = false) String filter,
+                              @RequestParam(name = "sign", required = true) String sign,
+                              HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        var list = queryTablesDao.queryAllTables();
-        if (filter!=null && filter.equals(SCHEDULE)) {
-            for (String tableName : list) {
-                String dropSql = "DROP TABLE IF EXISTS " +tableName +";";
-                writer.println(dropSql);
-                String createSql = "show create table " + tableName;
-                var str = tableServer.handleResult(createSql) + ";";
-                writer.println(str);
-                writer.flush();
-            }
-        } else {
-            for (String tableName : list) {
-                String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
-                writer.println(dropSql);
-                String createSql = "show create table " + tableName;
-                var str = tableServer.handleResult(createSql) + ";";
-                writer.println(str);
-                String insertSql = "SELECT * FROM " + tableName;
-                var test = tableServer.handleResult2(insertSql);
-                for (String st : test) {
-                    writer.println(st);
+        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+            writer.println("身份信息错误");
+            writer.flush();
+        }else {
+            var list = queryTablesDao.queryAllTables();
+            if (filter != null && filter.equals(SCHEDULE)) {
+                for (String tableName : list) {
+                    String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
+                    writer.println(dropSql);
+                    String createSql = "show create table " + tableName;
+                    var str = tableServer.handleResult(createSql) + ";";
+                    writer.println(str);
+                    writer.flush();
                 }
-                writer.flush();
+            } else {
+                for (String tableName : list) {
+                    String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
+                    writer.println(dropSql);
+                    String createSql = "show create table " + tableName;
+                    var str = tableServer.handleResult(createSql) + ";";
+                    writer.println(str);
+                    String insertSql = "SELECT * FROM " + tableName;
+                    var test = tableServer.handleResult2(insertSql);
+                    for (String st : test) {
+                        writer.println(st);
+                    }
+                    writer.flush();
+                }
             }
         }
     }
 
     @GetMapping("/sql")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip down(@RequestParam(name = "filter", required = false) String filter,HttpServletResponse response) throws IOException {
+    public Tip down(@RequestParam(name = "filter", required = false) String filter,
+                    @RequestParam(name = "sign", required = true) String sign,
+                    HttpServletResponse response) throws IOException {
+        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+            return ErrorTip.create(9010,"身份验证错误");
+        }
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         var dataBase = queryTablesDao.queryDataBase();

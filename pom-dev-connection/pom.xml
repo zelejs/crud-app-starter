@@ -63,6 +63,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>sign-sdk</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <!--spring boot依赖-->
         <dependency>
