@@ -370,12 +370,14 @@ public class ZipFileUtils {
 
     /*
        get entry content
+       @param forcePath: force return entry path, not the content
      */
     public static String getJarEntryPatternContent(File jarFile, String entryNamePattern, boolean forcePath){
         StringBuilder content = new StringBuilder();
         try(JarFile jar = new JarFile(jarFile)) {
-            Enumeration enumEntries = jar.entries();
             List<String> entryEffected = new ArrayList<>();
+
+            Enumeration enumEntries = jar.entries();
             JarEntry matchedJarEntry = null;
             boolean ret=true;
             while (ret && enumEntries.hasMoreElements()) {
@@ -704,6 +706,11 @@ public class ZipFileUtils {
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
                                 : jarEntry.getName());
                     }
+                    if(inputEntry!=null){
+                        if(!jarEntry.getName().equals(inputJarEntry)){
+                            continue;
+                        }
+                    }
 
                     if(criteria.length()==0){
                         // just ignore jar entries
@@ -780,9 +787,11 @@ public class ZipFileUtils {
                     new JarInputStream(new BufferedInputStream(cs));
         ) {
             JarEntry jarEntry = null;
-            while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
+            boolean done = false;
+            while(!done && (jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
+                    if(jarEntryName==null)
                     if(jarEntry.getName().contains(entryName)) {
                         if(jarEntry.getName().endsWith(".class")){
                             // required download
@@ -793,16 +802,23 @@ public class ZipFileUtils {
                             content = getZipEntryContent(jarFile, jarEntry);
                         }
                     }
+                    if(jarEntryName!=null){
+                        if(!jarEntryName.equals(jarEntry.getName())){
+                            continue;
+                        }
+                    }
+
 
                     if (jarEntryName.length()>0 && jarEntry.getName().equals(jarEntryName)){
                         try (InputStream is = jarFile.getInputStream(jarEntry)) {
                             JarInputStream jis = new JarInputStream(is);
 
                             ZipEntry entry = null;
-                            while ((entry = jis.getNextEntry()) != null) {
+                            while (!done && (entry = jis.getNextEntry()) != null) {
                                 if(!entry.isDirectory()) {
                                     if(entry.getName().contains(entryName)){
                                         content = getJarEntryContent(jarInputStream, jarEntry, entry);
+                                        done = true;
                                     }
                                 }
                             }

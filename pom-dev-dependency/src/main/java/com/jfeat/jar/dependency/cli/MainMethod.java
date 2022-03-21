@@ -267,33 +267,38 @@ public class MainMethod {
         }
         else if(cmd.hasOption(INSPECT_OPTION)) {
             String entryPattern = cmd.getOptionValue(INSPECT_OPTION);
-            final String NewLine = "\n";
-            var entriesContent = ZipFileUtils.getJarEntryPatternContent(jar1, entryPattern, true);
-            if (entriesContent.contains(NewLine)) {
-                // means multi matches, just output all entries
-                if (StringUtils.isNotBlank(entriesContent)) {
-                    var entries = Stream.of(entriesContent.split(NewLine)).collect(Collectors.toList());
-                    printOut(entries, cmd.hasOption(JSON_OPTION));
-                }
+            List<String> searchEntries = ZipFileUtils.searchWithinJarArchive(jar1, entryPattern, cmd.hasOption(CHECKSUM_OPTION));
+            if(searchEntries.size()==0){
+                // do nothing
+                
+            } else if(searchEntries.size()>1){
+                printOut(searchEntries, false);
+
             } else {
+                final String NewLine = "\n";
+                String entriesContent = searchEntries.get(0);
+
                 if (FileUtils.extension(entriesContent).equals("jar")) {
                     // jar, print out the entries
                     var entries = ZipFileUtils.getJarEntriesWithinEntry(jar1, entriesContent);
                     printOut(entries, cmd.hasOption(JSON_OPTION));
-                }
-                else if(FileUtils.extension(entriesContent).equals("class")){
+
+                }else if(FileUtils.extension(entriesContent).equals("class")){
                     // class, decompile java
-                    List<String> commentClass = new ArrayList<>();
-                    commentClass.add("// decompile "+ entriesContent);
-                    printOut(commentClass, false);
+                    String filesOrContent = ZipFileUtils.inspectJarEntryContentWithinArchive(jar1, entriesContent);
 
-                    List<String> classes = new ArrayList<>();
-                    classes.add(entriesContent);
-                    DecompileUtils.decompileFiles(classes, true);
+                    // start to decompile
+                    List<String> lines = DecompileUtils.decompileFiles(filesOrContent, false);
+                    printOut(lines, cmd.hasOption(JSON_OPTION));
 
-                } else {
+                } else if(entriesContent.contains("!")) {
+                    String filesOrContent = ZipFileUtils.inspectJarEntryContentWithinArchive(jar1, entriesContent);
+                    List<String> lines = Stream.of(filesOrContent.split("\n")).collect(Collectors.toList());
+                    printOut(lines, cmd.hasOption(JSON_OPTION));
+
+                }else{
                     // print out the entry content
-                    entriesContent = ZipFileUtils.getJarEntryPatternContent(jar1, entryPattern, false);
+                    entriesContent = ZipFileUtils.getJarEntryPatternContent(jar1, entriesContent, false);
                     if (StringUtils.isNotBlank(entriesContent)) {
                         var entries = Stream.of(entriesContent.split(NewLine)).collect(Collectors.toList());
                         printOut(entries, cmd.hasOption(JSON_OPTION));
