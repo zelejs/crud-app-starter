@@ -675,7 +675,7 @@ public class ZipFileUtils {
 
         // parse criteria
         // remove @checksum
-        String inputJarEntry = null;
+        String inputJarEntry = "";
         String inputEntry = criteria;
         if(criteria!=null){
             if(criteria.contains("@")){
@@ -700,7 +700,7 @@ public class ZipFileUtils {
             while((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
-                    if(inputJarEntry==null)
+                    if(inputJarEntry==null || inputJarEntry.length()==0)
                     if(criteria.length()==0 || jarEntry.getName().contains(criteria)) {
                         criterias.add((checksum && jarEntry.getCrc() > 0) ?
                                 String.join("@", jarEntry.getName(), String.valueOf(jarEntry.getCrc()))
@@ -791,7 +791,7 @@ public class ZipFileUtils {
             while(!done && (jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 if(!jarEntry.isDirectory()) {
 
-                    if(jarEntryName==null)
+                    if(jarEntryName==null || jarEntryName.length()==0)
                     if(jarEntry.getName().contains(entryName)) {
                         if(jarEntry.getName().endsWith(".class")){
                             // required download
