@@ -5,10 +5,10 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
+//import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
-import com.jfeat.dev.connection.util.DataSourceUtil;
+//import com.jfeat.dev.connection.util.DataSourceUtil;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,7 +70,7 @@ public class DevConnectionEndpoint {
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      @RequestParam(name = "sign", required = true) String sign,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
-        if (! SignatureKit.parseSignature(sign, "514528",180000L) ){
+        if (! SignatureKit.parseSignature(sign, "514528",60000L) ){
             return ErrorTip.create(9010,"身份验证错误");
         }
         response.setContentType("text/plain;charset=utf-8");
