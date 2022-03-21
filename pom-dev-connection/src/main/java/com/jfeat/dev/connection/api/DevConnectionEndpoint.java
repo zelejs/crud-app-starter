@@ -4,6 +4,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 import com.jfeat.dev.connection.util.DataSourceUtil;
@@ -188,9 +189,11 @@ public class DevConnectionEndpoint {
     public Tip down(@RequestParam(name = "filter", required = false) String filter,HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
+        var dataBase = queryTablesDao.queryDataBase();
 //        PrintWriter writer = new PrintWriter(response.getOutputStream());
         var list = queryTablesDao.queryAllTables();
         List<String> file = new ArrayList<String>();
+        file.add("SET FOREIGN_KEY_CHECKS = 0;");
         if(filter!=null && filter.equals(SCHEDULE)){
             for (String tableName : list) {
                 String dropSql = "\nDROP TABLE IF EXISTS " +tableName +";\n";
@@ -213,8 +216,8 @@ public class DevConnectionEndpoint {
                 }
             }
         }
+        file.add("SET FOREIGN_KEY_CHECKS = 1;");
         var data = tableServer.changToByte(file);
-        var dataBase = queryTablesDao.queryDataBase();
         response.setHeader(CONTENT_DISPOSITION,"attachment; filename="+dataBase+".sql");
         IOUtils.write(data,response.getOutputStream());
 //        writer.flush();
