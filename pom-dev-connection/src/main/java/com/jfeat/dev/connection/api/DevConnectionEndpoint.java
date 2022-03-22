@@ -70,7 +70,7 @@ public class DevConnectionEndpoint {
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      @RequestParam(name = "sign", required = true) String sign,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
-        if (! SignatureKit.parseSignature(sign, "514528",60000L) ){
+        if (! SignatureKit.parseSignature(sign, "514528",600000L) ){
             return ErrorTip.create(9010,"身份验证错误");
         }
         response.setContentType("text/plain;charset=utf-8");
@@ -140,7 +140,7 @@ public class DevConnectionEndpoint {
                                  HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
             writer.println("身份信息错误");
             writer.flush();
         }else {
@@ -172,7 +172,7 @@ public class DevConnectionEndpoint {
                               HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
             writer.println("身份信息错误");
             writer.flush();
         }else {
@@ -209,7 +209,7 @@ public class DevConnectionEndpoint {
     public Tip down(@RequestParam(name = "filter", required = false) String filter,
                     @RequestParam(name = "sign", required = true) String sign,
                     HttpServletResponse response) throws IOException {
-        if (!SignatureKit.parseSignature(sign, "514528",180000L) ) {
+        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
             return ErrorTip.create(9010,"身份验证错误");
         }
         response.setContentType("application/octet-stream");
