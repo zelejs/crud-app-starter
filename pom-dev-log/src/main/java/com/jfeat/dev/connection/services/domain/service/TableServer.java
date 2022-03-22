@@ -46,13 +46,13 @@ public class TableServer {
 //        return null;
     }
 
-    public List<String> handleResult(String sql){
+    public String handleResult(String sql){
         ResultSet rs = executeQuery(sql);
         try {
             while (rs.next()) {
                 ResultSetMetaData md = rs.getMetaData();
                 int cols = md.getColumnCount();
-                List<String> list = new ArrayList<>();
+
                 for (int i = 1; i <= cols; i++) {
                     switch (md.getColumnType(i)) {
                         case Types.VARCHAR:
@@ -63,7 +63,11 @@ public class TableServer {
                             }else {
                                 val = val.replace("\r", "");
                                 val = val.replace("\n", "");
-                                list.add(val);
+                                if(i>1) {
+                                    return val;
+                                }else{
+//                                    System.out.print(val);
+                                }
                             }
                         }
                         break;
@@ -72,8 +76,8 @@ public class TableServer {
                     }
 
                 }
-            return list;
-//                 new line
+
+                // new line
 //                System.out.println("");
             }
         } catch (Exception e) {
@@ -197,23 +201,23 @@ public class TableServer {
                         case Types.TINYINT:
                         case Types.SMALLINT:
                         case Types.NUMERIC:
-                            str.append(md.getColumnName(i)+":"+ rs.getInt(i)+"\n");
+                            str.append(rs.getInt(i));
                             break;
                         case Types.BIGINT:
-                            str.append(md.getColumnName(i)+":"+rs.getLong(i)+"\n");
+                            str.append(rs.getLong(i));
                             break;
                         case Types.DECIMAL:
-                            str.append(md.getColumnName(i)+":"+rs.getBigDecimal(i)+"\n");
+                            str.append(rs.getBigDecimal(i));
                             break;
                         case Types.BOOLEAN:
-                            str.append(md.getColumnName(i)+":"+rs.getBoolean(i)+"\n");
+                            str.append(rs.getBoolean(i));
                             break;
                         case Types.FLOAT:
                         case Types.REAL:
-                            str.append(md.getColumnName(i)+":"+rs.getFloat(i)+"\n");
+                            str.append(rs.getFloat(i));
                             break;
                         case Types.DOUBLE:
-                            str.append(md.getColumnName(i)+":"+rs.getDouble(i)+"\n");
+                            str.append(rs.getDouble(i));
                             break;
                         case Types.VARCHAR:
                         case Types.NVARCHAR:
@@ -223,11 +227,11 @@ public class TableServer {
                         case Types.TIMESTAMP: {
                             String val = rs.getString(i);
                             if (val == null) {
-                                str.append(md.getColumnName(i)+":"+"null");
+                                str.append("null");
                             } else {
                                 val = val.replace("\r", "");
                                 val = val.replace("\n", "");
-                                str.append(md.getColumnName(i)+":"+"'" + val + "'\n");
+                                str.append("'" + val + "'");
                             }
                         }
                         break;
@@ -238,7 +242,7 @@ public class TableServer {
 //                                for (int c = 0; c < bytes.length; c++) {
 //                                    hex += String.format("%02X", bytes[c]);
 //                                }
-                                str.append(md.getColumnName(i)+":"+"'" + hex + "'\n");
+                                str.append("'" + hex + "'");
                             }
                         }
                         break;
@@ -246,13 +250,13 @@ public class TableServer {
                             str.append("null");
                             break;
                         case Types.LONGVARBINARY:
-                            str.append(md.getColumnName(i)+":"+"'" + rs.getString(i) + "'\n");
+                            str.append("'" + rs.getString(i) + "'");
                             break;
                         case Types.LONGVARCHAR:
-                            str.append(md.getColumnName(i)+":"+'"' + rs.getString(i) + '"' +"\n");
+                            str.append('"' + rs.getString(i) + '"');
                             break;
                         case Types.TIME:
-                            str.append(md.getColumnName(i)+":"+rs.getTime(i)+"\n");
+                            str.append(rs.getTime(i));
                             break;
                         default:
                             System.out.print("Unknown type: " + md.getColumnType(i));

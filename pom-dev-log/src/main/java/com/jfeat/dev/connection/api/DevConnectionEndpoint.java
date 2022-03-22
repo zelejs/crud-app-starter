@@ -79,15 +79,15 @@ public class DevConnectionEndpoint {
             if(sql.startsWith("SELECT") || sql.startsWith("select")){
                 var test = tableServer.show(sql);
                 for (String st : test) {
-                    writer.println(st+"\n");
+                    writer.println(st);
                 }
                 writer.flush();
             }else if(sql.startsWith("SHOW") || sql.startsWith("show")) {
                 if (sql.startsWith("SHOW CREATE") || sql.startsWith("show create") || sql.startsWith("SHOW create") || sql.startsWith("show Create")){
                     var test = tableServer.handleResult(sql);
-                for (String st : test) {
-                    writer.println(st);
-                }
+//                for (String st : test) {
+                    writer.println(test);
+//                }
                 writer.flush();
                 }else{
                 var test = tableServer.show(sql);
