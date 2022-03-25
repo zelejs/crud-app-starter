@@ -55,7 +55,8 @@ import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
 public class DevConnectionEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DevConnectionEndpoint.class);
     private final String SCHEDULE = "schema";
-
+    private static final Long ttl = 600000L;
+    private static final String key = "514528";
     @Autowired
     DataSource dataSource;
 
@@ -69,32 +70,47 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      @RequestParam(name = "sign", required = true) String sign,
+                     @RequestParam(name = "format", required = false) String format,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
-        if (! SignatureKit.parseSignature(sign, "514528",600000L) ){
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
             return ErrorTip.create(9010,"身份验证错误");
         }
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
             if(sql.startsWith("SELECT") || sql.startsWith("select")){
-                var test = tableServer.show(sql);
-                for (String st : test) {
-                    writer.println(st+"\n");
+                if(format!=null && format.equals("md")) {
+                    var test = tableServer.showMd(sql);
+                    for (String st : test) {writer.print(st+"\n");}
+                }else{
+                    var test = tableServer.show(sql);
+                    for (String st : test) {writer.print(st+"\n");}
                 }
                 writer.flush();
             }else if(sql.startsWith("SHOW") || sql.startsWith("show")) {
                 if (sql.startsWith("SHOW CREATE") || sql.startsWith("show create") || sql.startsWith("SHOW create") || sql.startsWith("show Create")){
-                    var test = tableServer.handleResult(sql);
-                for (String st : test) {
-                    writer.println(st);
-                }
+                    if(format!=null && format.equals("md")) {
+                        var test = tableServer.showMd(sql);
+                        for (String st : test) {writer.print(st+"\n");}
+                    }else{
+                        var test = tableServer.handleResult(sql);
+                        for (String st : test) {writer.print(st+"\n");}
+                    }
                 writer.flush();
                 }else{
-                var test = tableServer.show(sql);
-                for (String st : test) {
-                    st = st.replace("'","");
-                    writer.println(st);
-                }
+                    if(format!=null && format.equals("md")) {
+                        var test = tableServer.showMd(sql);
+                        for (String st : test) {
+                            st = st.replace("'","");
+                            writer.print(st+"\n");
+                        }
+                    }else{
+                        var test = tableServer.show(sql);
+                        for (String st : test) {
+                            st = st.replace("'","");
+                            writer.print(st+"\n");
+                        }
+                    }
                 writer.flush();
                 }
             }else{
@@ -102,11 +118,12 @@ public class DevConnectionEndpoint {
             }
         }else{
             if (pattern != null) {
-                String dropSql = "DROP TABLE IF EXISTS " +pattern +";";
+                String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
                 writer.println(dropSql);
                 String createSql = "show create table " + pattern;
-                var str = tableServer.handleResult(createSql) + ";";
-                writer.println(str);
+                var str = tableServer.handleResult(createSql);
+                var createStr = str.get(1).replace("'","");
+                writer.print(createStr+";\n");
                 String insertSql = "SELECT * FROM " + pattern;
                 var test = tableServer.handleResult2(insertSql);
                 for (String st : test) {
@@ -140,7 +157,7 @@ public class DevConnectionEndpoint {
                                  HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
+        if (!SignatureKit.parseSignature(sign, key,ttl) ) {
             writer.println("身份信息错误");
             writer.flush();
         }else {
@@ -172,7 +189,7 @@ public class DevConnectionEndpoint {
                               HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
+        if (!SignatureKit.parseSignature(sign, key,ttl) ) {
             writer.println("身份信息错误");
             writer.flush();
         }else {
@@ -209,7 +226,7 @@ public class DevConnectionEndpoint {
     public Tip down(@RequestParam(name = "filter", required = false) String filter,
                     @RequestParam(name = "sign", required = true) String sign,
                     HttpServletResponse response) throws IOException {
-        if (!SignatureKit.parseSignature(sign, "514528",600000L) ) {
+        if (!SignatureKit.parseSignature(sign, key,ttl) ) {
             return ErrorTip.create(9010,"身份验证错误");
         }
         response.setContentType("application/octet-stream");

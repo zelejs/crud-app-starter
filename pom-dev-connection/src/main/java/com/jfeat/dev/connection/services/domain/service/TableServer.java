@@ -197,7 +197,7 @@ public class TableServer {
                         case Types.TINYINT:
                         case Types.SMALLINT:
                         case Types.NUMERIC:
-                            str.append(md.getColumnName(i)+":"+ rs.getInt(i)+"\n");
+                            str.append(md.getColumnName(i)+":"+rs.getInt(i)+"\n");
                             break;
                         case Types.BIGINT:
                             str.append(md.getColumnName(i)+":"+rs.getLong(i)+"\n");
@@ -223,11 +223,11 @@ public class TableServer {
                         case Types.TIMESTAMP: {
                             String val = rs.getString(i);
                             if (val == null) {
-                                str.append(md.getColumnName(i)+":"+"null");
+                                str.append(md.getColumnName(i)+":"+"null"+"\n");
                             } else {
                                 val = val.replace("\r", "");
                                 val = val.replace("\n", "");
-                                str.append(md.getColumnName(i)+":"+"'" + val + "'\n");
+                                str.append(md.getColumnName(i)+":"+"'" + val + "'"+"\n");
                             }
                         }
                         break;
@@ -238,18 +238,18 @@ public class TableServer {
 //                                for (int c = 0; c < bytes.length; c++) {
 //                                    hex += String.format("%02X", bytes[c]);
 //                                }
-                                str.append(md.getColumnName(i)+":"+"'" + hex + "'\n");
+                                str.append(md.getColumnName(i)+":"+"'" + hex + "'"+"\n");
                             }
                         }
                         break;
                         case Types.NULL:
-                            str.append("null");
+                            str.append(md.getColumnName(i)+":"+"null"+"\n");
                             break;
                         case Types.LONGVARBINARY:
-                            str.append(md.getColumnName(i)+":"+"'" + rs.getString(i) + "'\n");
+                            str.append(md.getColumnName(i)+":"+"'" + rs.getString(i) + "'"+"\n");
                             break;
                         case Types.LONGVARCHAR:
-                            str.append(md.getColumnName(i)+":"+'"' + rs.getString(i) + '"' +"\n");
+                            str.append(md.getColumnName(i)+":"+'"' + rs.getString(i) + '"'+"\n");
                             break;
                         case Types.TIME:
                             str.append(md.getColumnName(i)+":"+rs.getTime(i)+"\n");
@@ -260,6 +260,107 @@ public class TableServer {
                 }
                 String st = str.toString();
                 list.add(st);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            close();
+        }
+        return list;
+    }
+
+    public List<String> showMd(String sql){
+        ResultSet rs = executeQuery(sql);
+        List<String> list = new ArrayList<>();
+        int flag=1;
+        try {
+            while (rs.next()) {
+                ResultSetMetaData md = rs.getMetaData();
+                int cols = md.getColumnCount();
+                StringBuilder str = new StringBuilder("|");
+                if(flag==1){
+                    StringBuilder str1 = new StringBuilder("|");
+                    StringBuilder str2 = new StringBuilder("|");
+                    for (int i = 1; i <= cols; i++) {
+                        str1.append(md.getColumnName(i) + "|");
+                        str2.append("---------------" +"|");
+                    }
+                    String st1 = str1.toString();
+                    String st2 = str2.toString();
+                    list.add(st1);
+                    list.add(st2);
+                }
+                for (int i = 1; i <= cols; i++) {
+                    switch (md.getColumnType(i)) {
+                        case Types.BIT:
+                        case Types.INTEGER:
+                        case Types.TINYINT:
+                        case Types.SMALLINT:
+                        case Types.NUMERIC:
+                            str.append(rs.getInt(i)+" | ");
+                            break;
+                        case Types.BIGINT:
+                            str.append(rs.getLong(i)+" | ");
+                            break;
+                        case Types.DECIMAL:
+                            str.append(rs.getBigDecimal(i)+" | ");
+                            break;
+                        case Types.BOOLEAN:
+                            str.append(rs.getBoolean(i)+" | ");
+                            break;
+                        case Types.FLOAT:
+                        case Types.REAL:
+                            str.append(rs.getFloat(i)+" | ");
+                            break;
+                        case Types.DOUBLE:
+                            str.append(rs.getDouble(i)+" | ");
+                            break;
+                        case Types.VARCHAR:
+                        case Types.NVARCHAR:
+                        case Types.CHAR:
+                        case Types.NCHAR:
+                        case Types.DATE:
+                        case Types.TIMESTAMP: {
+                            String val = rs.getString(i);
+                            if (val == null) {
+                                str.append("null"+" | ");
+                            } else {
+                                val = val.replace("\r", "");
+                                val = val.replace("\n", "");
+                                str.append("'" + val + "'"+" | ");
+                            }
+                        }
+                        break;
+                        case Types.VARBINARY: {
+                            byte[] bytes = rs.getBytes(i);
+                            if (bytes != null) {
+                                String hex = "";
+//                                for (int c = 0; c < bytes.length; c++) {
+//                                    hex += String.format("%02X", bytes[c]);
+//                                }
+                                str.append("'" + hex + "'"+" | ");
+                            }
+                        }
+                        break;
+                        case Types.NULL:
+                            str.append("null"+" | ");
+                            break;
+                        case Types.LONGVARBINARY:
+                            str.append("'" + rs.getString(i) + "'"+" | ");
+                            break;
+                        case Types.LONGVARCHAR:
+                            str.append('"' + rs.getString(i) + '"'+" | ");
+                            break;
+                        case Types.TIME:
+                            str.append(rs.getTime(i)+" | ");
+                            break;
+                        default:
+                            System.out.print("Unknown type: " + md.getColumnType(i));
+                    }
+                }
+                String st = str.toString();
+                list.add(st);
+                flag =0;
             }
         } catch(Exception e){
             e.printStackTrace();
