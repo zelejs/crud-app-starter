@@ -94,7 +94,7 @@ public class DevConnectionEndpoint {
                         for (String st : test) {writer.print(st+"\n");}
                     }else{
                         var test = tableServer.handleResult(sql);
-                        for (String st : test) {writer.print(st+"\n");}
+                        writer.print(test.get(1)+";");
                     }
                 writer.flush();
                 }else{
@@ -165,8 +165,8 @@ public class DevConnectionEndpoint {
                 String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
                 writer.println(dropSql);
                 String createSql = "show create table " + pattern;
-                var str = tableServer.handleResult(createSql) + ";";
-                writer.println(str);
+                var str = tableServer.handleResult(createSql);
+                writer.println(str.get(1)+";");
                 writer.flush();
             } else {
                 var list = queryTablesDao.queryAllTables();
@@ -174,8 +174,8 @@ public class DevConnectionEndpoint {
                     String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
                     writer.println(dropSql);
                     String createSql = "show create table " + tableName;
-                    var str = tableServer.handleResult(createSql) + ";";
-                    writer.println(str);
+                    var str = tableServer.handleResult(createSql);
+                    writer.println(str.get(1)+";");
                     writer.flush();
                 }
             }
@@ -199,8 +199,11 @@ public class DevConnectionEndpoint {
                     String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
                     writer.println(dropSql);
                     String createSql = "show create table " + tableName;
-                    var str = tableServer.handleResult(createSql) + ";";
-                    writer.println(str);
+                    var str = tableServer.handleResult(createSql);
+                    writer.println(str.get(1)+";");
+                    for(String st:str) {
+                        writer.println(st);
+                    }
                     writer.flush();
                 }
             } else {
@@ -208,8 +211,8 @@ public class DevConnectionEndpoint {
                     String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
                     writer.println(dropSql);
                     String createSql = "show create table " + tableName;
-                    var str = tableServer.handleResult(createSql) + ";";
-                    writer.println(str);
+                    var str = tableServer.handleResult(createSql);
+                    writer.println(str.get(1)+";");
                     String insertSql = "SELECT * FROM " + tableName;
                     var test = tableServer.handleResult2(insertSql);
                     for (String st : test) {
@@ -241,16 +244,16 @@ public class DevConnectionEndpoint {
                 String dropSql = "\nDROP TABLE IF EXISTS " +tableName +";\n";
                 file.add(dropSql);
                 String createSql = "show create table " + tableName;
-                var str = tableServer.handleResult(createSql) + ";\n\n";
-                file.add(str);
+                var str = tableServer.handleResult(createSql);
+                file.add(str.get(1)+";");
             }
         }else {
             for (String tableName : list) {
                 String dropSql = "\nDROP TABLE IF EXISTS " + tableName + ";\n";
                 file.add(dropSql);
                 String createSql = "show create table " + tableName;
-                var str = tableServer.handleResult(createSql) + ";\n\n";
-                file.add(str);
+                var str = tableServer.handleResult(createSql);
+                file.add(str.get(1)+";");
                 String insertSql = "SELECT * FROM " + tableName;
                 var test = tableServer.handleResult2(insertSql);
                 for (String st : test) {
