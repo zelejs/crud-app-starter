@@ -1,18 +1,25 @@
 package com.jar;
 
+import com.jfeat.dev.logs.services.domain.service.TableServer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static com.jfeat.dev.dependency.FileUtils.getRelativePath;
+//import static com.jfeat.dev.dependency.FileUtils.getRelativePath;
 import static java.util.function.Predicate.not;
 
 public class TestCase {
+
+    @Resource
+    private static TableServer tableServer;
+
     Logger logger = Logger.getLogger(TestCase.class.getSimpleName());
 
     List<String> origin = null;
@@ -73,11 +80,22 @@ public class TestCase {
         query.forEach(u->{System.out.println(u.toString());});
     }
 
-    @Test
-    public void TestRelativeFilePath(){
-        String result = getRelativePath("/path/to/one/filename.jar", "/path/to/two/filename.class");
-        System.out.println(result);
-        Assert.assertTrue(result.equals("two/filename.class"));
+//    @Test
+//    public void TestRelativeFilePath(){
+//        String result = getRelativePath("/path/to/one/filename.jar", "/path/to/two/filename.class");
+//        System.out.println(result);
+//        Assert.assertTrue(result.equals("two/filename.class"));
+//    }
+
+    public static void main(String[] args) {
+        String sql = "show engine innodb status";
+        var test = tableServer.show(sql);
+        for (String st : test) {
+            System.out.println(st);
+        }
     }
+
+
+
 
 }
