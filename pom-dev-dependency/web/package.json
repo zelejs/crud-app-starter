@@ -1,0 +1,41 @@
+{
+  "name": "zero-element-b-p",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "umi dev",
+    "clean": "rimraf lib/",
+    "build": "umi build"
+  },
+  "dependencies": {
+    "@loadable/component": "^5.10.1",
+    "ahooks": "^2.4.0",
+    "lodash": "^4.17.19",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "zero-element": "^1.0.0",
+    "zero-element-boot": "github:kequandian/zero-element-boot#pattern",
+    "zero-element-boot-presenter": "github:kequandian/zero-element-boot-presenter#master"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-react": "^7.13.13",
+    "@umijs/preset-react": "^1.5.12",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "eslint": "^5.4.0",
+    "eslint-config-umi": "^1.4.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.14.3",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "react-test-renderer": "^16.9.0",
+    "rimraf": "^2.7.1",
+    "umi": "^3.2.6"
+  }
+}
