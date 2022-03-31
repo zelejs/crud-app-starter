@@ -1,6 +1,7 @@
 package com.jfeat.jar.dependency.api;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.jar.dependency.DecompileUtils;
@@ -11,6 +12,8 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -210,5 +213,18 @@ public class DependencyEndpoint {
         response.setContentType("application/octet-stream");
         response.addHeader("Content-Disposition", "attachment; " + entryName);
         ZipFileUtils.extraJarEntries(jarFile, "", pattern, response.getOutputStream());
+    }
+
+    @Autowired
+    BuildProperties buildProperties;
+    @GetMapping("/build")
+    public Tip buildInfo() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("artifact", buildProperties.getName());
+        jsonObject.put("version", buildProperties.getVersion());
+        jsonObject.put("buildAt", buildProperties.getTime());
+        jsonObject.put("artifactId:", buildProperties.getArtifact());
+        jsonObject.put("groupId:", buildProperties.getGroup());
+        return SuccessTip.create(jsonObject);
     }
 }
