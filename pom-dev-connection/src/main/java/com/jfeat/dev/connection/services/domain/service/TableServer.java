@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.xml.stream.events.Characters;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -21,6 +22,13 @@ public class TableServer {
     DataSource dataSource;
 
     Connection conn = null;
+
+    public File[] getAllFile(){
+        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler";
+        File fileDir = new File(path);
+        File[] files = fileDir.listFiles();
+        return files;
+    }
 
     public byte[] changToByte(List<String> list){
 //        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
