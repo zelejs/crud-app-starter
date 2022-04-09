@@ -1,5 +1,7 @@
 package com.jfeat.dev.connection.api;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.ErrorTip;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.Text;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
@@ -279,6 +282,7 @@ public class DevConnectionEndpoint {
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
 //        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -296,7 +300,7 @@ public class DevConnectionEndpoint {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler/" + ruler+".ruler";
+            String fileName = str + ".rulers/" + ruler+".ruler";
             File rulerFile = new File(fileName);
             InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(streamReader);
@@ -312,65 +316,109 @@ public class DevConnectionEndpoint {
             List<String> sqlList = new ArrayList<>();
             List<String> nameList = new ArrayList<>();
             List<String> limitList = new ArrayList<>();
-            if(rule.equals("defined")) {
+//            if(rule.equals("defined")) {
                 for (int i = 0; i < rulerArray.length; i++) {
                     var tableArray = rulerArray[i].replace("\"", "")
                             .replace("[", "").replace("]", "").replace("/r", "").replace("/n", "").trim()
                             .split(":");
                     nameList.add(tableArray[0]);
-                    limitList.add(tableArray[1]);
+                    if (tableArray.length == 1) {
+                        limitList.add(null);
+                    } else {
+                        limitList.add(tableArray[1]);
+                    }
                 }
                 response.setContentType("application/octet-stream");
                 response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
                 for (int j = 0; j < nameList.size(); j++) {
-                    if (limitList.get(j).contains(",")) {
-                        if (limitList.get(j).contains("-")) {
+                    String createSql = "show create table " + nameList.get(j);
+                    sqlList.add(createSql);
+                    if (limitList.get(j) == null) {
+                        continue;
+                    } else {
+                        if (limitList.get(j).contains(",")) {
+                            if (limitList.get(j).contains("-")) {
+                                var table1 = limitList.get(j).split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    var table2 = table1[k].split("-");
+                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + (Integer.parseInt(table2[0])-1) + "," + limit + ";";
+                                    sqlList.add(insertSql);
+                                }
+                            } else {
+                                var table1 = limitList.get(j).split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + table1[k] + ",1;";
+                                    sqlList.add(insertSql);
+                                }
+                            }
+                        } else if(limitList.get(j).contains("-")){
                             var table1 = limitList.get(j).split(",");
                             for (int k = 0; k < table1.length; k++) {
                                 var table2 = table1[k].split("-");
-                                var limit = Integer.parseInt(table2[1].trim()) - Integer.parseInt(table2[0].trim());
-                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + table2[0] + "," + limit + ";";
+                                var limit = Integer.parseInt(table2[1].trim());
+                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + (Integer.parseInt(table2[0])-1) + "," + limit + ";";
                                 sqlList.add(insertSql);
                             }
-                        } else {
-                            var table1 = limitList.get(j).split(",");
-                            for (int k = 0; k < table1.length; k++) {
-                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + table1[k] + ",1;";
+                        }else{
+                            if (limitList.get(j).contains("*")) {
+                                String insertSql = "SELECT * FROM " + nameList.get(j) + ";";
+                                sqlList.add(insertSql);
+                            } else {
+                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + limitList.get(j) + ",1;";
                                 sqlList.add(insertSql);
                             }
                         }
-                    } else {
-                        if (limitList.get(j).contains("*")) {
-                            String insertSql = "SELECT * FROM " + nameList.get(j) + ";";
-                            sqlList.add(insertSql);
-                        } else {
-                            String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + limitList.get(j) + ",1;";
+                    }
+                }
+                if (rule.equals("full")) {
+                    var list = queryTablesDao.queryAllTables();
+                    for (String tableName : list) {
+                        int exflag = 0;
+                        for (String basicName : nameList) {
+                            if (tableName.equals(basicName)) {
+                                exflag = 1;
+                            }
+                        }
+                        if (exflag == 0) {
+                            String insertSql = "SELECT * FROM " + tableName;
                             sqlList.add(insertSql);
                         }
                     }
                 }
                 for (String sql : sqlList) {
-                    var test = tableServer.handleResult2(sql);
-                    for (String st : test) {
-                        file.add(st + "\n");
+                    if (sql.contains("show")){
+                        var list = tableServer.handleResult(sql);
+                        file.add(list.get(1)+";\n");
+                    }else {
+                        var test = tableServer.handleResult2(sql);
+                        for (String st : test) {
+                            file.add(st + "\n");
+                        }
                     }
                 }
-            }else if(rule.equals("full")){
-                for (int i = 0; i < rulerArray.length; i++) {
-                    var tableArray = rulerArray[i].replace("\"", "")
-                            .replace("[", "").replace("]", "").replace("/r", "").replace("/n", "").trim()
-                            .split(":");
-                    nameList.add(tableArray[0]);
-                    limitList.add(tableArray[1]);
-                }
-                for (String tableName : nameList) {
-                    String sql = "SELECT * FROM " + tableName;
-                    var test = tableServer.handleResult2(sql);
-                    for (String st : test) {
-                        file.add(st + "\n");
-                    }
-                }
-            }
+//            }
+//            }else if(rule.equals("full")) {
+//                    for (int i = 0; i < rulerArray.length; i++) {
+//                        var tableArray = rulerArray[i].replace("\"", "")
+//                                .replace("[", "").replace("]", "").replace("/r", "").replace("/n", "").trim()
+//                                .split(":");
+//                        nameList.add(tableArray[0]);
+//                        if (tableArray.length==1){
+//                            limitList.add(null);
+//                        }else{
+//                            limitList.add(tableArray[1]);
+//                        }
+//                    }
+//                    for (String tableName : nameList) {
+//                        String sql = "SELECT * FROM " + tableName;
+//                        var test = tableServer.handleResult2(sql);
+//                        for (String st : test) {
+//                            file.add(st + "\n");
+//                        }
+//                    }
+//
+//            }
             var data = tableServer.changToByte(file);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + "a" + ".sql");
             IOUtils.write(data, response.getOutputStream());
@@ -402,6 +450,8 @@ public class DevConnectionEndpoint {
             HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
 //        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -418,7 +468,7 @@ public class DevConnectionEndpoint {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler/" + ruler_file_name+".ruler";
+            String fileName = str + ".rulers/" + ruler_file_name+".ruler";
             File rulerFile = new File(fileName);
             InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(streamReader);
@@ -438,34 +488,51 @@ public class DevConnectionEndpoint {
     @PostMapping("/snapshot/rulers/{ruler_file_name}")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name,
-                         @RequestBody RulerRequest rulerRequest,
+                         @RequestBody JSONObject jsonObject,
+                         HttpServletRequest request,
                          HttpServletResponse response) throws IOException {
 //        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+
         //获取文件夹位置
-        File[] files = tableServer.getAllFile();
+        String path = str+".rulers";
+        File fileDir = new File(path);
+        if(!fileDir.exists()){
+            fileDir.mkdirs();
+        }
+//        log.fileDir
+        File[] files = fileDir.listFiles();
+
+//        File directory = new File("");//参数为空
+//        String courseFile = directory.getCanonicalPath() ;
 
         boolean flag = true;
-        for (File file : files) {
-            if (file.isDirectory()) continue;
-            if (file.getName().equals(ruler_file_name+".ruler")){
-                flag=false;
+        if(files!=null) {
+            for (File file : files) {
+                if (file.isDirectory()) continue;
+                if (file.getName().equals(ruler_file_name + ".ruler")) {
+                    flag = false;
+                }
             }
         }
         if(flag){
-            FileWriter writer = null;
-            File checkFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler/" + ruler_file_name + ".ruler");
+//            FileWriter writer = null;
+            File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
+
             checkFile.createNewFile();// 创建目标文件
 
-            writer = new FileWriter(checkFile, true);
-            writer.append(rulerRequest.getValue());
+            FileWriter writer  = new FileWriter(checkFile, true);
+            String date = jsonObject.toString().replace("{","").replace("}","").replace("],","],\n");
+            writer.append(date);
             writer.flush();
         }else{
             FileWriter writer = null;
-            File checkFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler/" + ruler_file_name + ".ruler");
+            File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
             checkFile.canWrite();
 
             writer = new FileWriter(checkFile, true);
-            writer.append(",\n"+rulerRequest.getValue());
+            String date = jsonObject.toString().replace("{","").replace("}","").replace("],","],\n");
+            writer.append(",\n"+date);
             writer.flush();
 
 
@@ -476,9 +543,15 @@ public class DevConnectionEndpoint {
     @DeleteMapping("/snapshot/rulers/{ruler_file_name}")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name){
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler/"+ruler_file_name+".ruler";
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+        String path = str + ".rulers/"+ruler_file_name+".ruler";
         File file = new File(path);
-        file.deleteOnExit();
-        return SuccessTip.create();
+        if(file.delete()){
+            return SuccessTip.create("删除成功");
+        }else {
+            return SuccessTip.create("删除失败");
+        }
     }
+
+
 }

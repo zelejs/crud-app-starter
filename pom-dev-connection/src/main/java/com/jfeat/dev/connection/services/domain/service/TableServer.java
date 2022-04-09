@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import javax.xml.stream.events.Characters;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -23,9 +24,14 @@ public class TableServer {
 
     Connection conn = null;
 
-    public File[] getAllFile(){
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "ruler";
+    public File[] getAllFile() throws IOException {
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+        String path = str+".rulers";
         File fileDir = new File(path);
+        if(!fileDir.exists()){
+            fileDir.mkdirs();
+        }
+//        log.fileDir
         File[] files = fileDir.listFiles();
         return files;
     }

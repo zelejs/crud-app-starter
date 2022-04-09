@@ -34,30 +34,25 @@ GET {{endpoint}}/dev/connection/sql?filter=schema
 ####所有接口都需要带&sign参数
 
 ###删除规则
-DELETE {{endpoint}}/dev/connection/snapshot/rulers/test
+DELETE {{endpoint}}/dev/connection/snapshot/rulers/ming
 
-{
-    "value": "\"t_end_user\": [1],
-\"t_schedule_record\": [1,2],
-\"nft_player\": [\"1-10\",\"20-30\"],
-\"t_config_field\": [\"*\"]"
-}
 
 ###新建更新规则/dev/connection/snapshot/rulers/{ruler_file_name}
-POST {{endpoint}}/dev/connection/snapshot/rulers/java
+POST {{endpoint}}/dev/connection/snapshot/rulers/ming
 
 {
-    "value": "\"t_end_user\": [1],
-\"t_schedule_record\": [1,2],
-\"nft_player\": [\"1-10\",\"20-30\"],
-\"t_config_field\": [\"*\"]"
+    "t_end_user": [1],
+    "t_schedule_record": [1,2],
+    "nft_player": ["1-10","20-30"],
+    "t_config_field": ["*"]
 }
 
 ###查看具体的命名规则的配置详情
-GET {{endpoint}}/dev/connection/snapshot/rulers/java
+GET {{endpoint}}/dev/connection/snapshot/rulers/akali
+
 
 ###表出所有命名规则文件名称
 GET {{endpoint}}/dev/connection/snapshot/rulers
 
 ###数据库非全量下载
-GET {{endpoint}}/dev/connection/snapshot?ruler=test&rule=defined&sign=1
+GET {{endpoint}}/dev/connection/snapshot?ruler=test&rule=full&sign=1
