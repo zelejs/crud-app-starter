@@ -20,17 +20,7 @@ spring:
 ---
 spring:
   profiles: uat
-  datasource:
-    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/uat?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
-#    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/uat?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
-    username: root
-    password: zb2014@888
-    # driver-class-name: com.mysql.cj.jdbc.Driver
-    filters: log4j,wall,mergeStat
-    sql-script-encoding: UTF-8
-    schema: classpath*:sql/**/*-schema.sql
-    data: classpath*:sql/**/*-data.sql
-    initialize: false
+
 
 logging:
   level: debug
@@ -39,20 +29,7 @@ logging:
 ---
 spring:
   profiles: dev
-  datasource:
-    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/nft_prod?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
-      #    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/uat?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
-    username: root
-    password: zb2014@888
-#    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
-    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: sa
-#    password:
-    filters: log4j,wall,mergeStat
-    sql-script-encoding: UTF-8
-    schema: classpath*:sql/*-schema.sql
-    data: classpath*:sql/*-data.sql
-    initialize: true
+
   h2:
     console:
       enabled: true

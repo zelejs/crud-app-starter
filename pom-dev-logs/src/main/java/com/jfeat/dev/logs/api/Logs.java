@@ -4,8 +4,6 @@ package com.jfeat.dev.logs.api;
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.dev.logs.services.domain.dao.QueryTablesDao;
-import com.jfeat.dev.logs.services.domain.service.TableServer;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,7 @@ import javax.sql.DataSource;
  */
 import java.io.*;
 import java.lang.String;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,21 +34,12 @@ import java.util.Map;
 @Api("dev-logs")
 @RequestMapping("/dev/logs")
 public class Logs {
-    @Autowired
-    DataSource dataSource;
-
-    @Resource
-    QueryTablesDao queryTablesDao;
-
-    @Resource
-    TableServer tableServer;
     private List<String> getLogFiles() throws IOException {
-        List<String> list = null;
-        String logPath1 = new File(".").getCanonicalPath() + "/log";
-        File fileDir = new File(logPath1);
+        List<String> list =new ArrayList<>() ;
+        File fileDir = new File("logs");
         if (!fileDir.exists()) {
-            String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "\\log";
-            fileDir = new File(logPath2);
+            String logPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "\\logs";
+            fileDir = new File(logPath);
         }
         File[] files = fileDir.listFiles();
         for (File file : files) {
@@ -60,8 +50,7 @@ public class Logs {
     }
 
     private Map getLogContent(String logFiles) throws IOException {
-        String logPath1 = new File(".").getCanonicalPath() + "/logs/" + logFiles;
-        File file = new File(logPath1);
+        File file = new File("logs/"+logFiles);
         if (!file.exists()) {
             String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + logFiles;
             file = new File(logPath2);
@@ -81,31 +70,28 @@ public class Logs {
         return frontMap;
     }
     @GetMapping()
-    private Tip getLogContext(@RequestParam(name = "pattern") String pattern,
+    private Tip getLogContext(@RequestParam(name = "pattern",required = false) String pattern,
                               @RequestParam(name = "filter", defaultValue = " ") String filter,
                               @RequestParam(name = "time", defaultValue = " ") String time,
                               @RequestParam(name = "logNumber", defaultValue = "0") int logNumber,
                               HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
-        JSONObject jsonObject =new JSONObject();
         if(pattern ==null){
-            int i=0;
-            for(String str : this.getLogFiles()){
-                jsonObject.put(i+" ",str);
-            }
-            return SuccessTip.create(jsonObject);
+            return SuccessTip.create(this.getLogFiles());
         }
+
         Map<Integer,String> map = this.getLogContent(pattern);
         boolean flag = false;
         int flagNum=0;
-        StringBuilder logKeywordTextArea=null;
-        for(Map.Entry entry:map.entrySet()){
-            if(!map.values().contains(filter))continue;
+        StringBuilder logKeywordTextArea=new StringBuilder();
+        for(int key:map.keySet()){
+            String string = map.get(key);
+            if(!string.contains(filter))continue;
             if (flag) {
                 flagNum++;
                 //System.out.println("stringMap--后7段--" + line);
                 //显示在页面
-                if (logNumber != 0) logKeywordTextArea.append(map.values() + "\n");
+                if (logNumber != 0) logKeywordTextArea.append( string+ "\n");
                 if (flagNum >= logNumber) {
                     //logKeywordTextArea.append("==========下一个搜索结果============" + "\n\n");
                     flag = false;
@@ -113,21 +99,20 @@ public class Logs {
             }
             //开始进行关键字检索
             //TODO 只要文件中包含有该关键字就输出
-            if (map.values().contains(time)) {
-                if ((int)entry.getKey() <= logNumber) {
-                    for (int i = 1; i < (int)entry.getKey(); i++) {
-                        logKeywordTextArea.append(map.get((int)entry.getKey() - i) + "\n");
+            if (string.contains(time)) {
+                if (key <= logNumber) {
+                    for (int i = 1; i < key; i++) {
+                        logKeywordTextArea.append(map.get(key - i) + "\n");
                     }
                 } else {
                     for (int i = 1; i < logNumber; i++) {
-                        logKeywordTextArea.append(map.get((int)entry.getKey() - i) + "\n");
+                        logKeywordTextArea.append(map.get(key - i) + "\n");
                     }
                 }
                 flag = true;
                 time = "/t//////";
             }
-            jsonObject.put("",logKeywordTextArea);
         }
-        return SuccessTip.create(jsonObject);
+        return SuccessTip.create(logKeywordTextArea);
     }
 }
