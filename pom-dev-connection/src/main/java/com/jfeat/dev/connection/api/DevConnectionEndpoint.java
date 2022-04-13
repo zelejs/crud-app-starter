@@ -1,7 +1,6 @@
 package com.jfeat.dev.connection.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.ErrorTip;
@@ -9,19 +8,17 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
-import com.jfeat.dev.connection.services.domain.model.Ruler;
-import com.jfeat.dev.connection.services.domain.model.RulerRequest;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.Text;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +32,8 @@ import javax.sql.DataSource;
  * @date 2020-08-05
  */
 import java.io.*;
-import java.net.BindException;
-import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.net.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
 import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
@@ -184,6 +176,58 @@ public class DevConnectionEndpoint {
         }
     }
 
+    @GetMapping("/sqls")
+    @ApiOperation(value = "获取便捷sql查询语句", response = SqlRequest.class)
+    public void queryAllConvenientSql(@RequestParam(name = "pattern", required = false) String pattern,
+                              @RequestParam(name = "query", required = false) String query,
+                              HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+
+        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+ "sqls.json";
+        File file = new File(path);
+        String text= FileUtils.readFileToString(file,"UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(text);
+        Iterator it = jsonObject.keySet().iterator();
+        boolean flag = true;
+        if(query != null){
+            while (it.hasNext()) {
+                Object name = it.next();
+                if(name.equals(query)) {
+                    flag=false;
+                    Object value = jsonObject.get(name);
+                    var str = tableServer.show(value.toString());
+                    if(str == null){
+                        throw new BusinessException(BusinessCode.BadRequest,"value值查询错误，请检查查询语句");
+                    }
+                    for(String st:str) {
+                        writer.println(st);
+                    }
+                }
+
+            }
+            if(flag) {
+                throw new BusinessException(BusinessCode.BadRequest,"没有找到此query名");
+            }
+        }else {
+            if (pattern != null) {
+                while (it.hasNext()) {
+                    Object name = it.next();
+                    if (pattern.equals(name)) {
+                        writer.println(jsonObject.get(name));
+                    }
+                }
+            } else {
+                while (it.hasNext()) {
+                    Object name = it.next();
+                    Object value = jsonObject.get(name);
+                    writer.println(name + "：" + value);
+                }
+            }
+        }
+        writer.flush();
+    }
+
     @GetMapping("/print")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public void queryAllTable(@RequestParam(name = "filter", required = false) String filter,
@@ -278,99 +322,89 @@ public class DevConnectionEndpoint {
                     @RequestParam(name = "rule", required = false) String rule,
                       @RequestParam(name = "ruler", required = false) String ruler,
                     HttpServletResponse response) throws IOException {
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
 //        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/", "");
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
         //判断是否有想要获取的ruler文件
         boolean flag = false;
         for (File file : files) {
-            String a =file.getName();
+            String a = file.getName();
             if (file.isDirectory()) continue;
-            if (a.equals(ruler+".ruler")) {
+            if (a.equals(ruler + ".ruler")) {
                 flag = true;
             }
         }
         //有就调用规则，没有就返回无
-        if(flag) {
+        if (flag) {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = str + ".rulers/" + ruler+".ruler";
+            String fileName = str + ".rulers/" + ruler + ".ruler";
             File rulerFile = new File(fileName);
-            InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
-            BufferedReader bufferedReader = new BufferedReader(streamReader);
-
-            while ((content = bufferedReader.readLine()) != null)
-                builder.append(content);
-
-            String value = builder.toString();
-
-            //拆分识别内容
-            var rulerArray = value.split("],");
+            String text = FileUtils.readFileToString(rulerFile, "UTF-8");
+            JSONObject jsonObject = JSONObject.parseObject(text);
+            Iterator it = jsonObject.keySet().iterator();
             List<String> file = new ArrayList<String>();
             List<String> sqlList = new ArrayList<>();
             List<String> nameList = new ArrayList<>();
-            List<String> limitList = new ArrayList<>();
-//            if(rule.equals("defined")) {
-                for (int i = 0; i < rulerArray.length; i++) {
-                    var tableArray = rulerArray[i].replace("\"", "")
-                            .replace("[", "").replace("]", "").replace("/r", "").replace("/n", "").trim()
-                            .split(":");
-                    nameList.add(tableArray[0]);
-                    if (tableArray.length == 1) {
-                        limitList.add(null);
-                    } else {
-                        limitList.add(tableArray[1]);
-                    }
-                }
+            while (it.hasNext()) {
+                Object name = it.next();
+                Object value = jsonObject.get(name);
+                nameList.add(name.toString());
                 response.setContentType("application/octet-stream");
                 response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
-                for (int j = 0; j < nameList.size(); j++) {
-                    String createSql = "show create table " + nameList.get(j);
-                    sqlList.add(createSql);
-                    if (limitList.get(j) == null) {
-                        continue;
-                    } else {
-                        if (limitList.get(j).contains(",")) {
-                            if (limitList.get(j).contains("-")) {
-                                var table1 = limitList.get(j).split(",");
-                                for (int k = 0; k < table1.length; k++) {
-                                    var table2 = table1[k].split("-");
-                                    var limit = Integer.parseInt(table2[1].trim());
-                                    String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + (Integer.parseInt(table2[0])-1) + "," + limit + ";";
-                                    sqlList.add(insertSql);
-                                }
-                            } else {
-                                var table1 = limitList.get(j).split(",");
-                                for (int k = 0; k < table1.length; k++) {
-                                    String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + table1[k] + ",1;";
-                                    sqlList.add(insertSql);
-                                }
-                            }
-                        } else if(limitList.get(j).contains("-")){
-                            var table1 = limitList.get(j).split(",");
+//                for (int j = 0; j < nameList.size(); j++) {
+                String createSql = "show create table " + name;
+                sqlList.add(createSql);
+                String strValue = value.toString().replace("[", "").replace("]", "").replace("\"","");
+                if (value == null) {
+                    continue;
+                } else {
+                    if (strValue.contains(",")) {
+                        if (strValue.contains("-")) {
+                            var table1 = strValue.split(",");
                             for (int k = 0; k < table1.length; k++) {
                                 var table2 = table1[k].split("-");
                                 var limit = Integer.parseInt(table2[1].trim());
-                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + (Integer.parseInt(table2[0])-1) + "," + limit + ";";
+                                String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
                                 sqlList.add(insertSql);
                             }
-                        }else{
-                            if (limitList.get(j).contains("*")) {
-                                String insertSql = "SELECT * FROM " + nameList.get(j) + ";";
-                                sqlList.add(insertSql);
-                            } else {
-                                String insertSql = "SELECT * FROM " + nameList.get(j) + " limit " + limitList.get(j) + ",1;";
+                        } else {
+                            var table1 = strValue.split(",");
+                            for (int k = 0; k < table1.length; k++) {
+                                String insertSql = "SELECT * FROM " + name + " limit " + table1[k] + ",1;";
                                 sqlList.add(insertSql);
                             }
                         }
+                    } else if (strValue.contains("-")) {
+                        var table1 = strValue.split(",");
+                        for (int k = 0; k < table1.length; k++) {
+                            var table2 = table1[k].split("-");
+                            var limit = Integer.parseInt(table2[1].trim());
+                            String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                            sqlList.add(insertSql);
+                        }
+                    } else {
+                        if (strValue.contains("*")) {
+                            String insertSql = "SELECT * FROM " + name + ";";
+                            sqlList.add(insertSql);
+                        } else {
+                            String insertSql = "SELECT * FROM " + name + " limit " + strValue + ",1;";
+                            sqlList.add(insertSql);
+                        }
                     }
                 }
+            }
+
+
                 if (rule.equals("full")) {
                     var list = queryTablesDao.queryAllTables();
                     for (String tableName : list) {
@@ -397,35 +431,14 @@ public class DevConnectionEndpoint {
                         }
                     }
                 }
-//            }
-//            }else if(rule.equals("full")) {
-//                    for (int i = 0; i < rulerArray.length; i++) {
-//                        var tableArray = rulerArray[i].replace("\"", "")
-//                                .replace("[", "").replace("]", "").replace("/r", "").replace("/n", "").trim()
-//                                .split(":");
-//                        nameList.add(tableArray[0]);
-//                        if (tableArray.length==1){
-//                            limitList.add(null);
-//                        }else{
-//                            limitList.add(tableArray[1]);
-//                        }
-//                    }
-//                    for (String tableName : nameList) {
-//                        String sql = "SELECT * FROM " + tableName;
-//                        var test = tableServer.handleResult2(sql);
-//                        for (String st : test) {
-//                            file.add(st + "\n");
-//                        }
-//                    }
-//
-//            }
             var data = tableServer.changToByte(file);
-            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + "a" + ".sql");
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + rulerFile.getName() + ".sql");
             IOUtils.write(data, response.getOutputStream());
             return null;
         }else{
             return null;
         }
+
     }
 
     @GetMapping("/snapshot/rulers")
@@ -522,19 +535,18 @@ public class DevConnectionEndpoint {
             checkFile.createNewFile();// 创建目标文件
 
             FileWriter writer  = new FileWriter(checkFile, true);
-            String date = jsonObject.toString().replace("{","").replace("}","").replace("],","],\n");
+            String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
             writer.append(date);
             writer.flush();
         }else{
             FileWriter writer = null;
             File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
-            checkFile.canWrite();
+            String text = FileUtils.readFileToString(checkFile, "UTF-8");
 
-            writer = new FileWriter(checkFile, true);
-            String date = jsonObject.toString().replace("{","").replace("}","").replace("],","],\n");
-            writer.append(",\n"+date);
+            writer = new FileWriter(checkFile, false);
+            String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
+            writer.append(date);
             writer.flush();
-
 
         }
         return SuccessTip.create();

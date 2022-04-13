@@ -55,4 +55,9 @@ GET {{endpoint}}/dev/connection/snapshot/rulers/akali
 GET {{endpoint}}/dev/connection/snapshot/rulers
 
 ###数据库非全量下载
-GET {{endpoint}}/dev/connection/snapshot?ruler=test&rule=full&sign=1
+GET {{endpoint}}/dev/connection/snapshot?ruler=basic&rule=defined&sign=63fa65e3b2dac9bc86dcf184b6be4635
+
+
+
+###
+GET {{endpoint}}/dev/connection/sqls?query=view

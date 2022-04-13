@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.xml.stream.events.Characters;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,6 +31,20 @@ public class TableServer {
 //        log.fileDir
         File[] files = fileDir.listFiles();
         return files;
+    }
+
+    public String getTextInfo(String path) throws IOException{
+        String content = "";
+        StringBuilder builder = new StringBuilder();
+        File rulerFile = new File(path);
+        InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
+        BufferedReader bufferedReader = new BufferedReader(streamReader);
+
+        while ((content = bufferedReader.readLine()) != null)
+            builder.append(content);
+
+        String value = builder.toString();
+        return value;
     }
 
     public byte[] changToByte(List<String> list){
@@ -169,8 +180,10 @@ public class TableServer {
                                 break;
                             case Types.LONGVARCHAR:
                                 var st = rs.getString(i);
-                                st = st.replaceAll("\"","\\\\\"");
-                                st = st.replaceAll("\'","\\\\\'");
+                                if(st!=null) {
+                                    st = st.replaceAll("\"", "\\\\\"");
+                                    st = st.replaceAll("\'", "\\\\\'");
+                                }
                                 str.append("'" + st + "'");
                                 break;
                             case Types.TIME:
