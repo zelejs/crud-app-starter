@@ -292,6 +292,8 @@ public class Logs {
             }
 
         }
+        if(isGzip)unGzipFile(file.getPath());
+        if(isZip)unZip(file,file.getParent());
     }
 
     @GetMapping()
