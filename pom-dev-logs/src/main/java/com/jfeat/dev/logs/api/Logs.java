@@ -297,14 +297,17 @@ public class Logs {
     }
 
     @GetMapping()
-    private Tip getLogContext(@RequestParam(name = "pattern",required = false) String pattern,
+    private void getLogContext(@RequestParam(name = "pattern",required = false) String pattern,
                               @RequestParam(name = "filter", defaultValue = " ") String filter,
                               @RequestParam(name = "time", defaultValue = " ") String time,
                               @RequestParam(name = "logNumber", defaultValue = "0") int logNumber,
                               HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(pattern ==null){
-            return SuccessTip.create(this.getLogFiles());
+            writer.println(this.getLogFiles());
+            writer.flush();
+            return;
         }
 
         Map<Integer,String> map = this.getLogContent(pattern);
@@ -340,6 +343,12 @@ public class Logs {
                 time = "/t//////";
             }
         }
-        return SuccessTip.create(logKeywordTextArea);
+        writer.println(logKeywordTextArea);
+        writer.flush();
+    }
+    @GetMapping("/getFileList")
+    private Tip getLogFileList() throws IOException {
+
+        return SuccessTip.create(this.getLogFiles());
     }
 }

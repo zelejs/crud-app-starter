@@ -6,6 +6,9 @@
 ### 显示日志上下文,pattern=<fileName>，filter=<>，time=<date>，均为String
 GET {{endpoint}}/dev/logs?pattern=access.log&filter=WARN&time=2022-03-21&logNumber=10
 
+### 返回json型日志文件列表
+GET {{endpoint}}/dev/logs/getFileList
+
 
 
 
