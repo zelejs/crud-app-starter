@@ -1,3 +1,4 @@
+{
 "nft_companion_wisp":["*"],
 "nft_companion_wisp_order":[],
 "nft_complain_record":[],
@@ -46,4 +47,5 @@
 "t_tenant":[],
 "t_term_config":["*"],
 "meta_status_machine":["*"],
-"t_conversion_history":[],
+"t_conversion_history":[]
+}

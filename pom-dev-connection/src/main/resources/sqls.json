@@ -1,0 +1,4 @@
+{
+    "SQL_Show_processlist":"Show processlist",
+    "view": "Show variables like '%buffer_pool%'"
+}
