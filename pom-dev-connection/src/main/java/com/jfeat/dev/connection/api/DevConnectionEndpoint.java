@@ -368,8 +368,26 @@ public class DevConnectionEndpoint {
                 if (value == null) {
                     continue;
                 } else {
-                    if (strValue.contains(",")) {
-                        if (strValue.contains("-")) {
+                    if(strValue.contains("select") || strValue.contains("SELECT")){
+                        sqlList.add(strValue);
+                    }else {
+                        if (strValue.contains(",")) {
+                            if (strValue.contains("-")) {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    var table2 = table1[k].split("-");
+                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                    sqlList.add(insertSql);
+                                }
+                            } else {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    String insertSql = "SELECT * FROM " + name + " limit " + table1[k] + ",1;";
+                                    sqlList.add(insertSql);
+                                }
+                            }
+                        } else if (strValue.contains("-")) {
                             var table1 = strValue.split(",");
                             for (int k = 0; k < table1.length; k++) {
                                 var table2 = table1[k].split("-");
@@ -378,27 +396,13 @@ public class DevConnectionEndpoint {
                                 sqlList.add(insertSql);
                             }
                         } else {
-                            var table1 = strValue.split(",");
-                            for (int k = 0; k < table1.length; k++) {
-                                String insertSql = "SELECT * FROM " + name + " limit " + table1[k] + ",1;";
+                            if (strValue.contains("*")) {
+                                String insertSql = "SELECT * FROM " + name + ";";
+                                sqlList.add(insertSql);
+                            } else {
+                                String insertSql = "SELECT * FROM " + name + " limit " + strValue + ",1;";
                                 sqlList.add(insertSql);
                             }
-                        }
-                    } else if (strValue.contains("-")) {
-                        var table1 = strValue.split(",");
-                        for (int k = 0; k < table1.length; k++) {
-                            var table2 = table1[k].split("-");
-                            var limit = Integer.parseInt(table2[1].trim());
-                            String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
-                            sqlList.add(insertSql);
-                        }
-                    } else {
-                        if (strValue.contains("*")) {
-                            String insertSql = "SELECT * FROM " + name + ";";
-                            sqlList.add(insertSql);
-                        } else {
-                            String insertSql = "SELECT * FROM " + name + " limit " + strValue + ",1;";
-                            sqlList.add(insertSql);
                         }
                     }
                 }
