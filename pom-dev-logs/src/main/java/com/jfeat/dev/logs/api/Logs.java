@@ -40,12 +40,13 @@ public class Logs {
             fileDir = new File(logPath);
         }
         File[] files = fileDir.listFiles();
-        for (File file : files) {
-            decompression(file);
+        //for (File file : files) {
+        //    decompression(file);
+        //
+        //}
 
-        }
         for (File file : files) {
-            if(isArchiveFile(file))continue;
+            //if(isArchiveFile(file))continue;
             if(file.isDirectory())continue;
             list.add(file.getName());
         }
@@ -184,7 +185,12 @@ public class Logs {
 
     }
 
-
+    /**
+     * 获取日志内容
+     * @param logFiles 日志文件名
+     * @return
+     * @throws IOException
+     */
     private Map getLogContent(String logFiles) throws IOException {
         File file = new File("logs/"+logFiles);
         if (!file.exists()) {
@@ -296,57 +302,88 @@ public class Logs {
         if(isZip)unZip(file,file.getParent());
     }
 
+    /**
+     * 打印日志文件列表
+     * @param pattern
+     * @param filter
+     * @param N
+     * @param response
+     * @throws IOException
+     */
     @GetMapping()
-    private void getLogContext(@RequestParam(name = "pattern",required = false) String pattern,
-                              @RequestParam(name = "filter", defaultValue = " ") String filter,
-                              @RequestParam(name = "time", defaultValue = " ") String time,
-                              @RequestParam(name = "logNumber", defaultValue = "0") int logNumber,
+    private void getLogContext(@RequestParam(name = "pattern",required = false) String pattern, //日志文件名
+                              @RequestParam(name = "filter", defaultValue = " ") String filter, //拦截
+                              @RequestParam(name = "N", defaultValue = "0") int N, //输出的日志行数
                               HttpServletResponse response) throws IOException {
-        response.setContentType("text/plain;charset=utf-8");
+        response.setContentType("text/plain;charset=utf-8"); //设置响应的内容类型
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        if(pattern ==null){
-            writer.println(this.getLogFiles());
+        /*如果pattern == null 则直接打印日志文件列表*/
+        if(pattern ==null) {
+            for (String file : getLogFiles()){
+                writer.println(file);
+            }
             writer.flush();
             return;
         }
-
+        /*pattern不为空，则获取日志文件为pattern的内容*/
         Map<Integer,String> map = this.getLogContent(pattern);
         boolean flag = false;
         int flagNum=0;
         StringBuilder logKeywordTextArea=new StringBuilder();
+        /*map.keySet()返回由map的键组成的set集合*/
         for(int key:map.keySet()){
+            /*每次根据key取出一条日志*/
             String string = map.get(key);
+            /*如果不包含filter则跳过本次循环*/
             if(!string.contains(filter))continue;
             if (flag) {
                 flagNum++;
                 //System.out.println("stringMap--后7段--" + line);
                 //显示在页面
-                if (logNumber != 0) logKeywordTextArea.append( string+ "\n");
-                if (flagNum >= logNumber) {
+                if (N != 0) logKeywordTextArea.append( string+ "\n");
+                if (flagNum >= N) {
                     //logKeywordTextArea.append("==========下一个搜索结果============" + "\n\n");
                     flag = false;
                 }
             }
-            //开始进行关键字检索
-            //TODO 只要文件中包含有该关键字就输出
-            if (string.contains(time)) {
-                if (key <= logNumber) {
+            if (flagNum == 0){
+                if (key <= N) {
                     for (int i = 1; i < key; i++) {
                         logKeywordTextArea.append(map.get(key - i) + "\n");
                     }
                 } else {
-                    for (int i = 1; i < logNumber; i++) {
+                    for (int i = 1; i < N; i++) {
                         logKeywordTextArea.append(map.get(key - i) + "\n");
                     }
                 }
                 flag = true;
-                time = "/t//////";
             }
+            //开始进行关键字检索
+            //TODO 只要文件中包含有该关键字就输出
+                /*if (string.contains(time)) {
+                    if (key <= logNumber) {
+                        for (int i = 1; i < key; i++) {
+                            logKeywordTextArea.append(map.get(key - i) + "\n");
+                        }
+                    } else {
+                        for (int i = 1; i < logNumber; i++) {
+                            logKeywordTextArea.append(map.get(key - i) + "\n");
+                        }
+                    }
+                    flag = true;
+                    time = "/t//////";
+                }*/
         }
         writer.println(logKeywordTextArea);
         writer.flush();
     }
-    @GetMapping("/getFileList")
+
+    /**
+     *
+     * @return json格式的日志列表
+     * @throws IOException
+     */
+    @GetMapping("/json")
     private Tip getLogFileList() throws IOException {
 
         return SuccessTip.create(this.getLogFiles());
