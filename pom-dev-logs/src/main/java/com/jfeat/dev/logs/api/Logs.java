@@ -40,11 +40,10 @@ public class Logs {
             fileDir = new File(logPath);
         }
         File[] files = fileDir.listFiles();
-        //for (File file : files) {
-        //    decompression(file);
-        //
-        //}
-
+        /*如果没有文件则返回空列表*/
+        if (files == null){
+            return new ArrayList<String>();
+        }
         for (File file : files) {
             //if(isArchiveFile(file))continue;
             if(file.isDirectory())continue;
@@ -197,6 +196,10 @@ public class Logs {
             String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + logFiles;
             file = new File(logPath2);
         }
+        /*判断该文件是否存在，不存在直接返回*/
+        if (!file.exists()){
+            return new HashMap<Integer,String>();
+        }
         Map<Integer, String> frontMap = new HashMap<>();
         //Map<Integer, String> afterMap = new HashMap<>();
 
@@ -318,7 +321,7 @@ public class Logs {
         response.setContentType("text/plain;charset=utf-8"); //设置响应的内容类型
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         /*如果pattern == null 则直接打印日志文件列表*/
-        if(pattern ==null) {
+        if(pattern == null) {
             for (String file : getLogFiles()){
                 writer.println(file);
             }
