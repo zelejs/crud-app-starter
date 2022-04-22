@@ -491,7 +491,7 @@ public class JarDeployEndpoint {
                     bw.close();
                 }
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                logger.error(e.getMessage());
             }
         });
 

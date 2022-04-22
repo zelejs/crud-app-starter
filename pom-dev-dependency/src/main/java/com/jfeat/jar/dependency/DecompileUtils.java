@@ -10,8 +10,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DecompileUtils {
+        private final static Logger logger = LoggerFactory.getLogger(DecompileUtils.class);
+
         public static List<String> decompileFiles(String file, Boolean forceClean) {
             var files = new ArrayList<String>();
             files.add(file);
@@ -26,7 +30,7 @@ public class DecompileUtils {
         final List<String> lines = new ArrayList<>();
         OutputSinkFactory.Sink println = line -> {
             lines.add(line.toString());
-            System.out.println(line);
+            logger.debug(line.toString());
         };
 
         OutputSinkFactory mySink = new OutputSinkFactory() {

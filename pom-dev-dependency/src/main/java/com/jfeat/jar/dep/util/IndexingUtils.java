@@ -63,7 +63,7 @@ public class IndexingUtils {
                     bw.close();
                 }
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         });
 

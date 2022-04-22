@@ -40,7 +40,6 @@ public class DependencyUtils {
      * @return boolean
      */
     public static boolean isLegal(String dependencyJarName) {
-        //System.out.println(dependencyJarName);
         return StringUtils.isNotBlank(dependencyJarName) && dependencyJarName.matches(DEPENDENCY_JAR_NAME_REGEX);
     }
 

@@ -2,7 +2,6 @@ package com.jfeat.jar.dependency;
 
 import org.codehaus.plexus.util.FileUtils;
 
-import javax.management.BadAttributeValueExpException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -13,6 +12,8 @@ import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 import java.util.zip.ZipOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.jfeat.jar.dependency.FileUtils.getRelativeFilePath;
 
@@ -32,6 +33,7 @@ public class JarUpdate {
 //                .replace(File.separator, "/");
 //    }
 
+    private final static Logger logger = LoggerFactory.getLogger(JarUpdate.class);
 
     /**
      * main()
@@ -59,7 +61,7 @@ public class JarUpdate {
 
         // Open the jar file.
         JarFile jar = new JarFile(jarFile);
-        System.out.println(jarFile.getName() + " opened.");
+        logger.debug(jarFile.getName() + " opened.");
 
         List<String> fileNames = new ArrayList<>();
 
@@ -127,8 +129,8 @@ public class JarUpdate {
 
                         // successful
                         fileNames.add(entryName);
+                        logger.debug(entry.getName() + " added.");
 
-                        System.out.println(entry.getName() + " added.");
                     } finally {
                         fis.close();
                     }
@@ -163,7 +165,7 @@ public class JarUpdate {
 
                 jarUpdated = true;
             } catch (Exception ex) {
-                System.out.println(ex);
+                ex.printStackTrace();
 
                 // Add a stub entry here, so that the jar will close without an
                 // exception.
@@ -174,7 +176,7 @@ public class JarUpdate {
             }
         } finally {
             jar.close();
-            System.out.println(jarFile.getName() + " closed.");
+            logger.debug(jarFile.getName() + " closed.");
 
             // If the jar was not updated, delete the temp jar file.
 
@@ -193,7 +195,7 @@ public class JarUpdate {
             jarFile.renameTo(new File(jarFile.getAbsolutePath().replace(".jar", ".zip.temp")));
             tempJarFile.renameTo(new File(originJarFile));
 
-            System.out.println(jarFile.getName() + " updated.");
+            logger.debug(jarFile.getName() + " updated.");
         }
 
         return fileNames;
