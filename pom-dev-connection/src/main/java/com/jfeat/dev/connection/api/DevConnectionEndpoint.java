@@ -544,30 +544,42 @@ public class DevConnectionEndpoint {
             }
             if(flag){
                 // 文件不存在
-//            FileWriter writer = null;
-                File checkFile = new File(str+".rulers/" + ruler_file_name);
+                FileWriter writer = null;
+                try {
+                    File checkFile = new File(str + ".rulers/" + ruler_file_name);
+                    checkFile.createNewFile();// 创建目标文件
 
-                checkFile.createNewFile();// 创建目标文件
-
-                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
-                FileWriter writer  = new FileWriter(checkFile);
-                String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
-                writer.append(date);
-                writer.flush();
+                    // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
+                    writer = new FileWriter(checkFile);
+                    String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                    writer.append(date);
+                    writer.flush();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally{
+                    writer.close();
+                }
             }else{
                 // 文件已存在
                 FileWriter writer = null;
-                File checkFile = new File(str+".rulers/" + ruler_file_name);
-                // 读取已存在的文件内容
-                /*String text = FileUtils.readFileToString(checkFile, "UTF-8");*/
+                try {
+                    File checkFile = new File(str + ".rulers/" + ruler_file_name);
+                    // 读取已存在的文件内容
+                    /*String text = FileUtils.readFileToString(checkFile, "UTF-8");*/
 
-                writer = new FileWriter(checkFile);
-                // 拼接文件原来的内容和新的内容 原内容+新内容
-                /*String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");*/
-                String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
-                writer.append(date);
-                writer.flush();
-
+                    writer = new FileWriter(checkFile);
+                    // 拼接文件原来的内容和新的内容 原内容+新内容
+                    /*String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");*/
+                    String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                    writer.append(date);
+                    writer.flush();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    if (writer != null){
+                        writer.close();
+                    }
+                }
             }
         }else {
         // ruler_file_name 没有后缀名的情况
@@ -597,30 +609,41 @@ public class DevConnectionEndpoint {
         }
         if(flag){
             // 文件不存在
-//            FileWriter writer = null;
-            File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
+            FileWriter writer = null;
+            try {
+                File checkFile = new File(str + ".rulers/" + ruler_file_name + ".ruler");
 
-            checkFile.createNewFile();// 创建目标文件
+                checkFile.createNewFile();// 创建目标文件
 
-            // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
-            FileWriter writer  = new FileWriter(checkFile);
-            String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
-            writer.append(date);
-            writer.flush();
+                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
+                writer = new FileWriter(checkFile);
+                String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                writer.append(date);
+                writer.flush();
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                writer.close();
+            }
         }else{
             // 文件已存在
             FileWriter writer = null;
-            File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
-            // 获取原文件内容
-            //String text = FileUtils.readFileToString(checkFile, "UTF-8");
+            try {
+                File checkFile = new File(str + ".rulers/" + ruler_file_name + ".ruler");
+                // 获取原文件内容
+                //String text = FileUtils.readFileToString(checkFile, "UTF-8");
 
-            writer = new FileWriter(checkFile);
-            // 拼接原文件内容和新的内容，原内容+新内容
-            //String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
-            String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
-            writer.append(date);
-            writer.flush();
-
+                writer = new FileWriter(checkFile);
+                // 拼接原文件内容和新的内容，原内容+新内容
+                //String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
+                String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                writer.append(date);
+                writer.flush();
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                writer.close();
+            }
         }
     }
         return SuccessTip.create();
