@@ -11,15 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-
-/**
- * 依赖处理接口
- *
- * @author zxchengb
- * @date 2020-08-05
- */
 import java.io.*;
 import java.lang.String;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.zip.*;
 
@@ -32,8 +26,14 @@ import java.util.zip.*;
 @Api("dev-logs")
 @RequestMapping("/dev/logs")
 public class Logs {
+
+    /**
+     * 获取日志文件列表
+     * @return list:日志文件列表
+     * @throws IOException
+     */
     private List<String> getLogFiles() throws IOException {
-        List<String> list =new ArrayList<>() ;
+        List<String> list = new ArrayList<>();
         File fileDir = new File("logs");
         if (!fileDir.exists()) {
             String logPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "\\logs";
@@ -41,170 +41,67 @@ public class Logs {
         }
         File[] files = fileDir.listFiles();
         /*如果没有文件则返回空列表*/
-        if (files == null){
+        if (files == null) {
             return new ArrayList<String>();
         }
         for (File file : files) {
             //if(isArchiveFile(file))continue;
-            if(file.isDirectory())continue;
+            if (file.isDirectory()) continue;
             list.add(file.getName());
         }
         return list;
     }
-    public static void unGzipFile(String sourcedir) {
-        String ouputfile = "";
-        try {
-            //建立gzip压缩文件输入流
-            FileInputStream fin = new FileInputStream(sourcedir);
-            //建立gzip解压工作流
-            GZIPInputStream gzin = new GZIPInputStream(fin);
-            //建立解压文件输出流
-            ouputfile = sourcedir.substring(0,sourcedir.lastIndexOf('.'));
-//            ouputfile = ouputfile.substring(0,ouputfile.lastIndexOf('.'));
-            FileOutputStream fout = new FileOutputStream(ouputfile);
-            int num;
-            byte[] buf=new byte[1024];
-
-            while ((num = gzin.read(buf,0,buf.length)) != -1)
-            {
-                fout.write(buf,0,num);
-            }
-            gzin.close();
-            fout.close();
-            fin.close();
-        } catch (Exception ex){
-            System.err.println(ex.toString());
-        }
-        return;
-    }
 
     /**
-
-     * zip解压
-
-     * @param srcFile        zip源文件
-
-     * @param destDirPath     解压后的目标文件夹
-
-     * @throws RuntimeException 解压失败会抛出运行时异常
-
+     * 读取gz压缩文件
+     * @param zipFileName 压缩文件的文件名
+     * @return 文件内容数据数组
+     * @throws FileNotFoundException
      */
+    private Map readGzipFile(String zipFileName){
 
-    public static void unZip(File srcFile, String destDirPath) throws RuntimeException {
-
-
-        // 开始解压
-
-        ZipFile zipFile = null;
-
-        try {
-
-                zipFile = new ZipFile(srcFile);
-
-            Enumeration<?> entries = zipFile.entries();
-
-            while (entries.hasMoreElements()) {
-
-                ZipEntry entry = (ZipEntry) entries.nextElement();
-
-
-                // 如果是文件夹，就创建个文件夹
-
-                if (entry.isDirectory()) {
-
-                    String dirPath = destDirPath + "/" + entry.getName();
-
-                    File dir = new File(dirPath);
-
-                    dir.mkdirs();
-
-                } else {
-
-                    // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
-
-                    File targetFile = new File(destDirPath + "/" + entry.getName());
-
-                    // 保证这个文件的父文件夹必须要存在
-
-                    if(!targetFile.getParentFile().exists()){
-
-                        targetFile.getParentFile().mkdirs();
-
-                    }
-
-                    targetFile.createNewFile();
-
-                    // 将压缩文件内容写入到这个文件中
-
-                    InputStream is = zipFile.getInputStream(entry);
-
-                    FileOutputStream fos = new FileOutputStream(targetFile);
-
-                    int len;
-
-                    byte[] buf = new byte[1024];
-
-                    while ((len = is.read(buf)) != -1) {
-
-                        fos.write(buf, 0, len);
-
-                    }
-
-                    // 关流顺序，先打开的后关闭
-
-                    fos.close();
-
-                    is.close();
-
-                }
-
-            }
-
-        } catch (Exception e) {
-
-            throw new RuntimeException("unzip error from ZipUtils", e);
-
-        } finally {
-
-            if(zipFile != null){
-
-                try {
-
-                    zipFile.close();
-
-                } catch (IOException e) {
-
-                    e.printStackTrace();
-
-                }
-
-            }
-
+        String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + zipFileName;
+        // 创建文件
+        File gzipFile = new File(logPath2);
+        // 创建返回用的map
+        Map<Integer,String> gzipFileMap = new HashMap<>();
+        // 判断文件是否存在
+        if (!gzipFile.exists()){
+            return new HashMap<Integer,String>();
         }
-
+        // 使用gzipInputStream解压文件
+        try {
+            InputStream in = new GZIPInputStream(new FileInputStream(logPath2));
+            Scanner sc = new Scanner(in);
+            int lineNum = 0;
+            while (sc.hasNextLine()){
+                lineNum++;
+                gzipFileMap.put(lineNum,sc.nextLine());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return gzipFileMap;
     }
 
     /**
-     * 获取日志内容
-     * @param logFiles 日志文件名
-     * @return
+     * 获取非压缩文件的日志内容
+     * @param logFiles:日志文件名
+     * @return map:日志内容集合
      * @throws IOException
      */
     private Map getLogContent(String logFiles) throws IOException {
-        File file = new File("logs/"+logFiles);
+        File file = new File("logs/" + logFiles);
         if (!file.exists()) {
             String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + logFiles;
             file = new File(logPath2);
         }
-        /*判断该文件是否存在，不存在直接返回*/
-        if (!file.exists()){
-            return new HashMap<Integer,String>();
+        // 判断该文件是否存在，不存在直接返回
+        if (!file.exists()) {
+            return new HashMap<Integer, String>();
         }
-        Map<Integer, String> frontMap = new HashMap<>();
-        //Map<Integer, String> afterMap = new HashMap<>();
 
-        //定义一个标志位，往后的3行数据是我们想要的
-        //boolean flag = false;
+        Map<Integer, String> frontMap = new HashMap<>();
         int lineNum = 0;
         String line = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -215,180 +112,238 @@ public class Logs {
         return frontMap;
     }
 
-
-    private static byte[] ZIP_HEADER_1 = new byte[] { 80, 75, 3, 4 };
-
-    private static byte[] ZIP_HEADER_2 = new byte[] { 80, 75, 5, 6 };
-
-    private static byte[] ZIP_HEADER_3 = new byte[] { 31, -117, 8, 0 };
-
-    /**
-
-     * 判断文件是否为一个压缩文件
-
-     *
-
-     * @param file
-
-     * @return
-
-     */
-
-    private static boolean isArchiveFile(File file) {
-
-        boolean isArchive = false;
-
-        InputStream input = null;
-
-        try {
-            input = new FileInputStream(file);
-// 31 -117 8 0
-            byte[] buffer = new byte[4];
-
-            int length = input.read(buffer, 0, 4);
-
-            if (length == 4) {
-                isArchive = (Arrays.equals(ZIP_HEADER_1, buffer)) || (Arrays.equals(ZIP_HEADER_2, buffer))||(Arrays.equals(ZIP_HEADER_3, buffer));
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-
-                } catch (IOException e) {
-                }
-
-            }
-
-        }
-        return isArchive;
-
-    }
-
-    private static void decompression(File file) {
-
-        boolean isZip = false, isGzip = false;
-
-        InputStream input = null;
-
-        try {
-            input = new FileInputStream(file);
-// 31 -117 8 0
-            byte[] buffer = new byte[4];
-
-            int length = input.read(buffer, 0, 4);
-
-            if (length == 4) {
-                isZip = (Arrays.equals(ZIP_HEADER_1, buffer)) || (Arrays.equals(ZIP_HEADER_2, buffer));
-                isGzip = Arrays.equals(ZIP_HEADER_3, buffer);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-
-                } catch (IOException e) {
-                }
-
-            }
-
-        }
-        if(isGzip)unGzipFile(file.getPath());
-        if(isZip)unZip(file,file.getParent());
-    }
-
     /**
      * 打印日志文件列表
-     * @param pattern
-     * @param filter
-     * @param N
+     * @param pattern  日志文件名
+     * @param filter   指定字段
+     * @param n        上下文日志行数
      * @param response
      * @throws IOException
      */
     @GetMapping()
-    private void getLogContext(@RequestParam(name = "pattern",required = false) String pattern, //日志文件名
-                              @RequestParam(name = "filter", defaultValue = " ") String filter, //拦截
-                              @RequestParam(name = "N", defaultValue = "0") int N, //输出的日志行数
-                              HttpServletResponse response) throws IOException {
+    private void getLogContext(@RequestParam(name = "pattern", required = false) String pattern,
+                               @RequestParam(name = "filter", required = false) String filter,
+                               @RequestParam(name = "n", defaultValue = "6") int n,
+                               HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=utf-8"); //设置响应的内容类型
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-        /*如果pattern == null 则直接打印日志文件列表*/
-        if(pattern == null) {
-            for (String file : getLogFiles()){
+        StringBuilder logKeywordTextArea = new StringBuilder();
+
+        // 如果pattern == null 则直接打印日志文件列表
+        if (pattern == null) {
+            for (String file : getLogFiles()) {
                 writer.println(file);
+                writer.println("\n");
             }
             writer.flush();
             return;
         }
-        /*pattern不为空，则获取日志文件为pattern的内容*/
-        Map<Integer,String> map = this.getLogContent(pattern);
-        boolean flag = false;
-        int flagNum=0;
-        StringBuilder logKeywordTextArea=new StringBuilder();
-        /*map.keySet()返回由map的键组成的set集合*/
-        for(int key:map.keySet()){
-            /*每次根据key取出一条日志*/
-            String string = map.get(key);
-            /*如果不包含filter则跳过本次循环*/
-            if(!string.contains(filter))continue;
-            if (flag) {
-                flagNum++;
-                //System.out.println("stringMap--后7段--" + line);
-                //显示在页面
-                if (N != 0) logKeywordTextArea.append( string+ "\n");
-                if (flagNum >= N) {
-                    //logKeywordTextArea.append("==========下一个搜索结果============" + "\n\n");
-                    flag = false;
-                }
-            }
-            if (flagNum == 0){
-                if (key <= N) {
-                    for (int i = 1; i < key; i++) {
-                        logKeywordTextArea.append(map.get(key - i) + "\n");
+
+        // pattern != null 则获取文件内容
+        if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")) {
+            // 提取压缩文件内容
+            Map<Integer, String> gzipFileMap = readGzipFile(pattern);
+            if (filter == null) {
+                // 在filter参数为null的情况下将n设为100，输出文件最后的100行
+                n = 100;
+                // 循环取出文件最后的 n 条数据
+                // 在文件size不足 n 行时，将文件内容全部输出
+                if (gzipFileMap.size() <= n) {
+                    for (int key : gzipFileMap.keySet()) {
+                        String aLog = gzipFileMap.get(key);
+                        logKeywordTextArea.append(String.format("%06d", key) + " |  " + aLog + "\n");
+                        logKeywordTextArea.append("\n");
                     }
                 } else {
-                    for (int i = 1; i < N; i++) {
-                        logKeywordTextArea.append(map.get(key - i) + "\n");
+                    // 文件size大于 n 行，将文件的最后 n 行输出
+                    for (int i = 0; i <= n; i++) {
+                        String aLog = gzipFileMap.get(gzipFileMap.size() - (n - i));
+                        logKeywordTextArea.append(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog + "\n");
+                        logKeywordTextArea.append("\n");
                     }
                 }
-                flag = true;
-            }
-            //开始进行关键字检索
-            //TODO 只要文件中包含有该关键字就输出
-                /*if (string.contains(time)) {
-                    if (key <= logNumber) {
-                        for (int i = 1; i < key; i++) {
-                            logKeywordTextArea.append(map.get(key - i) + "\n");
-                        }
-                    } else {
-                        for (int i = 1; i < logNumber; i++) {
-                            logKeywordTextArea.append(map.get(key - i) + "\n");
-                        }
+            } else {
+                // 当filter不为空，则给出上下文,上下文 n 默认=6
+                for (int key : gzipFileMap.keySet()) {
+                    String aLog = gzipFileMap.get(key);
+                    if (!aLog.contains(filter)) continue;
+                    // 获取上文的n行
+                    for (int i = 1; i <= n; i++) {
+                        if (gzipFileMap.get(key - (n + 1 - i)) == null) continue;
+                        logKeywordTextArea.append(String.format("%06d", (key - (n - i))) + " |  " + gzipFileMap.get(key - (n + 1 - i)) + "\n");
+                        logKeywordTextArea.append("\n");
                     }
-                    flag = true;
-                    time = "/t//////";
-                }*/
+
+                    // 获取目标行
+                    logKeywordTextArea.append(String.format("%06d", key) + " |  " + gzipFileMap.get(key) + "\n");
+                    logKeywordTextArea.append("\n");
+
+                    //获取下文的n行
+                    for (int i = 1; i <= n; i++) {
+                        if (gzipFileMap.get(key + i) == null) continue;
+                        logKeywordTextArea.append(String.format("%06d", (key + i)) + " |  " + gzipFileMap.get(key + i) + "\n");
+                        logKeywordTextArea.append("\n");
+                    }
+                    break;
+                }
+            }
+        } else {
+            // 文件为非压缩文件
+            Map<Integer, String> map = this.getLogContent(pattern);
+            // filter == null，则默认 n=100 获取该日志最新的 n 条信息
+            if (filter == null) {
+                n = 100;
+                // 如果日志文件的条目数 <= n 则将文件内容全部输出
+                if (map.size() <= n){
+                    for (int key : map.keySet()){
+                        String aLog = map.get(key);
+                        logKeywordTextArea.append(String.format("%06d",key) + " |  " + aLog + "\n");
+                        logKeywordTextArea.append("\n");
+                    }
+                }else{
+                    // 如果日志的条目数 > n 则输出日志最新的 n 条信息
+                    for (int i = 0; i <= n ; i++){
+                        String aLog = map.get(map.size() - (n-i));
+                        logKeywordTextArea.append(String.format("%06d",map.size() - (n-i)) + " |  " + aLog + "\n");
+                        logKeywordTextArea.append("\n");
+                    }
+                }
+            } else {
+                // 当filter != null时，默认n=6，取出上下文
+                for (int key : map.keySet()) {
+                    String aLog = map.get(key);
+                    if (!aLog.contains(filter)) continue;
+                    // 取出上文的n行
+                    for (int i = 1; i <= n; i++) {
+                        logKeywordTextArea.append(String.format("%06d", (key - (n - i))) + " |  " + map.get(key - (n + 1 - i)) + "\n");
+                        logKeywordTextArea.append("\n");
+                    }
+
+                    // 目标行
+                    logKeywordTextArea.append(String.format("%06d", key) + " |  " + map.get(key) + "\n");
+                    logKeywordTextArea.append("\n");
+
+                    // 取出下文的n行
+                    for (int i = 1; i <= n; i++) {
+                        logKeywordTextArea.append(String.format("%06d", (key + i)) + " |  " + map.get(key + i) + "\n");
+                        logKeywordTextArea.append("\n");
+                    }
+                    break;
+                }
+            }
         }
+        // 推到浏览器显示
         writer.println(logKeywordTextArea);
+        // 刷新流，将缓冲区的数据全部推出
         writer.flush();
     }
 
     /**
-     *
      * @return json格式的日志列表
      * @throws IOException
      */
-    @GetMapping("/json")
-    private Tip getLogFileList() throws IOException {
+    @GetMapping(value = "/json",produces = {"application/json;charset=utf-8"})
+    private Tip getLogFileList(@RequestParam(name = "pattern", required = false) String pattern,
+                               @RequestParam(name = "filter",required = false) String filter,
+                               @RequestParam(name = "n" , defaultValue = "6") int n) throws IOException {
+        List<String> logList = new ArrayList<>();
 
-        return SuccessTip.create(this.getLogFiles());
+        // pattern为空
+        if (pattern == null) {
+            return SuccessTip.create(this.getLogFiles());
+        }
+
+        // 文件为压缩文件
+        if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")){
+            // 提取压缩文件内容
+            Map<Integer, String> gzipFileMap = readGzipFile(pattern);
+            // 在filter参数为null的情况下将n设为100，输出文件最后的100行
+            if (filter == null) {
+                // 在filter参数为null的情况下将n设为100，输出文件最后的100行
+                n = 100;
+                // 循环取出文件最后的 n 条数据
+                // 在文件size不足 n 行时，将文件内容全部输出
+                if (gzipFileMap.size() <= n) {
+                    for (int key : gzipFileMap.keySet()) {
+                        String aLog = gzipFileMap.get(key);
+                        logList.add(String.format("%06d", key) + " |  " + aLog);
+                    }
+                } else {
+                    // 文件size大于 n 行，将文件的最后 n 行输出
+                    for (int i = 0; i < n; i++) {
+                        String aLog = gzipFileMap.get(gzipFileMap.size() - (n - i));
+                        logList.add(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog);
+                    }
+                }
+                return SuccessTip.create(logList);
+            }else {
+                // 当filter不为空，则给出上下文,上下文 n 默认=10
+                for (int key : gzipFileMap.keySet()){
+                    String aLog = gzipFileMap.get(key);
+                    if (!aLog.contains(filter)) continue;
+                    // 获取上文的n行
+                    for (int i=0; i<n ;i++ ){
+                        if (gzipFileMap.get(key - (n - i)) == null) continue;
+                        logList.add(String.format("%06d",(key - (n - i))) + " |  " + gzipFileMap.get(key - (n - i)));
+                    }
+
+                    // 获取目标行
+                    logList.add(String.format("%06d",key) + " |  " + gzipFileMap.get(key));
+
+                    //获取下文的n行
+                    for (int i = 1; i<=n;i++){
+                        if (gzipFileMap.get(key + i) == null) continue;
+                        logList.add(String.format("%06d",(key + i )) + " |  " + gzipFileMap.get(key + i));
+                    }
+                    break;
+                }
+                return SuccessTip.create(logList);
+            }
+
+        }
+
+
+        //非压缩文件
+        Map<Integer, String> map = this.getLogContent(pattern);
+        // pattern不为空，但是filter为空，则默认n=100，输出最新的100行
+        if (filter == null) {
+            n = 100;
+            // 在文件size不足 n 行时，将文件内容全部输出
+            if (map.size() <= n){
+                for ( int key : map.keySet()){
+                    String aLog = map.get(key);
+                    logList.add(String.format("%06d",key) + " |  " + aLog);
+                }
+            }else{
+                // 文件size大于 n 行，将文件的最后 n 行输出
+                for (int i = 0 ; i <= n ;i++){
+                    String aLog = map.get(map.size() - (n - i));
+                    logList.add(String.format("%06d",map.size() - (n - i)) + " |  " + aLog);
+                }
+            }
+            return SuccessTip.create(logList);
+        }else {
+            // 当filter不为空，则输出filter上下文,输出指定行数
+            for (int key : map.keySet()){
+                String aLog = map.get(key);
+                if (!aLog.contains(filter)) continue;
+                // 获取上文的n行
+                for (int i=0; i<n ;i++ ){
+                    if (map.get(key - (n - i)) == null) continue;
+                    logList.add(String.format("%06d",(key - (n - i))) + " |  " + map.get(key - (n - i)));
+                }
+
+                // 获取目标行
+                logList.add(String.format("%06d",key) + " |  " + map.get(key));
+
+                //获取下文的n行
+                for (int i = 1; i <= n;i++){
+                    if (map.get(key + i) == null) continue;
+                    logList.add(String.format("%06d",(key + i)) + " |  " + map.get(key + i));
+                }
+                break;
+            }
+            return SuccessTip.create(logList);
+        }
     }
 }
