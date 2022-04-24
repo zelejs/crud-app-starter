@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -466,7 +467,7 @@ public class DevConnectionEndpoint {
     public Tip rulerInfo(@PathVariable String ruler_file_name,
             HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        //获取项目根路径
         String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
 
         //获取文件夹位置
@@ -502,14 +503,74 @@ public class DevConnectionEndpoint {
         return null;
     }
 
-    @PostMapping("/snapshot/rulers/{ruler_file_name}")
+    @PostMapping("/snapshot/rulers/{ruler_file_name:.*}")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name,
                          @RequestBody JSONObject jsonObject,
                          HttpServletRequest request,
                          HttpServletResponse response) throws IOException {
-//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+
+        //获取项目根路径
         String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
+
+        //判断文件名是否带有后缀
+        if (ruler_file_name.lastIndexOf(".") != -1){
+            // 判断后缀名是否为 “.ruler" 是的话进行报错
+            if (!ruler_file_name.substring(ruler_file_name.lastIndexOf(".")).equals(".ruler")){
+                return SuccessTip.create("暂不支持ruler以外的文件格式");
+            }
+            //获取文件夹位置
+            String path = str + ".rulers";
+            File fileDir = new File(path);
+            if(!fileDir.exists()){
+                fileDir.mkdirs();
+            }
+//        log.fileDir
+            // 获取文件列表
+            File[] files = fileDir.listFiles();
+
+//        File directory = new File("");//参数为空
+//        String courseFile = directory.getCanonicalPath() ;
+
+            boolean flag = true;
+            if(files!=null) {
+                for (File file : files) {
+                    if (file.isDirectory()) continue;
+                    // 判断文件是否存在
+                    if (file.getName().equals(ruler_file_name)) {
+                        flag = false;
+                    }
+                }
+            }
+            if(flag){
+                // 文件不存在
+//            FileWriter writer = null;
+                File checkFile = new File(str+".rulers/" + ruler_file_name);
+
+                checkFile.createNewFile();// 创建目标文件
+
+                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
+                FileWriter writer  = new FileWriter(checkFile);
+                String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
+                writer.append(date);
+                writer.flush();
+            }else{
+                // 文件已存在
+                FileWriter writer = null;
+                File checkFile = new File(str+".rulers/" + ruler_file_name);
+                // 读取已存在的文件内容
+                /*String text = FileUtils.readFileToString(checkFile, "UTF-8");*/
+
+                writer = new FileWriter(checkFile);
+                // 拼接文件原来的内容和新的内容 原内容+新内容
+                /*String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");*/
+                String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
+                writer.append(date);
+                writer.flush();
+
+            }
+        }else {
+        // ruler_file_name 没有后缀名的情况
 
         //获取文件夹位置
         String path = str+".rulers";
@@ -517,7 +578,8 @@ public class DevConnectionEndpoint {
         if(!fileDir.exists()){
             fileDir.mkdirs();
         }
-//        log.fileDir
+
+        // 获取目录中的文件列表
         File[] files = fileDir.listFiles();
 
 //        File directory = new File("");//参数为空
@@ -527,32 +589,40 @@ public class DevConnectionEndpoint {
         if(files!=null) {
             for (File file : files) {
                 if (file.isDirectory()) continue;
+                // 判断文件是否已经存在
                 if (file.getName().equals(ruler_file_name + ".ruler")) {
                     flag = false;
                 }
             }
         }
         if(flag){
+            // 文件不存在
 //            FileWriter writer = null;
             File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
 
             checkFile.createNewFile();// 创建目标文件
 
-            FileWriter writer  = new FileWriter(checkFile, true);
+            // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
+            FileWriter writer  = new FileWriter(checkFile);
             String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
             writer.append(date);
             writer.flush();
         }else{
+            // 文件已存在
             FileWriter writer = null;
             File checkFile = new File(str+".rulers/" + ruler_file_name + ".ruler");
-            String text = FileUtils.readFileToString(checkFile, "UTF-8");
+            // 获取原文件内容
+            //String text = FileUtils.readFileToString(checkFile, "UTF-8");
 
-            writer = new FileWriter(checkFile, false);
-            String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
+            writer = new FileWriter(checkFile);
+            // 拼接原文件内容和新的内容，原内容+新内容
+            //String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
+            String date = jsonObject.toString().replace("],","],\n").replace("{","{\n").replace("}","\n}");
             writer.append(date);
             writer.flush();
 
         }
+    }
         return SuccessTip.create();
     }
 

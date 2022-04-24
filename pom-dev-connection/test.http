@@ -38,7 +38,7 @@ DELETE {{endpoint}}/dev/connection/snapshot/rulers/ming
 
 
 ###新建更新规则/dev/connection/snapshot/rulers/{ruler_file_name}
-POST {{endpoint}}/dev/connection/snapshot/rulers/ming
+POST {{endpoint}}/dev/connection/snapshot/rulers/ming?sign=de89b878f624a4b4bb69dcd88dee443e
 
 {
     "t_end_user": [1],
