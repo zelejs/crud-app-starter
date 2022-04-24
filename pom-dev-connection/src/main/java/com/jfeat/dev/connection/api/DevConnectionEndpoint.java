@@ -316,6 +316,16 @@ public class DevConnectionEndpoint {
         return null;
     }
 
+    /**
+     * 按照规则下载数据库数据
+     * @param filter
+     * @param sign 签名
+     * @param rule full
+     * @param ruler 规则文件名，不带后缀
+     * @param response 响应
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/snapshot")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip rulers(@RequestParam(name = "filter", required = false) String filter,
@@ -330,6 +340,7 @@ public class DevConnectionEndpoint {
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
 //        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        // 获取当前类所在根路径
         String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/", "");
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
@@ -445,6 +456,153 @@ public class DevConnectionEndpoint {
         }
 
     }
+
+    /**
+     * Post请求方式下载数据
+     * @param sign 签名
+     * @param rule full
+     * @param ruler 规则文件名（不带后缀）
+     * @param response 响应
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/snapshot")
+    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
+    public Tip rulers(@RequestParam(name = "sign", required = true) String sign,
+                        @RequestParam(name = "rule", required = false) String rule,
+                        @RequestParam(name = "ruler", required = false) String ruler,
+                        HttpServletResponse response) throws IOException {
+        //测试用
+        System.out.println(sign);
+        System.out.println(rule);
+        System.out.println(ruler);
+
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        response.setContentType("application/octet-stream");
+        response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
+//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
+        // 获取当前类所在根路径
+        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/", "");
+        //获取文件夹位置
+        File[] files = tableServer.getAllFile();
+
+        //判断是否有想要获取的ruler文件
+        boolean flag = false;
+        for (File file : files) {
+            String a = file.getName();
+            if (file.isDirectory()) continue;
+            if (a.equals(ruler + ".ruler")) {
+                flag = true;
+            }
+        }
+        //有就调用规则，没有就返回无
+        if (flag) {
+            String content = "";
+            StringBuilder builder = new StringBuilder();
+            //把内容写入builder参数
+            String fileName = str + ".rulers/" + ruler + ".ruler";
+            File rulerFile = new File(fileName);
+            String text = FileUtils.readFileToString(rulerFile, "UTF-8");
+            JSONObject jsonObject = JSONObject.parseObject(text);
+            Iterator it = jsonObject.keySet().iterator();
+            List<String> file = new ArrayList<String>();
+            List<String> sqlList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
+            while (it.hasNext()) {
+                Object name = it.next();
+                Object value = jsonObject.get(name);
+                nameList.add(name.toString());
+                response.setContentType("application/octet-stream");
+                response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
+//                for (int j = 0; j < nameList.size(); j++) {
+                String createSql = "show create table " + name;
+                sqlList.add(createSql);
+                String strValue = value.toString().replace("[", "").replace("]", "").replace("\"","");
+                if (value == null) {
+                    continue;
+                } else {
+                    if(strValue.contains("select") || strValue.contains("SELECT")){
+                        sqlList.add(strValue);
+                    }else {
+                        if (strValue.contains(",")) {
+                            if (strValue.contains("-")) {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    var table2 = table1[k].split("-");
+                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                    sqlList.add(insertSql);
+                                }
+                            } else {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    String insertSql = "SELECT * FROM " + name + " limit " + table1[k] + ",1;";
+                                    sqlList.add(insertSql);
+                                }
+                            }
+                        } else if (strValue.contains("-")) {
+                            var table1 = strValue.split(",");
+                            for (int k = 0; k < table1.length; k++) {
+                                var table2 = table1[k].split("-");
+                                var limit = Integer.parseInt(table2[1].trim());
+                                String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                sqlList.add(insertSql);
+                            }
+                        } else {
+                            if (strValue.contains("*")) {
+                                String insertSql = "SELECT * FROM " + name + ";";
+                                sqlList.add(insertSql);
+                            } else {
+                                String insertSql = "SELECT * FROM " + name + " limit " + strValue + ",1;";
+                                sqlList.add(insertSql);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (rule.equals("full")) {
+                var list = queryTablesDao.queryAllTables();
+                for (String tableName : list) {
+                    int exflag = 0;
+                    for (String basicName : nameList) {
+                        if (tableName.equals(basicName)) {
+                            exflag = 1;
+                        }
+                    }
+                    if (exflag == 0) {
+                        String insertSql = "SELECT * FROM " + tableName;
+                        sqlList.add(insertSql);
+                    }
+                }
+            }
+            for (String sql : sqlList) {
+                if (sql.contains("show")){
+                    var list = tableServer.handleResult(sql);
+                    file.add(list.get(1)+";\n");
+                }else {
+                    var test = tableServer.handleResult2(sql);
+                    for (String st : test) {
+                        file.add(st + "\n");
+                    }
+                }
+            }
+            var data = tableServer.changToByte(file);
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + rulerFile.getName().substring(0, rulerFile.getName().lastIndexOf(".")) + ".sql");
+            IOUtils.write(data, response.getOutputStream());
+            return null;
+        }else{
+            return null;
+        }
+
+
+    }
+
 
     @GetMapping("/snapshot/rulers")
     @ApiOperation(value = "获取所有规则", response = SqlRequest.class)
