@@ -28,7 +28,7 @@ export default function Index (props) {
   const localLayoutJson = layout;
 
   // let api = '/dev/dependency/decompile/json';
-  let api = 'https://www.metagugu.net/dev/logs/json';
+  let api = '';
 
   // if (process.env.NODE_ENV === 'development') {
   //   api = `http://192.168.3.121:8080${api}`;
@@ -104,7 +104,7 @@ export default function Index (props) {
 
   //搜索按钮--获取返回的数据
   function anniu (body) {
-    let url = 'https://www.metagugu.net/dev/logs/json'
+    let url = ''
     promiseAjax(url, { ...body })
       .then(responseData => {
         {
@@ -130,6 +130,13 @@ export default function Index (props) {
     anniu(body)
 
   }
+  //select//获取value值
+  // function getvalue () {
+  //   var valuenum = document.getElementById('valueid').value;
+  //   alert(valuenum)
+  // }
+
+
 
   //
   //处理返回内容
@@ -201,6 +208,12 @@ export default function Index (props) {
               <div style={{ position: 'absolute', left: '486px', top: '52px' }}>
                 <Button colorScheme='teal' onClick={() => seach()} >搜索</Button>
               </div>
+
+              {/* <Select placeholder='Select' onClick={getvalue()} >
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+              </Select> */}
             </div>
 
 

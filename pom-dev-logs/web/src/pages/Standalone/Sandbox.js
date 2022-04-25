@@ -7,10 +7,10 @@ import useTokenRequest from 'zero-element-boot/lib/components/hooks/useTokenRequ
 export default function (props) {
 
   // let api = '/dev/dependency/decompile/json';
-  let api = '/dev/logs';
+  let api = '/dev/dependency/json';
 
   if (process.env.NODE_ENV === 'development') {
-    api = `http://192.168.139.1:8081${api}`;
+    api = `http://192.168.3.121:8080${api}`;
   }
 
   const [data] = useTokenRequest({ api });

@@ -1,0 +1,7 @@
+.textColor {
+  color: #1177BB;
+  cursor: pointer;
+}
+.textColor:hover {
+  text-decoration: underline;
+}
