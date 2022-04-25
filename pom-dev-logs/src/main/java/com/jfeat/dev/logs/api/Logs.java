@@ -35,13 +35,13 @@ public class Logs {
     private List<String> getLogFiles() throws IOException {
         List<String> list = new ArrayList<>();
         File fileDir = new File("logs");
-        if (!fileDir.exists()) {
-            String logPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "\\logs";
-            fileDir = new File(logPath);
+        // 如果目录不存在，则创建目录
+        if (!fileDir.exists()){
+            fileDir.mkdirs();
         }
         File[] files = fileDir.listFiles();
         /*如果没有文件则返回空列表*/
-        if (files == null) {
+        if (files.length == 0) {
             return new ArrayList<String>();
         }
         for (File file : files) {
@@ -60,9 +60,8 @@ public class Logs {
      */
     private Map readGzipFile(String zipFileName){
 
-        String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + zipFileName;
         // 创建文件
-        File gzipFile = new File(logPath2);
+        File gzipFile = new File(zipFileName);
         // 创建返回用的map
         Map<Integer,String> gzipFileMap = new HashMap<>();
         // 判断文件是否存在
@@ -71,7 +70,7 @@ public class Logs {
         }
         // 使用gzipInputStream解压文件
         try {
-            InputStream in = new GZIPInputStream(new FileInputStream(logPath2));
+            InputStream in = new GZIPInputStream(new FileInputStream(gzipFile));
             Scanner sc = new Scanner(in);
             int lineNum = 0;
             while (sc.hasNextLine()){
@@ -141,8 +140,10 @@ public class Logs {
 
         // pattern != null 则获取文件内容
         if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")) {
+            // 拼接文件路径
+            String gzipFilePath = "logs/" + pattern;
             // 提取压缩文件内容
-            Map<Integer, String> gzipFileMap = readGzipFile(pattern);
+            Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
             if (filter == null) {
                 // 在filter参数为null的情况下将n设为100，输出文件最后的100行
                 n = 100;
@@ -255,8 +256,10 @@ public class Logs {
 
         // 文件为压缩文件
         if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")){
+            // 拼接文件路径
+            String gzipFilePath = "logs/" + pattern;
             // 提取压缩文件内容
-            Map<Integer, String> gzipFileMap = readGzipFile(pattern);
+            Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
             // 在filter参数为null的情况下将n设为100，输出文件最后的100行
             if (filter == null) {
                 // 在filter参数为null的情况下将n设为100，输出文件最后的100行

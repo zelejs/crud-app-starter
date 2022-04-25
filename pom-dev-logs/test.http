@@ -1,17 +1,28 @@
 @endpoint=http://localhost:8084
+@pattern=pattern=log.2022-04-19.gz
+@filter=filter=ERROR
+@n=n=10
 
+### 返回日志文件列表
+GET {{endpoint}}/dev/logs
 
+### 返回日志最新的100行,pattern=<fileName>
+GET {{endpoint}}/dev/logs?{{pattern}}
 
+### 返回日志上下文,pattern=<fileName>，filter=<>，均为String
+GET {{endpoint}}/dev/logs?{{pattern}}&{{filter}}
 
-### 显示日志上下文,pattern=<fileName>，filter=<>，time=<date>，均为String
-GET {{endpoint}}/dev/logs?pattern=access.log&filter=WARN&time=2022-03-21&logNumber=10
+### 返回日志上下文,并更改上下文显示数（api默认为6行），pattern=<fileName>，filter=<>，n=<int number>
+GET {{endpoint}}/dev/logs?{{pattern}}&{{filter}}&{{n}}
 
-### 返回json型日志文件列表
-GET {{endpoint}}/dev/logs/getFileList
+### 以json格式，返回日志文件列表
+GET {{endpoint}}/dev/logs/json
 
+### 以json格式，返回的日志最新的100行,pattern=<fileName>
+GET {{endpoint}}/dev/logs/json?{{pattern}}
 
+### 以json格式，返回日志上下文,pattern=<fileName>，filter=<>，均为String
+GET {{endpoint}}/dev/logs/json?{{pattern}}&{{filter}}
 
-
-
-
-
+### 以json格式，返回日志上下文,并更改上下文显示数（api默认为6行），pattern=<fileName>，filter=<>，n=<int number>
+GET {{endpoint}}/dev/logs/json?{{pattern}}&{{filter}}&{{n}}
