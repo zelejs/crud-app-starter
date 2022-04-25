@@ -215,7 +215,7 @@ public class DependencyEndpoint {
         ZipFileUtils.extraJarEntries(jarFile, "", pattern, response.getOutputStream());
     }
 
-    @Autowired
+/*    @Autowired
     BuildProperties buildProperties;
     @GetMapping("/build")
     public Tip buildInfo() {
@@ -226,5 +226,5 @@ public class DependencyEndpoint {
         jsonObject.put("artifactId:", buildProperties.getArtifact());
         jsonObject.put("groupId:", buildProperties.getGroup());
         return SuccessTip.create(jsonObject);
-    }
+    }*/
 }
