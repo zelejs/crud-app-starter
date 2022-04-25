@@ -39,15 +39,14 @@ public class Logs {
         if (!fileDir.exists()){
             fileDir.mkdirs();
         }
-        File[] files = fileDir.listFiles();
+        String[] logFileList = fileDir.list();
         /*如果没有文件则返回空列表*/
-        if (files.length == 0) {
-            return new ArrayList<String>();
+        if (logFileList.length == 0) {
+            return list;
         }
-        for (File file : files) {
-            //if(isArchiveFile(file))continue;
-            if (file.isDirectory()) continue;
-            list.add(file.getName());
+        // 遍历数组，得出每一个文件名
+        for (String logFileName : logFileList) {
+            list.add(logFileName);
         }
         return list;
     }
@@ -85,16 +84,13 @@ public class Logs {
 
     /**
      * 获取非压缩文件的日志内容
-     * @param logFiles:日志文件名
+     * @param logFileName:日志文件名
      * @return map:日志内容集合
      * @throws IOException
      */
-    private Map getLogContent(String logFiles) throws IOException {
-        File file = new File("logs/" + logFiles);
-        if (!file.exists()) {
-            String logPath2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/logs/" + logFiles;
-            file = new File(logPath2);
-        }
+    private Map getLogContent(String logFileName) throws IOException {
+        // 创建文件对象
+        File file = new File(logFileName);
         // 判断该文件是否存在，不存在直接返回
         if (!file.exists()) {
             return new HashMap<Integer, String>();
@@ -139,6 +135,7 @@ public class Logs {
         }
 
         // pattern != null 则获取文件内容
+        // 判断是否为gzip压缩文件
         if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")) {
             // 拼接文件路径
             String gzipFilePath = "logs/" + pattern;
@@ -189,8 +186,10 @@ public class Logs {
                 }
             }
         } else {
-            // 文件为非压缩文件
-            Map<Integer, String> map = this.getLogContent(pattern);
+            // 文件为非GZIP压缩文件
+            // 拼接文件路径
+            String filePath = "logs/" + pattern;
+            Map<Integer, String> map = this.getLogContent(filePath);
             // filter == null，则默认 n=100 获取该日志最新的 n 条信息
             if (filter == null) {
                 n = 100;
@@ -280,7 +279,7 @@ public class Logs {
                 }
                 return SuccessTip.create(logList);
             }else {
-                // 当filter不为空，则给出上下文,上下文 n 默认=10
+                // 当filter不为空，则给出上下文
                 for (int key : gzipFileMap.keySet()){
                     String aLog = gzipFileMap.get(key);
                     if (!aLog.contains(filter)) continue;
@@ -307,7 +306,9 @@ public class Logs {
 
 
         //非压缩文件
-        Map<Integer, String> map = this.getLogContent(pattern);
+        // 拼接文件路径
+        String filePath = "logs/" + pattern;
+        Map<Integer, String> map = this.getLogContent(filePath);
         // pattern不为空，但是filter为空，则默认n=100，输出最新的100行
         if (filter == null) {
             n = 100;
