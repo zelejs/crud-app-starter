@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,11 +183,11 @@ public class DevConnectionEndpoint {
     public void queryAllConvenientSql(@RequestParam(name = "pattern", required = false) String pattern,
                               @RequestParam(name = "query", required = false) String query,
                               HttpServletResponse response) throws IOException {
+        // 响应内容类型
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
 
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+ "sqls.json";
-        File file = new File(path);
+        File file = new File("sqls.json");
         String text= FileUtils.readFileToString(file,"UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(text);
         Iterator it = jsonObject.keySet().iterator();
@@ -339,9 +340,8 @@ public class DevConnectionEndpoint {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
-//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
         // 获取当前类所在根路径
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/", "");
+        String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -359,7 +359,7 @@ public class DevConnectionEndpoint {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = str + ".rulers/" + ruler + ".ruler";
+            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
             File rulerFile = new File(fileName);
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(text);
@@ -484,9 +484,8 @@ public class DevConnectionEndpoint {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
-//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
-        // 获取当前类所在根路径
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/", "");
+        // 获取当前项目根路径
+        String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -504,7 +503,7 @@ public class DevConnectionEndpoint {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = str + ".rulers/" + ruler + ".ruler";
+            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
             File rulerFile = new File(fileName);
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(text);
@@ -608,7 +607,6 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "获取所有规则", response = SqlRequest.class)
     public Tip allRulers(HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
-//        this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()+"\\ruler";
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -626,8 +624,7 @@ public class DevConnectionEndpoint {
             HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         //获取项目根路径
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
-
+        String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
@@ -644,7 +641,7 @@ public class DevConnectionEndpoint {
             String content = "";
             StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
-            String fileName = str + ".rulers/" + ruler_file_name+".ruler";
+            String fileName = projectPath + "/.rulers/" + ruler_file_name+".ruler";
             File rulerFile = new File(fileName);
             InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(streamReader);
@@ -668,48 +665,30 @@ public class DevConnectionEndpoint {
                          HttpServletRequest request,
                          HttpServletResponse response) throws IOException {
 
-        //获取项目根路径
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
-
+        // 获取项目当前路径
+        String projectPath = new File("").getAbsolutePath();
         //判断文件名是否带有后缀
         if (ruler_file_name.lastIndexOf(".") != -1){
             // 判断后缀名是否为 “.ruler" 是的话进行报错
-            if (!ruler_file_name.substring(ruler_file_name.lastIndexOf(".")).equals(".ruler")){
-                return SuccessTip.create("暂不支持ruler以外的文件格式");
-            }
-            //获取文件夹位置
-            String path = str + ".rulers";
-            File fileDir = new File(path);
+                Assert.isTrue(ruler_file_name.substring(ruler_file_name.lastIndexOf(".")).equals(".ruler"),"暂不支持ruler以外的文件格式");
+
+                //获取文件夹位置
+            File fileDir = new File(".rulers");
+            // 判断文件夹是否存在，不存在则创建
             if(!fileDir.exists()){
                 fileDir.mkdirs();
             }
-//        log.fileDir
-            // 获取文件列表
-            File[] files = fileDir.listFiles();
-
-//        File directory = new File("");//参数为空
-//        String courseFile = directory.getCanonicalPath() ;
-
-            boolean flag = true;
-            if(files!=null) {
-                for (File file : files) {
-                    if (file.isDirectory()) continue;
-                    // 判断文件是否存在
-                    if (file.getName().equals(ruler_file_name)) {
-                        flag = false;
-                    }
-                }
-            }
-            if(flag){
-                // 文件不存在
+            // 创建文件字符流输出流
                 FileWriter writer = null;
                 try {
-                    File checkFile = new File(str + ".rulers/" + ruler_file_name);
-                    checkFile.createNewFile();// 创建目标文件
+                    // 创建文件对象
+                    File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name);
 
-                    // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
-                    writer = new FileWriter(checkFile);
+                    // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
+                    writer = new FileWriter(checkFile,false);
+                    // 调整json排版
                     String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                    // 写入数据
                     writer.append(date);
                     writer.flush();
                 }catch (Exception e){
@@ -717,92 +696,31 @@ public class DevConnectionEndpoint {
                 }finally{
                     writer.close();
                 }
-            }else{
-                // 文件已存在
-                FileWriter writer = null;
-                try {
-                    File checkFile = new File(str + ".rulers/" + ruler_file_name);
-                    // 读取已存在的文件内容
-                    /*String text = FileUtils.readFileToString(checkFile, "UTF-8");*/
-
-                    writer = new FileWriter(checkFile);
-                    // 拼接文件原来的内容和新的内容 原内容+新内容
-                    /*String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");*/
-                    String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
-                    writer.append(date);
-                    writer.flush();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }finally {
-                    if (writer != null){
-                        writer.close();
-                    }
-                }
-            }
         }else {
         // ruler_file_name 没有后缀名的情况
-
-        //获取文件夹位置
-        String path = str+".rulers";
-        File fileDir = new File(path);
+        // 获取文件夹位置
+        File fileDir = new File(".rulers");
+        // 判断文件夹是否存在，不存在则创建
         if(!fileDir.exists()){
             fileDir.mkdirs();
         }
-
-        // 获取目录中的文件列表
-        File[] files = fileDir.listFiles();
-
-//        File directory = new File("");//参数为空
-//        String courseFile = directory.getCanonicalPath() ;
-
-        boolean flag = true;
-        if(files!=null) {
-            for (File file : files) {
-                if (file.isDirectory()) continue;
-                // 判断文件是否已经存在
-                if (file.getName().equals(ruler_file_name + ".ruler")) {
-                    flag = false;
-                }
-            }
-        }
-        if(flag){
-            // 文件不存在
+        // 创建文件输出流
             FileWriter writer = null;
             try {
-                File checkFile = new File(str + ".rulers/" + ruler_file_name + ".ruler");
-
-                checkFile.createNewFile();// 创建目标文件
-
-                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加新的内容
-                writer = new FileWriter(checkFile);
-                String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
-                writer.append(date);
+                // 创建文件对象
+                File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name + ".ruler");
+                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
+                writer = new FileWriter(checkFile,false);
+                // 调整json排版
+                String data = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
+                // 向文件写入数据
+                writer.append(data);
                 writer.flush();
             }catch (Exception e){
                 e.printStackTrace();
             }finally {
                 writer.close();
             }
-        }else{
-            // 文件已存在
-            FileWriter writer = null;
-            try {
-                File checkFile = new File(str + ".rulers/" + ruler_file_name + ".ruler");
-                // 获取原文件内容
-                //String text = FileUtils.readFileToString(checkFile, "UTF-8");
-
-                writer = new FileWriter(checkFile);
-                // 拼接原文件内容和新的内容，原内容+新内容
-                //String date = text.replace("\n}",",\n") + jsonObject.toString().replace("{","").replace("],","],\n").replace("}","\n}");
-                String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
-                writer.append(date);
-                writer.flush();
-            }catch(Exception e){
-                e.printStackTrace();
-            }finally{
-                writer.close();
-            }
-        }
     }
         return SuccessTip.create();
     }
@@ -810,9 +728,12 @@ public class DevConnectionEndpoint {
     @DeleteMapping("/snapshot/rulers/{ruler_file_name}")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name){
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
-        String path = str + ".rulers/"+ruler_file_name+".ruler";
-        File file = new File(path);
+
+        //获取项目根路径
+        String projectPath = new File("").getAbsolutePath();
+        // 拼接文件路径
+        String filePath = projectPath + "/.rulers/"+ruler_file_name+".ruler";
+        File file = new File(filePath);
         if(file.delete()){
             return SuccessTip.create("删除成功");
         }else {
