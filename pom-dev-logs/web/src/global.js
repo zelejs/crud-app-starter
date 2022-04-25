@@ -11,7 +11,7 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 
 
 //presenter
-import JarItem from '@/pages/Standalone/JarItem';
+import JarItem from '@/pages/dev/JarItem';
 
 
 // NamedCartSet({
