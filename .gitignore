@@ -41,7 +41,7 @@ config/
 ##
 BOOT-INF/
 WEB-INF/
-META-INF/
+# META-INF/
 indexes/
 .tarignore
 *.tar

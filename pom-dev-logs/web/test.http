@@ -1,0 +1,12 @@
+@endpoint= http://192.168.3.170:8084 
+
+
+### 显示日志上下文,pattern=<fileName>，filter=<>，time=<date>，均为String
+GET {{endpoint}}/dev/logs?pattern=access.log&filter=WARN&logNumber=10
+# &time=2022-03-21
+
+//pattern 指定的文件   filter 过滤     logNumber返回条数
+
+
+
+
