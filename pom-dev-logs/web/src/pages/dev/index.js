@@ -91,7 +91,7 @@ export default function Index (props) {
 
   //搜索按钮--获取返回的数据
   function anniu (body) {
-    let url = 'https://www.metagugu.net/dev/logs/json'
+    let url = '/dev/logs/json'
     promiseAjax(url, { ...body })
       .then(responseData => {
         {
