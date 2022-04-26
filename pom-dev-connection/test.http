@@ -51,7 +51,7 @@ POST {{endpoint}}/dev/connection/snapshot/rulers/ming?sign=de89b878f624a4b4bb69d
 GET {{endpoint}}/dev/connection/snapshot/rulers/akali
 
 
-###表出所有命名规则文件名称
+###获取所有命名规则文件名称
 GET {{endpoint}}/dev/connection/snapshot/rulers
 
 ###数据库非全量下载

@@ -68,8 +68,7 @@ public class Logs {
             return new HashMap<Integer,String>();
         }
         // 使用gzipInputStream解压文件
-        try {
-            InputStream in = new GZIPInputStream(new FileInputStream(gzipFile));
+        try (InputStream in = new GZIPInputStream(new FileInputStream(gzipFile))){
             Scanner sc = new Scanner(in);
             int lineNum = 0;
             while (sc.hasNextLine()){
@@ -99,10 +98,13 @@ public class Logs {
         Map<Integer, String> frontMap = new HashMap<>();
         int lineNum = 0;
         String line = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))){
         while ((line = br.readLine()) != null) {
             lineNum++;
             frontMap.put(lineNum, line);
+        }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return frontMap;
     }
@@ -128,7 +130,6 @@ public class Logs {
         if (pattern == null) {
             for (String file : getLogFiles()) {
                 writer.println(file);
-                writer.println("\n");
             }
             writer.flush();
             return;
@@ -150,14 +151,12 @@ public class Logs {
                     for (int key : gzipFileMap.keySet()) {
                         String aLog = gzipFileMap.get(key);
                         logKeywordTextArea.append(String.format("%06d", key) + " |  " + aLog + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                 } else {
                     // 文件size大于 n 行，将文件的最后 n 行输出
                     for (int i = 0; i <= n; i++) {
                         String aLog = gzipFileMap.get(gzipFileMap.size() - (n - i));
                         logKeywordTextArea.append(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                 }
             } else {
@@ -169,18 +168,15 @@ public class Logs {
                     for (int i = 1; i <= n; i++) {
                         if (gzipFileMap.get(key - (n + 1 - i)) == null) continue;
                         logKeywordTextArea.append(String.format("%06d", (key - (n - i))) + " |  " + gzipFileMap.get(key - (n + 1 - i)) + "\n");
-                        logKeywordTextArea.append("\n");
                     }
 
                     // 获取目标行
                     logKeywordTextArea.append(String.format("%06d", key) + " |  " + gzipFileMap.get(key) + "\n");
-                    logKeywordTextArea.append("\n");
 
                     //获取下文的n行
                     for (int i = 1; i <= n; i++) {
                         if (gzipFileMap.get(key + i) == null) continue;
                         logKeywordTextArea.append(String.format("%06d", (key + i)) + " |  " + gzipFileMap.get(key + i) + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                     break;
                 }
@@ -198,14 +194,12 @@ public class Logs {
                     for (int key : map.keySet()){
                         String aLog = map.get(key);
                         logKeywordTextArea.append(String.format("%06d",key) + " |  " + aLog + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                 }else{
                     // 如果日志的条目数 > n 则输出日志最新的 n 条信息
                     for (int i = 0; i <= n ; i++){
                         String aLog = map.get(map.size() - (n-i));
                         logKeywordTextArea.append(String.format("%06d",map.size() - (n-i)) + " |  " + aLog + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                 }
             } else {
@@ -216,17 +210,14 @@ public class Logs {
                     // 取出上文的n行
                     for (int i = 1; i <= n; i++) {
                         logKeywordTextArea.append(String.format("%06d", (key - (n - i))) + " |  " + map.get(key - (n + 1 - i)) + "\n");
-                        logKeywordTextArea.append("\n");
                     }
 
                     // 目标行
                     logKeywordTextArea.append(String.format("%06d", key) + " |  " + map.get(key) + "\n");
-                    logKeywordTextArea.append("\n");
 
                     // 取出下文的n行
                     for (int i = 1; i <= n; i++) {
                         logKeywordTextArea.append(String.format("%06d", (key + i)) + " |  " + map.get(key + i) + "\n");
-                        logKeywordTextArea.append("\n");
                     }
                     break;
                 }
