@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import DevLogsPage from '@/pages/dev'
 import useTokenRequest from 'zero-element-boot/lib/components/hooks/useTokenRequest';
-import { AutoLayout } from 'zero-element-boot';
-import { Page } from 'zero-element-boot/lib/components/cart'
-const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 import { setEndpoint, setToken } from 'zero-element-boot/lib/components/config/common';
 export default function index (props) {
 
-  let api = 'https://www.metagugu.net/dev/logs/json';
+
+  if (process.env.NODE_ENV == 'development') {
+    setEndpoint('https://www.metagugu.net');
+  }
+  let api = '/dev/logs/json';
+
 
   const requestData = {
     // pattern: 'access.log',

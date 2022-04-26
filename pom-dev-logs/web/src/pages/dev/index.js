@@ -8,10 +8,6 @@ import JarItem from './JarItem';
 
 import layout from './layout';
 
-// import StandaloneBody from './StandaloneBody';
-// import { isDisabled } from '@chakra-ui/react/node_modules/@chakra-ui/utils';
-
-
 export default function Index (props) {
 
   const { data = [] } = props;
@@ -27,12 +23,12 @@ export default function Index (props) {
   const layoutJsonPath = '';
   const localLayoutJson = layout;
 
-  // let api = '/dev/dependency/decompile/json';
-  let api = 'https://www.metagugu.net/dev/logs/json';
+  let api = '/dev/logs/json';
 
-  // if (process.env.NODE_ENV === 'development') {
-  //   api = `http://192.168.3.121:8080${api}`;
-  // }
+  if (process.env.NODE_ENV === 'development') {
+    api = `${api}`;
+  }
+
 
   if (layoutJsonPath) {
     layoutData = { path: layoutJsonPath };
@@ -47,12 +43,7 @@ export default function Index (props) {
 
   const onJarItemClick = (item) => {
     console.log(item, ' === item')
-    // document.body.scrollTop = document.documentElement.scrollTop = 0;
     let name = item.value;
-    // if(name.indexOf('/') > -1){
-    //     const list = name.split('/');
-    //     name = list[list.length-1]
-    // }
 
     if (name.indexOf('@') > -1) {
       const list = name.split('@');
@@ -67,7 +58,7 @@ export default function Index (props) {
     if (num == 1) {
       setCurrentItemName(name)
     }
-    // const api = `http://localhost:8080/api/dev/dependency/decompile`;
+    
     setIsShowList(false)
     setIsLoading(true)
     promiseAjax(api, { pattern: name }, {})
@@ -98,10 +89,6 @@ export default function Index (props) {
     upDown = N
   }
 
-
-
-
-
   //搜索按钮--获取返回的数据
   function anniu (body) {
     let url = 'https://www.metagugu.net/dev/logs/json'
@@ -120,6 +107,7 @@ export default function Index (props) {
         }
       })
   }
+
   //搜索方法
   function seach () {
     const body = {
