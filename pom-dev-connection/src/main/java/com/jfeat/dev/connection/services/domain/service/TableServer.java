@@ -22,13 +22,12 @@ public class TableServer {
     Connection conn = null;
 
     public File[] getAllFile() throws IOException {
-        String str = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replace("target/classes/","");
-        String path = str+".rulers";
+        String projectPath = new File("").getAbsolutePath();
+        String path = projectPath+"/.rulers";
         File fileDir = new File(path);
         if(!fileDir.exists()){
             fileDir.mkdirs();
         }
-//        log.fileDir
         File[] files = fileDir.listFiles();
         return files;
     }
