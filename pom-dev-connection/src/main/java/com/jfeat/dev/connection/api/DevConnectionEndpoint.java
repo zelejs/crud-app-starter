@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-
-/**
- * 依赖处理接口
- *
- * @author zxchengb
- * @date 2020-08-05
- */
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -77,6 +69,7 @@ public class DevConnectionEndpoint {
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
+            // startsWith() 方法用于检测字符串是否以指定的前缀开始
             if(sql.startsWith("SELECT") || sql.startsWith("select")){
                 if(format!=null && format.equals("md")) {
                     var test = tableServer.showMd(sql);
@@ -130,23 +123,13 @@ public class DevConnectionEndpoint {
                 }
                 writer.flush();
             } else {
+                //获取所有的表名
                 var list = queryTablesDao.queryAllTables();
-                for (String tableName : list) {
-                    writer.println(tableName);
-                }
-                writer.flush();
+                return SuccessTip.create(list);
                 }
             }
 
-//        String[] strs1=file.toArray(new String[file.size()]);
-//        byte[] bytes=new byte[strs1.length];
-//        for (int i=0; i<strs1.length; i++) {
-//            System.out.println(strs1[i]);
-//            bytes[i]=Byte.parseByte(strs1[i]);
-//            System.out.println(bytes[i]);
-//        }
-
-        return null;
+        return SuccessTip.create();
     }
 
     @GetMapping("/schema")
@@ -322,7 +305,6 @@ public class DevConnectionEndpoint {
 
     /**
      * 按照规则下载数据库数据
-     * @param filter
      * @param sign 签名
      * @param rule full
      * @param ruler 规则文件名，不带后缀
@@ -330,26 +312,23 @@ public class DevConnectionEndpoint {
      * @return
      * @throws IOException
      */
-    @GetMapping("/snapshot")
+    @GetMapping("/snapshot/instant")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip rulers(@RequestParam(name = "filter", required = false) String filter,
-                      // 测试环境，设为false，测试完务必设回true
-                    @RequestParam(name = "sign", required = false) String sign,
-                    @RequestParam(name = "rule", required = false) String rule,
-                      @RequestParam(name = "ruler", required = false) String ruler,
+                                    // 测试环境，设为false，测试完务必设回true
+    public Tip rulers(@RequestParam(name = "sign", required = false) String sign,
+                      @RequestParam(name = "rule", defaultValue = "defined") String rule,
+                      @RequestParam(name = "ruler",required = true) String ruler,
                     HttpServletResponse response) throws IOException {
         // 测试环境，注释签名，测试完务必还原
         /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }*/
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         // 获取当前类所在根路径
         String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
-
         //判断是否有想要获取的ruler文件
         boolean flag = false;
         for (File file : files) {
@@ -454,11 +433,10 @@ public class DevConnectionEndpoint {
                 }
             var data = tableServer.changToByte(file);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + rulerFile.getName() + ".sql");
-            System.out.println("attachment; filename=" + rulerFile.getName() + ".sql");
             IOUtils.write(data, response.getOutputStream());
-            return null;
+            return SuccessTip.create();
         }else{
-            return null;
+            return ErrorTip.create(200,"没有该规则");
         }
 
     }
@@ -474,15 +452,13 @@ public class DevConnectionEndpoint {
      */
     @PostMapping("/snapshot")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip saveFileToLocal(@RequestParam(name = "filter", required = false) String filter,
-                      @RequestParam(name = "sign", required = true) String sign,
-                      @RequestParam(name = "rule", required = false) String rule,
-                      @RequestParam(name = "ruler", required = false) String ruler,
-                      HttpServletResponse response) throws IOException {
+    public Tip saveFileToLocal(@RequestParam(name = "sign", required = true) String sign,
+                               @RequestParam(name = "rule", defaultValue = "defined") String rule,
+                               @RequestParam(name = "ruler", required = false) String ruler,
+                               HttpServletResponse response) throws IOException {
         if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         // 获取当前类所在根路径
@@ -499,9 +475,6 @@ public class DevConnectionEndpoint {
         }
         //有就调用规则，没有就返回无
         if (flag) {
-            String content = "";
-            StringBuilder builder = new StringBuilder();
-            //把内容写入builder参数
             String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
             File rulerFile = new File(fileName);
             // 将指定文件读取出来以String显示，”utf-8“设置写入时的编码格式
@@ -516,7 +489,7 @@ public class DevConnectionEndpoint {
             List<String> sqlList = new ArrayList<>();
             List<String> nameList = new ArrayList<>();
             while (it.hasNext()) {
-                // 获得表名(key)
+                // 获得该ruler规则中的表名(key)
                 Object name = it.next();
                 nameList.add(name.toString());
                 // 通过表名获得value
@@ -571,7 +544,7 @@ public class DevConnectionEndpoint {
             }
 
 
-            if (rule.equals("full")) {
+           if (rule.equals("full")) {
                 var list = queryTablesDao.queryAllTables();
                 for (String tableName : list) {
                     int exflag = 0;
@@ -597,6 +570,7 @@ public class DevConnectionEndpoint {
                     }
                 }
             }
+
             // 创建文件夹对象
             File fileDir = new File(".dbsnapshot");
             // 如果文件夹不存在就创建
@@ -606,47 +580,79 @@ public class DevConnectionEndpoint {
             // 创建文件对象
             String everyDate = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
             File everyDaydata = new File(".dbsnapshot/" + everyDate +".sql");
-            FileWriter fileWriter = null;
             // 写入数据
-            try {
-                fileWriter = new FileWriter(everyDaydata,false);
+            try (FileWriter fileWriter = new FileWriter(everyDaydata,false)){
                 for (String adata : file){
                     fileWriter.write(adata);
                 }
                 fileWriter.flush();
-            }finally {
-                if (fileWriter != null) {
-                    fileWriter.close();
-                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            return null;
+            return SuccessTip.create();
         }else{
-            return null;
+            return ErrorTip.create(200,"没有该规则");
         }
 
     }
 
     /**
      * 获取数据保存文件列表
-     * @param response
+     * @param sign:签名
      * @return
      * @throws IOException
      */
-    @GetMapping("/snapshot/dbsnapshot")
+    @GetMapping("/snapshot")
     @ApiOperation(value = "获取数据保存文件列表", response = SqlRequest.class)
-    public Tip allDbSnapshot(HttpServletResponse response) throws IOException {
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
+                                            // 方便测试，将sign设为false，测试结束请设回true
+    public Tip allDbSnapshot(@RequestParam(name = "sign",required = false) String sign) throws IOException {
+        // 方便测试注释sign验证，测试结束请还原
+        /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }*/
+        List<String> dbFileNameList = new ArrayList<>();
         // 获取目录对象
         File fileDir = new File(".dbsnapshot");
         // 如果目录不存在就创建
         if (!fileDir.exists()) fileDir.mkdir();
         // 获取目录中的文件列表
-        File[] dbSnapshotFile = fileDir.listFiles();
-        for (File file : dbSnapshotFile) {
-            writer.print(file.getName()+"\n");
-            writer.flush();
+        File[] dbFileList = fileDir.listFiles();
+        for (File file : dbFileList) {
+            dbFileNameList.add(file.getName());
         }
-        return SuccessTip.create();
+        return SuccessTip.create(dbFileNameList);
+    }
+    @GetMapping("snapshot/dl")
+    @ApiOperation(value = "下载dbsnapshot本地文件",response = SqlRequest.class)
+    public Tip downloadSnapshotFile(@RequestParam(value = "sign",required = true) String sign,
+                                    @RequestParam(value = "pattern",required = true) String pattern,
+                                    HttpServletResponse response) throws IOException {
+        OutputStream outputStream = response.getOutputStream();
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
+        // 创建.dbsnapshot目录下的pattern文件对象
+        File snapshotFile = new File(".dbsnapshot/" + pattern);
+        if (!snapshotFile.exists()) return ErrorTip.create(200,"文件不存在");
+        // 读取文件内容
+        String aline = null;
+        List<String> contentList = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(snapshotFile)))){
+            while ((aline = br.readLine()) != null){
+                contentList.add(aline+"\n");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        // contentList掉开头和结尾的 "[","]"并转换成字节数组
+        byte[] contentByte = contentList.toString().replace("[","").replace("]","").getBytes(StandardCharsets.UTF_8);
+        // 设置响应头，告诉浏览器以附件的形式下载
+        response.setHeader("Content-Disposition","attachment;filename="+pattern);
+        // 通过流输出给浏览器
+        outputStream.write(contentByte);
+        outputStream.flush();
+        return null;
     }
 
     /**
@@ -667,7 +673,7 @@ public class DevConnectionEndpoint {
             writer.print(file.getName()+"\n");
             writer.flush();
         }
-        return null;
+        return SuccessTip.create();
     }
 
     @GetMapping("/snapshot/rulers/{ruler_file_name}")
@@ -730,21 +736,18 @@ public class DevConnectionEndpoint {
             if(!fileDir.exists()){
                 fileDir.mkdirs();
             }
-            // 创建文件字符流输出流
-                FileWriter writer = null;
-                try {
-                    // 创建文件对象
-                    File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name);
+            // 创建文件对象
+            File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name);
+            // 创建文件字符流输出流,new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
+                try (FileWriter writer = new FileWriter(checkFile,false)){
 
-                    // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
-                    writer = new FileWriter(checkFile,false);
                     // 调整json排版
                     String date = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
                     // 写入数据
                     writer.append(date);
                     writer.flush();
-                }finally{
-                    writer.close();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
         }else {
         // ruler_file_name 没有后缀名的情况
@@ -754,20 +757,18 @@ public class DevConnectionEndpoint {
         if(!fileDir.exists()){
             fileDir.mkdirs();
         }
-        // 创建文件输出流
-            FileWriter writer = null;
-            try {
-                // 创建文件对象
-                File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name + ".ruler");
-                // new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
-                writer = new FileWriter(checkFile,false);
+            // 创建文件对象
+            File checkFile = new File(projectPath + "/.rulers/" + ruler_file_name + ".ruler");
+        // 创建文件输出流,new FileWriter(checkFile,true),如果给出true参数则是在文件原来的内容后面添加，false则是覆盖
+            try (FileWriter writer = new FileWriter(checkFile,false);){
+
                 // 调整json排版
                 String data = jsonObject.toString().replace("],", "],\n").replace("{", "{\n").replace("}", "\n}");
                 // 向文件写入数据
                 writer.append(data);
                 writer.flush();
-            }finally {
-                writer.close();
+            }catch (IOException e){
+                e.printStackTrace();
             }
     }
         return SuccessTip.create();
