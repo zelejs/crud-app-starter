@@ -45,3 +45,6 @@ WEB-INF/
 indexes/
 .tarignore
 *.tar
+
+## 
+pom-dev-dependency/META-INF/

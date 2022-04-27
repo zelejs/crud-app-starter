@@ -30,7 +30,7 @@ public class DecompileUtils {
         final List<String> lines = new ArrayList<>();
         OutputSinkFactory.Sink println = line -> {
             lines.add(line.toString());
-            logger.debug(line.toString());
+            //logger.debug(line.toString());
         };
 
         OutputSinkFactory mySink = new OutputSinkFactory() {
