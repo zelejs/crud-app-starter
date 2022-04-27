@@ -36,3 +36,8 @@ spring:
       settings:
         web-allow-others: true
         trace: false
+
+logging:
+  level:
+    root: info
+  file: logs/access.log
