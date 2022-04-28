@@ -125,6 +125,7 @@ public class DependencyEndpoint {
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
+            // just for debug
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
         logger.info("jarPath: "+jarPath);
@@ -152,12 +153,17 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
         if(all==null){all=false;}
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        logger.info("domain jar path: " + jarPath);
         if(jarPath.contains("!")){
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         }else{
-            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+            // just for debug
+            //jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+            jarPath = new File(".").getCanonicalPath() + "/dev-dependency-0.0.1-standalone.jar";
         }
         logger.info("jarPath: "+jarPath);
+
+
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 

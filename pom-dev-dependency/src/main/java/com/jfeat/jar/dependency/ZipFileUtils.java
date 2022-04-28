@@ -450,12 +450,12 @@ public class ZipFileUtils {
             String line = r.readLine();
             String NewLine = "\n";
             while (line != null) {
+                content.append(line);
+                content.append(NewLine);
+
                 line = r.readLine();
-                if(line!=null) {
-                    content.append(line);
-                    content.append(NewLine);
-                }
             }
+
         }catch (Exception e){
         }
 
