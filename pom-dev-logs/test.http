@@ -1,28 +1,28 @@
-@endpoint=http://localhost:8084
-@pattern=pattern=log.2022-04-19.gz
-@filter=filter=ERROR
-@n=n=10
+@endpoint=http://demo.smallsaas.cn:8001/
+@pattern=pattern=access.log
 
 ### 返回日志文件列表
 GET {{endpoint}}/dev/logs
 
-### 返回日志最新的100行,pattern=<fileName>
-GET {{endpoint}}/dev/logs?{{pattern}}
+### 默认返回日志最新的100行,pattern=<fileName>
+### 可给n参数，修改返回最新的n行
+GET {{endpoint}}/dev/logs?{{pattern}}&n=10
 
-### 返回日志上下文,pattern=<fileName>，filter=<>，均为String
-GET {{endpoint}}/dev/logs?{{pattern}}&{{filter}}
-
-### 返回日志上下文,并更改上下文显示数（api默认为6行），pattern=<fileName>，filter=<>，n=<int number>
-GET {{endpoint}}/dev/logs?{{pattern}}&{{filter}}&{{n}}
+### 返回日志上下文（默认上下文各6行）,pattern=<fileName>，filter=<>，均为String
+### 可给n参数，修改上下文返回行数
+GET {{endpoint}}/dev/logs?{{pattern}}&filter=
 
 ### 以json格式，返回日志文件列表
 GET {{endpoint}}/dev/logs/json
 
 ### 以json格式，返回的日志最新的100行,pattern=<fileName>
+### 可给n参数，修改返回最新的n行
 GET {{endpoint}}/dev/logs/json?{{pattern}}
 
 ### 以json格式，返回日志上下文,pattern=<fileName>，filter=<>，均为String
-GET {{endpoint}}/dev/logs/json?{{pattern}}&{{filter}}
+### 可给n参数，修改上下文放回行数
+GET {{endpoint}}/dev/logs/json?{{pattern}}&filter
 
-### 以json格式，返回日志上下文,并更改上下文显示数（api默认为6行），pattern=<fileName>，filter=<>，n=<int number>
-GET {{endpoint}}/dev/logs/json?{{pattern}}&{{filter}}&{{n}}
+#目前尚且存在的问题：
+#1、暂不支持zip文件的解压
+#2、搜索上下文功能不完善

@@ -143,6 +143,7 @@ public class Logs {
             String gzipFilePath = "logs/" + pattern;
             // 提取压缩文件内容
             Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
+            // 如果filter为空
             if (filter == null) {
                 // 如果没有给n参数那么就默认设为100
                 if (n == 0){
@@ -163,6 +164,7 @@ public class Logs {
                     }
                 }
             } else {
+                // filter不为空
                 // 如果没有传n参数则默认设为6,
                 if (n == 0){
                     n = 6;
@@ -171,7 +173,7 @@ public class Logs {
                 // 当filter != null时，取出n行上下文
                 for (int key : gzipFileMap.keySet()) {
                     String aLog = gzipFileMap.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 获取上文的n行
                     for (int i = 0; i < n; i++) {
                         if (gzipFileMap.get(key - (n + 1 - i)) == null) continue;
@@ -223,7 +225,7 @@ public class Logs {
                 // 当filter != null时，取出n行上下文
                 for (int key : map.keySet()) {
                     String aLog = map.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 取出上文的n行
                     for (int i = 0; i < n; i++) {
                         if (map.get(key - (n + 1 - i)) == null) continue;
@@ -298,7 +300,7 @@ public class Logs {
                 // 有n参数传入,则且传入的n参数>0就直接使用传入的n
                 for (int key : gzipFileMap.keySet()){
                     String aLog = gzipFileMap.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 获取上文的n行
                     for (int i=0; i < n ;i++ ){
                         if (gzipFileMap.get(key - (n  - i)) == null) continue;
@@ -353,7 +355,7 @@ public class Logs {
             }
             for (int key : map.keySet()){
                 String aLog = map.get(key);
-                if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                 // 获取上文的n行
                 for (int i=0; i<n ;i++ ){
                     if (map.get(key - (n - i)) == null) continue;

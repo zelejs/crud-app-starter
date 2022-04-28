@@ -59,13 +59,13 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      // 测试环境，注释签名设为false，测试完务必还原
-                     @RequestParam(name = "sign", required = false) String sign,
+                     @RequestParam(name = "sign", required = true) String sign,
                      @RequestParam(name = "format", required = false) String format,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
         // 测试环境，注释签名，测试完务必还原
-        /*if (! SignatureKit.parseSignature(sign, key,ttl) ){
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
             return ErrorTip.create(9010,"身份验证错误");
-        }*/
+        }
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
@@ -313,16 +313,16 @@ public class DevConnectionEndpoint {
      * @throws IOException
      */
     @GetMapping("/snapshot/instant")
-    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
+    @ApiOperation(value = "按照规则下载数据库数据", response = SqlRequest.class)
                                     // 测试环境，设为false，测试完务必设回true
-    public Tip rulers(@RequestParam(name = "sign", required = false) String sign,
+    public Tip rulers(@RequestParam(name = "sign", required = true) String sign,
                       @RequestParam(name = "rule", defaultValue = "defined") String rule,
                       @RequestParam(name = "ruler",required = true) String ruler,
                     HttpServletResponse response) throws IOException {
         // 测试环境，注释签名，测试完务必还原
-        /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
-        }*/
+        }
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         // 获取当前类所在根路径
@@ -446,7 +446,6 @@ public class DevConnectionEndpoint {
      * @param sign 签名
      * @param rule full
      * @param ruler 规则文件名（不带后缀）
-     * @param response 响应
      * @return
      * @throws IOException
      */
@@ -454,13 +453,10 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public Tip saveFileToLocal(@RequestParam(name = "sign", required = true) String sign,
                                @RequestParam(name = "rule", defaultValue = "defined") String rule,
-                               @RequestParam(name = "ruler", required = false) String ruler,
-                               HttpServletResponse response) throws IOException {
+                               @RequestParam(name = "ruler", required = false) String ruler) throws IOException {
         if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }
-        response.setContentType("application/octet-stream");
-        response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         // 获取当前类所在根路径
         String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
@@ -494,8 +490,6 @@ public class DevConnectionEndpoint {
                 nameList.add(name.toString());
                 // 通过表名获得value
                 Object value = jsonObject.get(name);
-                response.setContentType("application/octet-stream");
-                response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
                 // 拼接sql语句，获得建表语句
                 String createSql = "show create table " + name;
                 sqlList.add(createSql);
@@ -597,19 +591,19 @@ public class DevConnectionEndpoint {
     }
 
     /**
-     * 获取数据保存文件列表
+     * 显示所有的数据库快照保存文件
      * @param sign:签名
      * @return
      * @throws IOException
      */
     @GetMapping("/snapshot")
-    @ApiOperation(value = "获取数据保存文件列表", response = SqlRequest.class)
+    @ApiOperation(value = "显示所有的数据库快照保存文件", response = SqlRequest.class)
                                             // 方便测试，将sign设为false，测试结束请设回true
-    public Tip allDbSnapshot(@RequestParam(name = "sign",required = false) String sign) throws IOException {
+    public Tip allDbSnapshot(@RequestParam(name = "sign",required = true) String sign) throws IOException {
         // 方便测试注释sign验证，测试结束请还原
-        /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
-        }*/
+        }
         List<String> dbFileNameList = new ArrayList<>();
         // 获取目录对象
         File fileDir = new File(".dbsnapshot");
@@ -657,29 +651,45 @@ public class DevConnectionEndpoint {
 
     /**
      * 返回规则文件列表
-     * @param response
      * @return
      * @throws IOException
      */
     @GetMapping("/snapshot/rulers")
-    @ApiOperation(value = "获取所有规则", response = SqlRequest.class)
-    public Tip allRulers(HttpServletResponse response) throws IOException {
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
+    @ApiOperation(value = "获取规则文件列表", response = SqlRequest.class)
+    public Tip allRulers(@RequestParam(name = "sign",required = true) String sign) throws IOException {
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
+        // 创建数组，接收文件名称
+        List<String> rulersList = new ArrayList<>();
         //获取文件夹位置
         File[] files = tableServer.getAllFile();
 
         for (File file : files) {
             if (file.isDirectory()) continue;
-            writer.print(file.getName()+"\n");
-            writer.flush();
+            rulersList.add(file.getName());
         }
-        return SuccessTip.create();
+        return SuccessTip.create(rulersList);
     }
 
+    /**
+     * 查看具体的命名规则的配置详情
+     * @param ruler_file_name:要查看的规则名
+     * @param sign:签名
+     * @param response:响应
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/snapshot/rulers/{ruler_file_name}")
     @ApiOperation(value = "查看具体的命名规则的配置详情", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name,
-            HttpServletResponse response) throws IOException {
+                         @RequestParam(name = "sign",required = true) String sign,
+                         HttpServletResponse response) throws IOException {
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         //获取项目根路径
         String projectPath = new File("").getAbsolutePath();
@@ -716,13 +726,27 @@ public class DevConnectionEndpoint {
         return null;
     }
 
+    /**
+     * 更新/新建规则文件
+     * @param ruler_file_name:规则文件名
+     * @param jsonObject:json格式的规则内容
+     * @param sign:签名
+     * @param request:请求
+     * @param response:响应
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/snapshot/rulers/{ruler_file_name:.*}")
-    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
+    @ApiOperation(value = "更新/新建规则文件", response = SqlRequest.class)
     public Tip rulerInfo(@PathVariable String ruler_file_name,
                          @RequestBody JSONObject jsonObject,
+                         @RequestParam(name = "sign",required = true) String sign,
                          HttpServletRequest request,
                          HttpServletResponse response) throws IOException {
-
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
         // 获取项目当前路径
         String projectPath = new File("").getAbsolutePath();
         //判断文件名是否带有后缀
@@ -774,10 +798,20 @@ public class DevConnectionEndpoint {
         return SuccessTip.create();
     }
 
+    /**
+     * 删除规则
+     * @param sign:签名
+     * @param ruler_file_name:规则名
+     * @return
+     */
     @DeleteMapping("/snapshot/rulers/{ruler_file_name}")
-    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
-    public Tip rulerInfo(@PathVariable String ruler_file_name){
-
+    @ApiOperation(value = "删除规则", response = SqlRequest.class)
+    public Tip rulerInfo(@PathVariable String ruler_file_name,
+                         @RequestParam(name = "sign",required = true) String sign){
+        // 验证签名
+        if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }
         //获取项目根路径
         String projectPath = new File("").getAbsolutePath();
         // 拼接文件路径
