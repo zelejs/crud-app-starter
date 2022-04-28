@@ -128,7 +128,7 @@ public class Logs {
         StringBuilder logKeywordTextArea = new StringBuilder();
 
         // 如果pattern == null 则直接打印日志文件列表
-        if (pattern == null) {
+        if (pattern == null || pattern.isEmpty()) {
             for (String file : getLogFiles()) {
                 writer.println(file);
             }
@@ -144,7 +144,7 @@ public class Logs {
             // 提取压缩文件内容
             Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
             // 如果filter为空
-            if (filter == null) {
+            if (filter == null || filter.isEmpty()) {
                 // 如果没n=0那么就默认设为100
                 if (n == 0){
                     n = 100;
@@ -206,7 +206,7 @@ public class Logs {
             String filePath = "logs/" + pattern;
             Map<Integer, String> map = this.getLogContent(filePath);
             // filter == null，则默认 n=100 获取该日志最新的 n 条信息
-            if (filter == null) {
+            if (filter == null || filter.isEmpty()) {
                 // 如果n=0那么默认设为100
                 if (n == 0){
                     n = 100;
@@ -276,7 +276,7 @@ public class Logs {
         List<String> logList = new ArrayList<>();
 
         // pattern为空
-        if (pattern == null) {
+        if (pattern == null || pattern.isEmpty()) {
             return SuccessTip.create(this.getLogFiles());
         }
         // 文件为压缩文件
@@ -286,7 +286,7 @@ public class Logs {
             // 提取压缩文件内容
             Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
             // 在filter参数为null的情况下将n设为100，输出文件最后的100行
-            if (filter == null) {
+            if (filter == null || filter.isEmpty()) {
                 //如果n=0那么就默认设n=100
                 if (n == 0){
                     n = 100;
@@ -349,7 +349,7 @@ public class Logs {
         String filePath = "logs/" + pattern;
         Map<Integer, String> map = this.getLogContent(filePath);
         // pattern不为空，但是filter为空，则默认n=100，输出最新的100行
-        if (filter == null) {
+        if (filter == null || filter.isEmpty()) {
             // 没有传入n参数，则默认n=100，输出最新的100行
             if (n == 0){
                 n = 100;
