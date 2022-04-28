@@ -143,35 +143,46 @@ public class Logs {
             String gzipFilePath = "logs/" + pattern;
             // 提取压缩文件内容
             Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
+            // 如果filter为空
             if (filter == null) {
-                // 如果没有给n参数那么就默认设为100
+                // 如果没n=0那么就默认设为100
                 if (n == 0){
                     n = 100;
-                }
-                // 如果有n参数那么就直接使用传过来的n参数的值，循环取出文件最后的 n 条数据
-                // 在文件size不足 n 行时，将文件内容全部输出
-                if (gzipFileMap.size() <= n) {
+                }else if (n == -1){
+                 //如果n=-1那么就显示该日志的所有内容
                     for (int key : gzipFileMap.keySet()) {
                         String aLog = gzipFileMap.get(key);
                         logKeywordTextArea.append(String.format("%06d", key) + " |  " + aLog + "\n");
                     }
-                } else {
-                    // 文件size大于 n 行，将文件的最后 n 行输出
-                    for (int i = 1; i <= n; i++) {
-                        String aLog = gzipFileMap.get(gzipFileMap.size() - (n - i));
-                        logKeywordTextArea.append(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog + "\n");
-                    }
+                    // 推到浏览器显示
+                    writer.println(logKeywordTextArea);
+                    // 刷新流，将缓冲区的数据全部推出
+                    writer.flush();
                 }
+                    // 如果有n参数那么就直接使用传过来的n参数的值，循环取出文件最后的 n 条数据
+                    // 在文件size不足 n 行时，将文件内容全部输出
+                    if (gzipFileMap.size() <= n) {
+                        for (int key : gzipFileMap.keySet()) {
+                            String aLog = gzipFileMap.get(key);
+                            logKeywordTextArea.append(String.format("%06d", key) + " |  " + aLog + "\n");
+                        }
+                    } else {
+                        // 文件size大于 n 行，将文件的最后 n 行输出
+                        for (int i = 1; i <= n; i++) {
+                            String aLog = gzipFileMap.get(gzipFileMap.size() - (n - i));
+                            logKeywordTextArea.append(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog + "\n");
+                        }
+                    }
             } else {
-                // 如果没有传n参数则默认设为6,
+                // filter不为空
+                // 如果n=0则默认设为6,
                 if (n == 0){
                     n = 6;
                 }
-                // 如果有n参数那么就直接使用传过来的n参数的值
                 // 当filter != null时，取出n行上下文
                 for (int key : gzipFileMap.keySet()) {
                     String aLog = gzipFileMap.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 获取上文的n行
                     for (int i = 0; i < n; i++) {
                         if (gzipFileMap.get(key - (n + 1 - i)) == null) continue;
@@ -196,26 +207,32 @@ public class Logs {
             Map<Integer, String> map = this.getLogContent(filePath);
             // filter == null，则默认 n=100 获取该日志最新的 n 条信息
             if (filter == null) {
-                // 如果没有给n参数那么就默认设为100
+                // 如果n=0那么默认设为100
                 if (n == 0){
                     n = 100;
-                }
-                // 如果有n参数那么就直接使用传过来的n参数的值，循环取出文件最后的 n 条数据
-                // 如果日志文件的条目数 <= n 则将文件内容全部输出
-                if (map.size() <= n){
+                }else if (n == -1){
+                    //如果n=-1那么就显示该日志的所有内容
                     for (int key : map.keySet()){
                         String aLog = map.get(key);
                         logKeywordTextArea.append(String.format("%06d",key) + " |  " + aLog + "\n");
                     }
-                }else{
-                    // 如果日志的条目数 > n 则输出日志最新的 n 条信息
-                    for (int i = 1; i <= n ; i++){
-                        String aLog = map.get(map.size() - (n - i));
-                        logKeywordTextArea.append(String.format("%06d",map.size() - (n-i)) + " |  " + aLog + "\n");
-                    }
                 }
+                    // 如果日志文件的条目数 <= n 则将文件内容全部输出
+                    if (map.size() <= n) {
+                        for (int key : map.keySet()) {
+                            String aLog = map.get(key);
+                            logKeywordTextArea.append(String.format("%06d", key) + " |  " + aLog + "\n");
+                        }
+                    } else {
+                        // 如果日志的条目数 > n 则输出日志最新的 n 条信息
+                        for (int i = 1; i <= n; i++) {
+                            String aLog = map.get(map.size() - (n - i));
+                            logKeywordTextArea.append(String.format("%06d", map.size() - (n - i)) + " |  " + aLog + "\n");
+                        }
+                    }
+
             } else {
-                // 如果没有传n参数则默认设为6,
+                // 如果n=0则默认设为6,
                 if (n == 0){
                     n = 6;
                 }
@@ -223,7 +240,7 @@ public class Logs {
                 // 当filter != null时，取出n行上下文
                 for (int key : map.keySet()) {
                     String aLog = map.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 取出上文的n行
                     for (int i = 0; i < n; i++) {
                         if (map.get(key - (n + 1 - i)) == null) continue;
@@ -262,7 +279,6 @@ public class Logs {
         if (pattern == null) {
             return SuccessTip.create(this.getLogFiles());
         }
-
         // 文件为压缩文件
         if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")){
             // 拼接文件路径
@@ -271,11 +287,18 @@ public class Logs {
             Map<Integer, String> gzipFileMap = readGzipFile(gzipFilePath);
             // 在filter参数为null的情况下将n设为100，输出文件最后的100行
             if (filter == null) {
-                //如果没有给n参数，那么就默认设n为100
+                //如果n=0那么就默认设n=100
                 if (n == 0){
                     n = 100;
+                }else if (n == -1){
+                    //如果n == -1，那么就把该日志的内容全部输出
+                    for (int key : gzipFileMap.keySet()) {
+                        String aLog = gzipFileMap.get(key);
+                        logList.add(String.format("%06d", key) + " |  " + aLog);
+                    }
+                    return SuccessTip.create(logList);
                 }
-                // 如果有n参数那么就直接使用传过来的n参数的值，循环取出文件最后的 n 条数据
+                // n != 0且 != -1的情况
                 // 在文件size不足 n 行时，将文件内容全部输出
                 if (gzipFileMap.size() <= n) {
                     for (int key : gzipFileMap.keySet()) {
@@ -298,7 +321,7 @@ public class Logs {
                 // 有n参数传入,则且传入的n参数>0就直接使用传入的n
                 for (int key : gzipFileMap.keySet()){
                     String aLog = gzipFileMap.get(key);
-                    if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                    if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                     // 获取上文的n行
                     for (int i=0; i < n ;i++ ){
                         if (gzipFileMap.get(key - (n  - i)) == null) continue;
@@ -330,6 +353,13 @@ public class Logs {
             // 没有传入n参数，则默认n=100，输出最新的100行
             if (n == 0){
                 n = 100;
+            }else if (n == -1){
+                //如果n=-1那么就把该日志内容全部输出
+                for ( int key : map.keySet()){
+                    String aLog = map.get(key);
+                    logList.add(String.format("%06d",key) + " |  " + aLog);
+                }
+                return SuccessTip.create(logList);
             }
             // 传入了n参数且n>0则直接使用传入的值即可
             // 在文件size不足 n 行时，将文件内容全部输出
@@ -353,7 +383,7 @@ public class Logs {
             }
             for (int key : map.keySet()){
                 String aLog = map.get(key);
-                if (!aLog.toLowerCase().contains(filter.toLowerCase())) continue;
+                if (!aLog.toLowerCase().contains(filter.toLowerCase().trim())) continue;
                 // 获取上文的n行
                 for (int i=0; i<n ;i++ ){
                     if (map.get(key - (n - i)) == null) continue;
