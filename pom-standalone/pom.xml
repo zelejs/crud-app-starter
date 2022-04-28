@@ -22,6 +22,14 @@
     </properties>
 
     <dependencies>
+        <!-- dev -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>dev-assembly</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <!-- end dev -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -29,14 +37,15 @@
         </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
-            <artifactId>crud-plus</artifactId>
-            <version>${crud-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
             <artifactId>crud-core</artifactId>
             <version>${crud-core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-plus</artifactId>
+            <version>${crud-plus.version}</version>
+        </dependency>
+
         <!-- crud runtime
         <dependency>
             <groupId>com.jfeat</groupId>
@@ -92,19 +101,6 @@
             <version>${ehcache.version}</version>
         </dependency> -->
 
-        <!--swagger -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        
-
         <!-- springboot  -->
          <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -132,10 +128,10 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
-<!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
 
-        <!--allow swagger support java 11 (above java9)-->
+        <!-- allow swagger support java 11 (above java9)
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -166,7 +162,7 @@
             <artifactId>lombok</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency> -->
     </dependencies>
 
     <build>
