@@ -10,6 +10,7 @@ import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
+import com.jfeat.dev.connection.util.ShowAllFileName;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -362,8 +363,6 @@ public class DevConnectionEndpoint {
         }
         //有就调用规则，没有就返回无
         if (flag) {
-            String content = "";
-            StringBuilder builder = new StringBuilder();
             //把内容写入builder参数
             String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
             File rulerFile = new File(fileName);
@@ -379,13 +378,9 @@ public class DevConnectionEndpoint {
                 Object name = it.next();
                 // 获取所有的表名
                 List<String> allTableName = queryTablesDao.queryAllTables();
-                logger.info(allTableName.toString());
-                // 判断库中是否存在该表，不存在则跳过
+                // 判断库中是否存在该表，不存在则跳过，不把不存在的表名加入到namelist中，更不做后续的sql拼接
                 if (!allTableName.contains(name.toString())) continue;
                 nameList.add(name.toString());
-
-                response.setContentType("application/octet-stream");
-                response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
                 String createSql = "show create table " + name;
                 sqlList.add(createSql);
                 // 根据name获取value
@@ -450,10 +445,14 @@ public class DevConnectionEndpoint {
                         }
                     }
                 }
+
+                int i = 0;
                 for (String sql : sqlList) {
                     if (sql.contains("show")){
                         var list = tableServer.handleResult(sql);
+                            file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
                             file.add(list.get(1) + ";\n");
+                            i++;
                     }else {
                         var test = tableServer.handleResult2(sql);
                         for (String st : test) {
@@ -464,6 +463,151 @@ public class DevConnectionEndpoint {
             var data = tableServer.changToByte(file);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + rulerFile.getName() + ".sql");
             IOUtils.write(data, response.getOutputStream());
+            return null;
+        }else{
+            return ErrorTip.create(200,"没有该规则");
+        }
+
+    }
+
+
+    /**
+     * 根据规则显示数据库快照内容
+     * @param sign
+     * @param rule
+     * @param ruler
+     * @param response
+     * @return
+     */
+    @GetMapping("/snapshot/print")
+    @ApiOperation(value = "根据规则显示数据库快照内容", response = SqlRequest.class)
+                            // 测试环境，注释签名，测试完毕请设回 true
+    public Tip printSnapshot(@RequestParam(name = "sign",required = false) String sign,
+                             @RequestParam(name = "rule",defaultValue = "defined") String rule,
+                             @RequestParam(name = "ruler",required = true) String ruler,
+                             HttpServletResponse response) throws IOException {
+// 测试环境，注释签名，测试完务必还原
+        /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }*/
+        response.setContentType("text/plain;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        // 获取当前类所在根路径
+        String projectPath = new File("").getAbsolutePath();
+        //获取文件夹位置
+        File[] files = tableServer.getAllFile();
+        //判断是否有想要获取的ruler文件
+        boolean flag = false;
+        for (File file : files) {
+            String a = file.getName();
+            if (file.isDirectory()) continue;
+            if (a.equals(ruler + ".ruler")) {
+                flag = true;
+            }
+        }
+        //有就调用规则，没有就返回无
+        if (flag) {
+            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
+            File rulerFile = new File(fileName);
+            String text = FileUtils.readFileToString(rulerFile, "UTF-8");
+            JSONObject jsonObject = JSONObject.parseObject(text);
+            Iterator it = jsonObject.keySet().iterator();
+            List<String> file = new ArrayList<>();
+            List<String> sqlList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
+            // 循环取出下载规则内容
+            while (it.hasNext()) {
+                // 获得表名
+                Object name = it.next();
+                // 获取所有的表名
+                List<String> allTableName = queryTablesDao.queryAllTables();
+                // 判断库中是否存在该表，不存在则跳过
+                if (!allTableName.contains(name.toString())) continue;
+                nameList.add(name.toString());
+                String createSql = "show create table " + name;
+                sqlList.add(createSql);
+                // 根据name获取value
+                Object value = jsonObject.get(name);
+                String strValue = value.toString().replace("[", "").replace("]", "").replace("\"","");
+                if (value == null) {
+                    continue;
+                } else {
+                    if(strValue.contains("select") || strValue.contains("SELECT")){
+                        sqlList.add(strValue);
+                    }else {
+                        if (strValue.contains(",")) {
+                            if (strValue.contains("-")) {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    var table2 = table1[k].split("-");
+                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                    sqlList.add(insertSql);
+                                }
+                            } else {
+                                var table1 = strValue.split(",");
+                                for (int k = 0; k < table1.length; k++) {
+                                    String insertSql = "SELECT * FROM " + name + " limit " + table1[k] + ",1;";
+                                    sqlList.add(insertSql);
+                                }
+                            }
+                        } else if (strValue.contains("-")) {
+                            var table1 = strValue.split(",");
+                            for (int k = 0; k < table1.length; k++) {
+                                var table2 = table1[k].split("-");
+                                var limit = Integer.parseInt(table2[1].trim());
+                                String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                sqlList.add(insertSql);
+                            }
+                        } else {
+                            if (strValue.contains("*")) {
+                                String insertSql = "SELECT * FROM " + name + ";";
+                                sqlList.add(insertSql);
+                            } else {
+                                String insertSql = "SELECT * FROM " + name + " limit " + strValue + ",1;";
+                                sqlList.add(insertSql);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (rule.equals("full")) {
+                var list = queryTablesDao.queryAllTables();
+                for (String tableName : list) {
+                    int exflag = 0;
+                    for (String basicName : nameList) {
+                        if (tableName.equals(basicName)) {
+                            exflag = 1;
+                        }
+                    }
+                    if (exflag == 0) {
+                        String insertSql = "SELECT * FROM " + tableName;
+                        sqlList.add(insertSql);
+                    }
+                }
+            }
+            // 将获取到的数据库数据收集到List<String> file中
+            int i = 0;
+            for (String sql : sqlList) {
+                if (sql.contains("show")){
+                    var list = tableServer.handleResult(sql);
+                    file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
+                    file.add(list.get(1) + ";\n");
+                    i++;
+                }else {
+                    var test = tableServer.handleResult2(sql);
+                    for (String st : test) {
+                        file.add(st + "\n");
+                    }
+                }
+            }
+            // 打印输出到页面
+            for (String sqlData : file){
+                writer.print(sqlData);
+                writer.flush();
+            }
             return null;
         }else{
             return ErrorTip.create(200,"没有该规则");
@@ -589,10 +733,14 @@ public class DevConnectionEndpoint {
                     }
                 }
             }
+           // 将获取到的数据库数据收集到List<String> file中
+            int i = 0;
             for (String sql : sqlList) {
                 if (sql.contains("show")){
                     var list = tableServer.handleResult(sql);
-                        file.add(list.get(1) + ";\n");
+                    file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
+                    file.add(list.get(1) + ";\n");
+                    i++;
                 }else {
                     var test = tableServer.handleResult2(sql);
                     for (String st : test) {
@@ -652,6 +800,8 @@ public class DevConnectionEndpoint {
         }
         return SuccessTip.create(dbFileNameList);
     }
+
+
     @GetMapping("snapshot/dl")
     @ApiOperation(value = "下载dbsnapshot本地文件",response = SqlRequest.class)
                                     // 测试环境，注释签名设为false，测试完务必还原
@@ -869,6 +1019,32 @@ public class DevConnectionEndpoint {
             return SuccessTip.create("删除失败");
         }
     }
+
+    @GetMapping("/images")
+    @ApiOperation(value = "删除规则", response = SqlRequest.class)
+                        // 测试环境，注释签名，测试完毕请务必设回 true
+    public Tip showImages(@RequestParam(name = "sign",required = false) String sign){
+        // 验证签名
+        // 测试环境，注释签名，测试完务必还原
+        /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            return ErrorTip.create(9010, "身份验证错误");
+        }*/
+        // 获取项目根路径
+        String projectPath = new File("").getAbsolutePath();
+        // 获取文件夹对象
+        File imagesDir = new File(projectPath + "\\images");
+        // 判断文件夹是否存在
+        if (!imagesDir.exists()){
+            return ErrorTip.create(200,"没有找到images文件夹");
+        }
+        //创建list用来收集文件名
+        List<String> allImagesName = new ArrayList<>();
+        // 获取该文件下的所有文件名
+        ShowAllFileName.queryAllFileName(imagesDir,allImagesName);
+        return SuccessTip.create(allImagesName);
+    }
+
+
 
 
 }
