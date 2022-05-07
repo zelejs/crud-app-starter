@@ -77,13 +77,18 @@ export default function index (props) {
     // alert(`选择的用户id为: ${id}`)
     //点击跳转页面
     if (item.path.indexOf('http') != -1) {
-      window.location.replace(item.path)
-      let url = window.location.href
-      console.log(window.location.href);
-      history.push(url);
+      // window.location.replace(item.path)
+
+      // history.push(url);
+      const w = window.open('about:blank');
+      w.location.href = item.path
+      console.log(item.path);
 
     } else {
-      history.push(item.path);
+      const w = window.open('about:blank');
+      w.location.href = location + item.path
+      console.log(item.path);
+
     }
 
   }
