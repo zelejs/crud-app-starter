@@ -1133,11 +1133,10 @@ public class DevConnectionEndpoint {
             // 循环读取，并写入stringbuffer中
             String content = "";
             while ((content = bufferedReader.readLine()) != null) {
-                jsonString.append(content);
+                jsonString.append(content + "\n");
             }
-            // 因为内容中带有 ” 双引号，所以先将stringbuffer转换成json对象再传过去
-            JSONObject jsonObject = JSONObject.parseObject(jsonString.toString());
-            return SuccessTip.create(jsonObject);
+            //JSONObject jsonObject = JSONObject.parseObject(jsonString.toString());
+            return SuccessTip.create(jsonString);
 
         }else{
             throw new BusinessException(BusinessCode.BadRequest,"没有找到此规则");
