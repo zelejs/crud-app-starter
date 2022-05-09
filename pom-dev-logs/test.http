@@ -5,7 +5,7 @@
 GET {{endpoint}}/dev/logs
 
 ### 默认返回日志最新的100行,pattern=<fileName>
-### 可给n参数，修改返回最新的n行
+### 可给n参数，修改返回最新的n行，当 n= -1 时返回该日志全部内容
 GET {{endpoint}}/dev/logs?{{pattern}}&n=10
 
 ### 返回日志上下文（默认上下文各6行）,pattern=<fileName>，filter=<>，均为String
@@ -16,7 +16,7 @@ GET {{endpoint}}/dev/logs?{{pattern}}&filter=
 GET {{endpoint}}/dev/logs/json
 
 ### 以json格式，返回的日志最新的100行,pattern=<fileName>
-### 可给n参数，修改返回最新的n行
+### 可给n参数，修改返回最新的n行，当 n= -1 时返回该日志全部内容
 GET {{endpoint}}/dev/logs/json?{{pattern}}
 
 ### 以json格式，返回日志上下文,pattern=<fileName>，filter=<>，均为String
