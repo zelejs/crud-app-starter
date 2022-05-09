@@ -927,13 +927,13 @@ public class DevConnectionEndpoint {
         // 判断是否有.dbsnapshot目录
         File fileDir = new File(".dbsnapshot");
         // 没有则返回找不到
-        if (!fileDir.exists()) return SuccessTip.create("没有找到dbsnapshot目录，或者目录为空");
+        if (!fileDir.exists()) return ErrorTip.create(200,"没有找到dbsnapshot目录，或者目录为空");
         // 判断是否是空目录
-        if (fileDir.list().length == 0) return  SuccessTip.create("目录为空");
+        if (fileDir.list().length == 0) return  ErrorTip.create(200,"目录为空");
         // 通过传入的文件名，找到文件并删除
         File snapshotFile = new File(".dbsnapshot/" + snapshot_name + ".sql");
 
-        if (!snapshotFile.exists()) return SuccessTip.create("没有该文件，请确认文件名是否正确");
+        if (!snapshotFile.exists()) return ErrorTip.create(200,"没有该文件，请确认文件名是否正确");
 
         if (snapshotFile.delete()) {
             return SuccessTip.create("删除成功");

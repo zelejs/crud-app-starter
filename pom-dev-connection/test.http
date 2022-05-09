@@ -36,7 +36,7 @@ GET {{endpoint}}/dev/connection/sqls?query=view
 ### 显示所有表
 GET {{endpoint}}/dev/connection?{{sign}}
 
-###获取所有命名规则文件
+###获取所有规则文件
 GET {{endpoint}}/dev/connection/snapshot/rulers?{{sign}}
 
 ### 新建/更新规则，文件已存在就更新替换内容，不存在就新建
@@ -57,7 +57,8 @@ POST {{endpoint}}/dev/connection/snapshot/rulers/mings?{{sign}}
 POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=mings
 
 ### 删除保存在本地的快照文件
-### /dev/connection/snapshot/{snapshot_name} 无需带后缀名
+### /dev/connection/snapshot/{snapshot_name}
+### snapshot_name ：snapshot文件名无需带后缀
 DELETE {{endpoint}}/dev/connection/snapshot/20220505_1743?{{sign}}
 
 ### 下载数据库快照
