@@ -78,7 +78,7 @@ GET {{endpoint}}/dev/connection/snapshot?{{sign}}
 ### pattern = 数据库快照文件名
 GET {{endpoint}}/dev/connection/snapshot/dl?{{sign}}&pattern=20220429_0945.sql
 
-### 查看具体的命名规则的配置详情
+### 查看具体的规则的配置详情
 ### /dev/connection/snapshot/rulers/{ruler_file_name}
 GET {{endpoint}}/dev/connection/snapshot/rulers/mings?{{sign}}
 
