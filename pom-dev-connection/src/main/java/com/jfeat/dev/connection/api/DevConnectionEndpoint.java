@@ -769,7 +769,7 @@ public class DevConnectionEndpoint {
                                 // 测试环境，注释签名设为false，测试完务必还原
     public Tip saveFileToLocal(@RequestParam(name = "sign", required = false) String sign,
                                @RequestParam(name = "rule", defaultValue = "defined") String rule,
-                               @RequestParam(name = "ruler", required = false) String ruler) throws IOException {
+                               @RequestParam(name = "ruler", required = true) String ruler) throws IOException {
         // 测试环境，注释签名，测试完务必还原
         /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
@@ -807,8 +807,8 @@ public class DevConnectionEndpoint {
                 // 获得库中的所有表名
                 List<String> allTableName = queryTablesDao.queryAllTables();
                 // 判断库中是否存在该表，不存在则跳过
-                nameList.add(name.toString());
                 if (!allTableName.contains(name.toString())) continue;
+                nameList.add(name.toString());
                 // 通过表名获得value
                 Object value = jsonObject.get(name);
                 // 拼接sql语句，获得建表语句
@@ -987,16 +987,16 @@ public class DevConnectionEndpoint {
         if (!snapshotFile.exists()) return ErrorTip.create(200,"文件不存在");
         // 读取文件内容
         String aline = null;
-        List<String> contentList = new ArrayList<>();
+        StringBuffer contentList = new StringBuffer();
         try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(snapshotFile)))){
             while ((aline = br.readLine()) != null){
-                contentList.add(aline+"\n");
+                contentList.append(aline+"\n");
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        // contentList掉开头和结尾的 "[","]"并转换成字节数组
-        byte[] contentByte = contentList.toString().replace("[","").replace("]","").getBytes(StandardCharsets.UTF_8);
+        // contentList转换成字节数组
+        byte[] contentByte = contentList.toString().getBytes(StandardCharsets.UTF_8);
         // 设置响应头，告诉浏览器以附件的形式下载
         response.setHeader("Content-Disposition","attachment;filename="+pattern);
         // 通过流输出给浏览器
