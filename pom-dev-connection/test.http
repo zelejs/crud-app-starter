@@ -2,30 +2,32 @@ key="514528" ttl =600000
 sign提供smallsee/dev-cli获取signature gen key ttl
 ####所有接口都需要带&sign参数
 
-### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号
-GET {{endpoint}}/dev/connection?sql=SELECT * FROM nft_player&format=md
-可选参数 ?format=md
+### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号，无需分号
+### format = md 以表格的形式输出数据内容
+### 如果不给format=md就以列表的形式输出内容
+GET {{endpoint}}/dev/connection?sql=SELECT * FROM lc_field_model
 
-### 获取数据库数据 pattern=<table_name>
-GET {{endpoint}}/dev/connection?pattern=
 
-### 页面输出数据
-GET {{endpoint}}/dev/connection/print
+### 获取表数据
+### pattern = 表名
+GET {{endpoint}}/dev/connection?pattern=lc_field_model
 
-### 页面输出数据仅结构
+### 获取数据库数据
+### filter = schema :如果给出schema则返回数据库所有表的结构
+### 不给filter则返回数据库所有的数据
 GET {{endpoint}}/dev/connection/print?filter=schema
 
-###下载所有的数据库
+### 输出指定表数据，仅结构
+### pattern = 表名,如果不给这个参数的话输出全部表的结构
+GET {{endpoint}}/dev/connection/schema
+
+###下载所有的数据库数据
+### filter = schema 给出这个参数则仅下载数据库所有表数据结构
+### 不给filter则下载数据库的所有数据
 GET {{endpoint}}/dev/connection/sql
 
-###下载所有的数据库结构
-GET {{endpoint}}/dev/connection/sql?filter=schema
-
-###数据库非全量下载
-GET {{endpoint}}/dev/connection/snapshot?ruler=basic&rule=defined&sign=63fa65e3b2dac9bc86dcf184b6be4635
-
 ###
-GET {{endpoint}}/dev/connection/sqls?query=view
+GET {{endpoint}}/dev/connection/sqls?
 
 ############################################################################################
 ### 以下是修改过的业务
@@ -54,7 +56,7 @@ POST {{endpoint}}/dev/connection/snapshot/rulers/mings?{{sign}}
 ### 根据规则(ruler)保存数据库快照到本地.dbsnapshot文件夹中,以：日期_时分.sql作为文件名
 ### ruler=规则文件名
 ### rule=默认为defined,可给 full：下载所有数据库数据
-POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=mings
+POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=ming.ruler
 
 ### 删除保存在本地的快照文件
 ### /dev/connection/snapshot/{snapshot_name}
@@ -64,7 +66,7 @@ DELETE {{endpoint}}/dev/connection/snapshot/20220505_1743?{{sign}}
 ### 下载数据库快照
 ### ruler=规则文件名
 ### rule=默认为defined,可给 full：下载所有数据库数据
-GET {{endpoint}}/dev/connection/snapshot/instant?{{sign}}&ruler=mings
+GET {{endpoint}}/dev/connection/snapshot/instant?{{sign}}&ruler=ming
 
 ### 页面输出当前的数据库快照内容
 ### ruler=规则文件名

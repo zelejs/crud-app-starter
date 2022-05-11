@@ -21,6 +21,7 @@ import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -181,6 +182,43 @@ public class DevConnectionEndpoint {
                 }
             }
         }
+    }
+
+    @GetMapping("/schema/json")
+    @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
+    public Tip queryTableSchemaJson(@RequestParam(name = "pattern", required = false) String pattern,
+                                 // 测试环境，注释签名设为false，测试完务必还原
+                                 @RequestParam(name = "sign", required = false) String sign,
+                                 HttpServletResponse response) throws IOException {
+        // 测试环境，注释签名，测试完务必还原
+        /*if (!SignatureKit.parseSignature(sign, key,ttl) ) {
+            writer.println("身份信息错误");
+            writer.flush();*/
+        ArrayList schemaList = new ArrayList();
+        if (!pattern.isBlank()) {
+            String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
+            schemaList.add(dropSql);
+            //writer.println(dropSql);
+            String createSql = "show create table " + pattern;
+            var str = tableServer.handleResult(createSql);
+            schemaList.add(str.get(1) + ";");
+            return SuccessTip.create(schemaList);
+            //writer.println(str.get(1)+";");
+            //writer.flush();
+            }
+            var list = queryTablesDao.queryAllTables();
+            for (String tableName : list) {
+                String dropSql = "DROP TABLE IF EXISTS " + tableName + ";";
+                schemaList.add(dropSql);
+                //writer.println(dropSql);
+                String createSql = "show create table " + tableName;
+                var str = tableServer.handleResult(createSql);
+                schemaList.add(str.get(1) + ";");
+                return SuccessTip.create(schemaList);
+                //writer.println(str.get(1)+";");
+                //writer.flush();
+            }
+            return ErrorTip.create(200,"没有找到该表");
     }
 
     @GetMapping("/sqls")
@@ -348,6 +386,15 @@ public class DevConnectionEndpoint {
         /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }*/
+        // 判断是否有后缀名
+        String rulerName = null;
+        if (ruler.lastIndexOf(".") != -1){
+            // 有的话就去掉后缀名
+            rulerName = ruler.replace(".ruler","");
+        }else{
+            // 没有的话就直接使用
+            rulerName = ruler;
+        }
         response.setContentType("application/octet-stream");
         response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION);
         // 获取当前类所在根路径
@@ -359,14 +406,14 @@ public class DevConnectionEndpoint {
         for (File file : files) {
             String a = file.getName();
             if (file.isDirectory()) continue;
-            if (a.equals(ruler + ".ruler")) {
+            if (a.equals(rulerName + ".ruler")) {
                 flag = true;
             }
         }
         //有就调用规则，没有就返回无
         if (flag) {
             //把内容写入builder参数
-            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
+            String fileName = projectPath + "/.rulers/" + rulerName + ".ruler";
             File rulerFile = new File(fileName);
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(text);
@@ -636,6 +683,15 @@ public class DevConnectionEndpoint {
         /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }*/
+        // 判断是否有后缀名
+        String rulerName = null;
+        if (ruler.lastIndexOf(".") != -1){
+            // 有的话就去掉后缀名
+            rulerName = ruler.replace(".ruler","");
+        }else{
+            // 没有的话就直接使用
+            rulerName = ruler;
+        }
         response.setContentType("application/json;charset=utf-8");
         // 获取当前类所在根路径
         String projectPath = new File("").getAbsolutePath();
@@ -646,13 +702,13 @@ public class DevConnectionEndpoint {
         for (File file : files) {
             String a = file.getName();
             if (file.isDirectory()) continue;
-            if (a.equals(ruler + ".ruler")) {
+            if (a.equals(rulerName + ".ruler")) {
                 flag = true;
             }
         }
         //有就调用规则，没有就返回无
         if (flag) {
-            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
+            String fileName = projectPath + "/.rulers/" + rulerName + ".ruler";
             File rulerFile = new File(fileName);
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(text);
@@ -774,6 +830,15 @@ public class DevConnectionEndpoint {
         /*if (!SignatureKit.parseSignature(sign, key, ttl)) {
             return ErrorTip.create(9010, "身份验证错误");
         }*/
+        // 判断是否有后缀名
+        String rulerName = null;
+        if (ruler.lastIndexOf(".") != -1){
+            // 有的话就去掉后缀名
+            rulerName = ruler.replace(".ruler","");
+        }else{
+            // 没有的话就直接使用
+            rulerName = ruler;
+        }
         // 获取当前类所在根路径
         String projectPath = new File("").getAbsolutePath();
         //获取文件夹位置
@@ -782,13 +847,13 @@ public class DevConnectionEndpoint {
         boolean flag = false;
         for (File file : files) {
             String a = file.getName();
-            if (a.equals(ruler + ".ruler")) {
+            if (a.equals(rulerName + ".ruler")) {
                 flag = true;
             }
         }
         //有就调用规则，没有就返回无
         if (flag) {
-            String fileName = projectPath + "/.rulers/" + ruler + ".ruler";
+            String fileName = projectPath + "/.rulers/" + rulerName + ".ruler";
             File rulerFile = new File(fileName);
             // 将指定文件读取出来以String显示，”utf-8“设置写入时的编码格式
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
