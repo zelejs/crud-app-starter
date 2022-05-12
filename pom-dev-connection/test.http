@@ -19,7 +19,7 @@ GET {{endpoint}}/dev/connection/print?filter=schema
 
 ### 输出指定表数据，仅结构
 ### pattern = 表名,如果不给这个参数的话输出全部表的结构
-GET {{endpoint}}/dev/connection/schema
+GET {{endpoint}}/dev/connection/schema?pattern=sys_user_role
 
 ###下载所有的数据库数据
 ### filter = schema 给出这个参数则仅下载数据库所有表数据结构
@@ -61,7 +61,7 @@ POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=ming.ruler
 ### 删除保存在本地的快照文件
 ### /dev/connection/snapshot/{snapshot_name}
 ### snapshot_name ：snapshot文件名无需带后缀
-DELETE {{endpoint}}/dev/connection/snapshot/20220505_1743?{{sign}}
+DELETE {{endpoint}}/dev/connection/snapshot/mings_20220512_1840.sql?{{sign}}
 
 ### 下载数据库快照
 ### ruler=规则文件名
@@ -78,7 +78,7 @@ GET {{endpoint}}/dev/connection/snapshot?{{sign}}
 
 ### 下载snapshot文件
 ### pattern = 数据库快照文件名
-GET {{endpoint}}/dev/connection/snapshot/dl?{{sign}}&pattern=20220429_0945.sql
+GET {{endpoint}}/dev/connection/snapshot/dl?{{sign}}&pattern=mings_20220512_2035.sql
 
 ### 查看具体的规则的配置详情
 ### /dev/connection/snapshot/rulers/{ruler_file_name}

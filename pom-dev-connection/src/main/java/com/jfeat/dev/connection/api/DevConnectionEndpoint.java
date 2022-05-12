@@ -75,13 +75,13 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "数据库查询", response = SqlRequest.class)
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      // 测试环境，注释签名设为false，测试完务必还原
-                     @RequestParam(name = "sign", required = false) String sign,
+                     @RequestParam(name = "sign", required = true) String sign,
                      @RequestParam(name = "format", required = false) String format,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
         // 测试环境，注释签名，测试完务必还原
-        /*if (! SignatureKit.parseSignature(sign, key,ttl) ){
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
             return ErrorTip.create(9010,"身份验证错误");
-        }*/
+        }
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
@@ -190,6 +190,8 @@ public class DevConnectionEndpoint {
                                  // 测试环境，注释签名设为false，测试完务必还原
                                  @RequestParam(name = "sign", required = false) String sign,
                                  HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
         // 测试环境，注释签名，测试完务必还原
         /*if (!SignatureKit.parseSignature(sign, key,ttl) ) {
             writer.println("身份信息错误");
@@ -412,7 +414,7 @@ public class DevConnectionEndpoint {
         }
         //有就调用规则，没有就返回无
         if (flag) {
-            //把内容写入builder参数
+            //读取规则文件
             String fileName = projectPath + "/.rulers/" + rulerName + ".ruler";
             File rulerFile = new File(fileName);
             String text = FileUtils.readFileToString(rulerFile, "UTF-8");
@@ -495,12 +497,17 @@ public class DevConnectionEndpoint {
                     }
                 }
 
+            // 将规则文件作为注释加在头部
+            StringBuilder builder = new StringBuilder();
+            String value ="/*\n" + text + "\n" + "*/\n";
+            file.add(value);
+
                 int i = 0;
                 for (String sql : sqlList) {
                     if (sql.contains("show")){
                         var list = tableServer.handleResult(sql);
                             file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
-                            file.add(list.get(1) + ";\n");
+                            file.add(list.get(1).replace("',","',\n") + ";\n");
                             i++;
                     }else {
                         var test = tableServer.handleResult2(sql);
@@ -638,12 +645,16 @@ public class DevConnectionEndpoint {
                 }
             }
             // 将获取到的数据库数据收集到List<String> file中
+            // 在头部加入规则内容注释
+            StringBuilder builder = new StringBuilder();
+            String value ="/*\n" + text + "\n" + "*/\n";
+            file.add(value);
             int i = 0;
             for (String sql : sqlList) {
                 if (sql.contains("show")){
                     var list = tableServer.handleResult(sql);
                     file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
-                    file.add(list.get(1) + ";\n");
+                    file.add(list.get(1).replace("',","',\n") + ";\n");
                     i++;
                 }else {
                     var test = tableServer.handleResult2(sql);
@@ -790,12 +801,16 @@ public class DevConnectionEndpoint {
                 }
             }
             // 将获取到的数据库数据收集到List<String> file中
+            // 在头部加入规则内容注释
+            StringBuilder builder = new StringBuilder();
+            String value ="/*\n" + text + "\n" + "*/\n";
+            file.add(value);
             int i = 0;
             for (String sql : sqlList) {
                 if (sql.contains("show")){
                     var list = tableServer.handleResult(sql);
                     file.add("DROP TABLE IF EXISTS "+nameList.get(i));
-                    file.add(list.get(1));
+                    file.add(list.get(1).replace("',","',\n") + "\n");
                     i++;
                 }else {
                     var test = tableServer.handleResult2(sql);
@@ -813,7 +828,7 @@ public class DevConnectionEndpoint {
     }
 
     /**
-     * Post请求方式保存文件到本地
+     * Post请求方式保存快照文件到本地
      * @param sign 签名
      * @param rule full
      * @param ruler 规则文件名（不带后缀）
@@ -940,12 +955,17 @@ public class DevConnectionEndpoint {
                 }
             }
            // 将获取到的数据库数据收集到List<String> file中
+            // 将规则文件作为注释加在头部
+            StringBuilder builder = new StringBuilder();
+            String value ="/*\n" + text + "\n" + "*/\n";
+            file.add(value);
+
             int i = 0;
             for (String sql : sqlList) {
                 if (sql.contains("show")){
                     var list = tableServer.handleResult(sql);
                     file.add("DROP TABLE IF EXISTS "+nameList.get(i) + ";\n");
-                    file.add(list.get(1) + ";\n");
+                    file.add(list.get(1).replace("',","',\n") + ";\n");
                     i++;
                 }else {
                     var test = tableServer.handleResult2(sql);
@@ -963,7 +983,7 @@ public class DevConnectionEndpoint {
             }
             // 创建文件对象
             String everyDate = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
-            File everyDaydata = new File(".dbsnapshot/" + everyDate +".sql");
+            File everyDaydata = new File(".dbsnapshot/" +  rulerName + "_" + everyDate +".sql");
             // 写入数据
             try (FileWriter fileWriter = new FileWriter(everyDaydata,false)){
                 for (String adata : file){
@@ -1138,9 +1158,9 @@ public class DevConnectionEndpoint {
             File rulerFile = new File(fileName);
             InputStreamReader streamReader = new InputStreamReader(new FileInputStream(rulerFile), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(streamReader);
-
-            while ((content = bufferedReader.readLine()) != null)
-                builder.append(content+"\n");
+            while ((content = bufferedReader.readLine()) != null) {
+                builder.append(content + "\n");
+            }
 
             String value = builder.toString();
             writer.print(value);
