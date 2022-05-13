@@ -7,7 +7,6 @@ sign提供smallsee/dev-cli获取signature gen key ttl
 ### 如果不给format=md就以列表的形式输出内容
 GET {{endpoint}}/dev/connection?sql=SELECT * FROM lc_field_model
 
-
 ### 获取表数据
 ### pattern = 表名
 GET {{endpoint}}/dev/connection?pattern=lc_field_model

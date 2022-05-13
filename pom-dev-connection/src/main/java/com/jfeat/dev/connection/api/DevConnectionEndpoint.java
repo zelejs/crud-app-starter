@@ -1,6 +1,7 @@
 package com.jfeat.dev.connection.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -21,7 +22,6 @@ import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -75,13 +75,13 @@ public class DevConnectionEndpoint {
     @ApiOperation(value = "数据库查询", response = SqlRequest.class)
     public Tip query(@RequestParam(name = "pattern", required = false) String pattern,
                      // 测试环境，注释签名设为false，测试完务必还原
-                     @RequestParam(name = "sign", required = true) String sign,
+                     @RequestParam(name = "sign", required = false) String sign,
                      @RequestParam(name = "format", required = false) String format,
             @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
         // 测试环境，注释签名，测试完务必还原
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+        /*if (! SignatureKit.parseSignature(sign, key,ttl) ){
             return ErrorTip.create(9010,"身份验证错误");
-        }
+        }*/
         response.setContentType("text/plain;charset=utf-8");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         if(sql!=null) {
@@ -148,6 +148,90 @@ public class DevConnectionEndpoint {
         return SuccessTip.create();
     }
 
+    /**
+     * 数据库查询,JSON格式返回
+     * @param pattern
+     * @param sign
+     * @param format
+     * @param sql
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/json")
+    @ApiOperation(value = "数据库查询", response = SqlRequest.class)
+    public Tip queryJson(@RequestParam(name = "pattern", required = false) String pattern,
+                     // 测试环境，注释签名设为false，测试完务必还原
+                     @RequestParam(name = "sign", required = false) String sign,
+                     @RequestParam(name = "format", required = false) String format,
+                     @RequestParam(name = "sql", required = false) String sql,HttpServletResponse response) throws IOException {
+        // 测试环境，注释签名，测试完务必还原
+        /*if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            return ErrorTip.create(9010,"身份验证错误");
+        }*/
+        /*response.setContentType("text/plain;charset=utf-8");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());*/
+        ArrayList resultList = new ArrayList();
+        if(!StringUtils.isBlank(sql)) {
+            // startsWith() 方法用于检测字符串是否以指定的前缀开始
+            if(sql.startsWith("SELECT") || sql.startsWith("select")){
+                if(format!=null && format.equals("md")) {
+                    var test = tableServer.showMd(sql);
+                    for (String st : test) {resultList.add(st+"\n");}
+                }else{
+                    var test = tableServer.show(sql);
+                    for (String st : test) {resultList.add(st+"\n");}
+                }
+            }else if(sql.startsWith("SHOW") || sql.startsWith("show")) {
+                if (sql.startsWith("SHOW CREATE") || sql.startsWith("show create") || sql.startsWith("SHOW create") || sql.startsWith("show Create")){
+                    if(format!=null && format.equals("md")) {
+                        var test = tableServer.showMd(sql);
+                        for (String st : test) {resultList.add(st+"\n");}
+                    }else{
+                        var test = tableServer.handleResult(sql);
+                        resultList.add(test.get(1)+";");
+                    }
+                }else{
+                    if(format!=null && format.equals("md")) {
+                        var test = tableServer.showMd(sql);
+                        for (String st : test) {
+                            st = st.replace("'","");
+                            resultList.add(st+"\n");
+                        }
+                    }else{
+                        var test = tableServer.show(sql);
+                        for (String st : test) {
+                            st = st.replace("'","");
+                            resultList.add(st+"\n");
+                        }
+                    }
+                }
+            }else{
+                throw new BusinessException(BusinessCode.BadRequest,"请输入正确的SELECT查询语句");
+            }
+        }else{
+            if (!StringUtils.isBlank(pattern)) {
+                String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
+                resultList.add(dropSql);
+                String createSql = "show create table " + pattern;
+                var str = tableServer.handleResult(createSql);
+                var createStr = str.get(1).replace("'","");
+                resultList.add(createStr+";\n");
+                String insertSql = "SELECT * FROM " + pattern;
+                var test = tableServer.handleResult2(insertSql);
+                for (String st : test) {
+                    resultList.add(st);
+                }
+            } else {
+                //获取所有的表名
+                var list = queryTablesDao.queryAllTables();
+                return SuccessTip.create(list);
+            }
+        }
+
+        return SuccessTip.create(resultList);
+    }
+
     @GetMapping("/schema")
     @ApiOperation(value = "执行数据库查询", response = SqlRequest.class)
     public void queryTableSchema(@RequestParam(name = "pattern", required = false) String pattern,
@@ -197,7 +281,7 @@ public class DevConnectionEndpoint {
             writer.println("身份信息错误");
             writer.flush();*/
         ArrayList schemaList = new ArrayList();
-        if (!pattern.isBlank()) {
+        if (!StringUtils.isBlank(pattern)) {
             String dropSql = "DROP TABLE IF EXISTS " + pattern + ";";
             schemaList.add(dropSql);
             //writer.println(dropSql);
@@ -217,8 +301,6 @@ public class DevConnectionEndpoint {
                 var str = tableServer.handleResult(createSql);
                 schemaList.add(str.get(1) + ";");
                 return SuccessTip.create(schemaList);
-                //writer.println(str.get(1)+";");
-                //writer.flush();
             }
             return ErrorTip.create(200,"没有找到该表");
     }
@@ -1342,7 +1424,7 @@ public class DevConnectionEndpoint {
         // 获取项目根路径
         String projectPath = new File("").getAbsolutePath();
         // 获取文件夹对象
-        File imagesDir = new File(projectPath + "\\images");
+        File imagesDir = new File(projectPath + File.separator + "images");
         // 判断文件夹是否存在
         if (!imagesDir.exists()){
             return ErrorTip.create(200,"没有找到images文件夹");
