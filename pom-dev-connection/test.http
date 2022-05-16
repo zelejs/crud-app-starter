@@ -1,38 +1,37 @@
 key="514528" ttl =600000
 sign提供smallsee/dev-cli获取signature gen key ttl
-####所有接口都需要带&sign参数
+
+### ！！！所有api接口都需要验证sign
+@endpoint=http://localhost:8080
+@sign=sign=12b3e68455f3f3c3193694e4f8625c3d
 
 ### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号，无需分号
 ### format = md 以表格的形式输出数据内容
 ### 如果不给format=md就以列表的形式输出内容
-GET {{endpoint}}/dev/connection?sql=SELECT * FROM lc_field_model
+GET {{endpoint}}/dev/connection?{{sign}}&sql=SELECT * FROM lc_field_model
 
 ### 获取表数据
 ### pattern = 表名
-GET {{endpoint}}/dev/connection?pattern=lc_field_model
+GET {{endpoint}}/dev/connection?{{sign}}&pattern=lc_field_model
 
 ### 获取数据库数据
 ### filter = schema :如果给出schema则返回数据库所有表的结构
 ### 不给filter则返回数据库所有的数据
-GET {{endpoint}}/dev/connection/print?filter=schema
+GET {{endpoint}}/dev/connection/print?{{sign}}&filter=schema
 
 ### 输出指定表数据，仅结构
 ### pattern = 表名,如果不给这个参数的话输出全部表的结构
-GET {{endpoint}}/dev/connection/schema?pattern=sys_user_role
+GET {{endpoint}}/dev/connection/schema?{{sign}}&pattern=sys_user_role
 
 ###下载所有的数据库数据
 ### filter = schema 给出这个参数则仅下载数据库所有表数据结构
 ### 不给filter则下载数据库的所有数据
-GET {{endpoint}}/dev/connection/sql
+GET {{endpoint}}/dev/connection/sql{{sign}}
 
-###
-GET {{endpoint}}/dev/connection/sqls?
-
-############################################################################################
-### 以下是修改过的业务
-### ！！！所有api接口都需要验证sign
-@endpoint=http://localhost:8080
-@sign=sign=52abf62dd0f7812d91029b430ccf7baa
+###根据获取便捷sql查询语句
+### pattern = 
+### query = 
+GET {{endpoint}}/dev/connection/sqls?{{sign}}
 
 ### 显示所有表
 GET {{endpoint}}/dev/connection?{{sign}}
