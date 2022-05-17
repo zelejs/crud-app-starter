@@ -1,63 +1,94 @@
-@endpoint=http://localhost:8086
-
 key="514528" ttl =600000
 sign提供smallsee/dev-cli获取signature gen key ttl
-####所有接口都需要带&sign参数
+
+### ！！！所有api接口都需要验证sign
+@endpoint=http://localhost:8080
+@sign=sign=12b3e68455f3f3c3193694e4f8625c3d
+
+### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号，无需分号
+### format = md 以表格的形式输出数据内容
+### 如果不给format=md就以列表的形式输出内容
+GET {{endpoint}}/dev/connection?{{sign}}&sql=SELECT * FROM lc_field_model
+
+### 获取表数据
+### pattern = 表名
+GET {{endpoint}}/dev/connection?{{sign}}&pattern=lc_field_model
+
+### 获取数据库数据
+### filter = schema :如果给出schema则返回数据库所有表的结构
+### 不给filter则返回数据库所有的数据
+GET {{endpoint}}/dev/connection/print?{{sign}}&filter=schema
+
+### 输出指定表数据，仅结构
+### pattern = 表名,如果不给这个参数的话输出全部表的结构
+GET {{endpoint}}/dev/connection/schema?{{sign}}&pattern=sys_user_role
+
+###下载所有的数据库数据
+### filter = schema 给出这个参数则仅下载数据库所有表数据结构
+### 不给filter则下载数据库的所有数据
+GET {{endpoint}}/dev/connection/sql{{sign}}
+
+###根据获取便捷sql查询语句
+### pattern = 
+### query = 
+GET {{endpoint}}/dev/connection/sqls?{{sign}}
 
 ### 显示所有表
-GET {{endpoint}}/dev/connection
+GET {{endpoint}}/dev/connection?{{sign}}
 
+###获取所有规则文件
+GET {{endpoint}}/dev/connection/snapshot/rulers?{{sign}}
 
-### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号
-GET {{endpoint}}/dev/connection?sql=SELECT * FROM nft_player&format=md
-可选参数 ?format=md
-####所有接口都需要带&sign参数
-
-### 获取数据库数据 pattern=<table_name>
-GET {{endpoint}}/dev/connection?pattern=
-####所有接口都需要带&sign参数
-
-### 页面输出数据
-GET {{endpoint}}/dev/connection/print
-####所有接口都需要带&sign参数
-
-### 页面输出数据仅结构
-GET {{endpoint}}/dev/connection/print?filter=schema
-####所有接口都需要带&sign参数
-
-###下载所有的数据库
-GET {{endpoint}}/dev/connection/sql
-####所有接口都需要带&sign参数
-
-###下载所有的数据库结构
-GET {{endpoint}}/dev/connection/sql?filter=schema
-####所有接口都需要带&sign参数
-
-###删除规则
-DELETE {{endpoint}}/dev/connection/snapshot/rulers/ming
-
-
-###新建更新规则/dev/connection/snapshot/rulers/{ruler_file_name}
-POST {{endpoint}}/dev/connection/snapshot/rulers/ming?sign=de89b878f624a4b4bb69dcd88dee443e
+### 新建/更新规则，文件已存在就更新替换内容，不存在就新建
+### 同时支持带后缀名和不带后缀名，后缀名只支持.ruler格式
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+POST {{endpoint}}/dev/connection/snapshot/rulers/mings?{{sign}}
 
 {
-    "t_end_user": [1],
-    "t_schedule_record": [1,2],
-    "nft_player": ["1-10","20-30"],
-    "t_config_field": ["*"]
+"t_end_user":[1],
+"t_schedule_record":[1,2],
+"nft_player":["1-10","20-30"],
+"t_config_field":["*"]
 }
 
-###查看具体的命名规则的配置详情
-GET {{endpoint}}/dev/connection/snapshot/rulers/akali
+### 根据规则(ruler)保存数据库快照到本地.dbsnapshot文件夹中,以：日期_时分.sql作为文件名
+### ruler=规则文件名
+### rule=默认为defined,可给 full：下载所有数据库数据
+POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=ming.ruler
+
+### 删除保存在本地的快照文件
+### /dev/connection/snapshot/{snapshot_name}
+### snapshot_name ：snapshot文件名无需带后缀
+DELETE {{endpoint}}/dev/connection/snapshot/mings_20220512_1840.sql?{{sign}}
+
+### 下载数据库快照
+### ruler=规则文件名
+### rule=默认为defined,可给 full：下载所有数据库数据
+GET {{endpoint}}/dev/connection/snapshot/instant?{{sign}}&ruler=ming
+
+### 页面输出当前的数据库快照内容
+### ruler=规则文件名
+### rule=
+GET {{endpoint}}/dev/connection/snapshot/print?{{sign}}&ruler=mings
+
+### 显示所有保存的数据库快照文件
+GET {{endpoint}}/dev/connection/snapshot?{{sign}}
+
+### 下载snapshot文件
+### pattern = 数据库快照文件名
+GET {{endpoint}}/dev/connection/snapshot/dl?{{sign}}&pattern=mings_20220512_2035.sql
+
+### 查看具体的规则的配置详情
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+GET {{endpoint}}/dev/connection/snapshot/rulers/mings?{{sign}}
+
+### 删除规则
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+DELETE {{endpoint}}/dev/connection/snapshot/rulers/ming?{{sign}}
+
+### images接口，返回images目录下的文件列表
+GET {{endpoint}}/dev/connection/images?{{sign}}
 
 
-###获取所有命名规则文件名称
-GET {{endpoint}}/dev/connection/snapshot/rulers
-
-###数据库非全量下载
-GET {{endpoint}}/dev/connection/snapshot?ruler=basic&rule=defined&sign=63fa65e3b2dac9bc86dcf184b6be4635
 
 
-
-###
-GET {{endpoint}}/dev/connection/sqls?query=view
