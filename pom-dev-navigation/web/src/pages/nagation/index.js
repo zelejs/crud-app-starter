@@ -1,33 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, VStack, Spinner, Switch, FormControl, FormLabel } from "@chakra-ui/react";
-// import { AutoLayout } from '@/components';
-// import Logs from '@/pages/dev/logs'
-
+import { ChakraProvider, Box, VStack, Spinner, Switch, FormControl, FormLabel, } from "@chakra-ui/react";
+import { getEndpoint } from 'zero-element-boot/src/components/config/common';
 import { history } from 'umi';
 import { AutoLayout } from 'zero-element-boot';
 // const promiseAjax = require('@/components/utils/request');
 import layout from '../nagation/layout'
 // import layout from './Standalone/layout';
 import { Page } from 'zero-element-boot/lib/components/cart'
+import TabsCompox from 'zero-element-boot/lib/composition/testCrudList/compx/tabsComps'
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 // import { setEndpoint, setToken } from 'zero-element-boot/lib/components/config/common';
 export default function index (props) {
 
   const { } = props;
 
+
   const [listData, setListData] = useState([])
   const [isLoading, setLoading] = useState(false)
   const [switchStatus, setSwitchStatus] = useState(false)
+  const [navCateListData, setNavCateListData] = useState([]);
+  const [tabIndex, setTabIndex] = useState(0);
 
 
-
-
-  let api = '/api/c/navigation/navigations';
-
+  let api = '/api/pub/data/services/navigation';
+  let navListApi = '/api/pub/data/services/navigation';
+  let navApi = '/api/pub/data/services/navCategory';
   useEffect(() => {
     console.log('首次加载')
     const queryData = {}
     fetchData(api, queryData)
+    fetchNavCategoryData(navApi, {});
   }, []);
 
   useEffect(() => {
@@ -49,12 +51,34 @@ export default function index (props) {
   };
 
 
-  // return <Page>
-  //   <Page width='800px'>
-  //     <AutoLayout {...config} onItemClick={onJarItemClick} />
-  //   </Page>
+  //获取分类列表信息
 
+  const fetchNavCategoryData = (api, queryData) => {
+    setLoading(true);
+    let newNavCateList = [];
+    return promiseAjax(api, queryData).then(resp => {
+      if (resp && resp.code === 200) {
+        newNavCateList = resp.data.records; //-1:新增  -2删除
 
+        newNavCateList.push({
+          id: '-1'
+        });
+        newNavCateList.push({
+          id: '-2'
+        });
+        setNavCateListData(newNavCateList);
+        setLoading(false);
+      } else {
+        console.error('获取列表数据失败 ==', resp);
+      }
+    }).finally(_ => {
+      setLoading(false);
+      setTabIndex(newNavCateList[0].id);
+      fetchData(navListApi, {
+        typeId: newNavCateList[0].id
+      });
+    });
+  };
   // </Page>
   //获取列表信息
   const fetchData = (api, queryData) => {
@@ -86,8 +110,10 @@ export default function index (props) {
 
     } else {
       const w = window.open('about:blank');
-      w.location.href = location + item.path
-      console.log(item.path);
+      const host = getEndpoint || location.host
+      w.location.href = host + item.path
+
+      console.log(host);
 
     }
 
@@ -102,9 +128,40 @@ export default function index (props) {
     }
   }
 
+
+
+  const tabscallback = value => {
+    if (value) {
+      setNavCateListData([]);
+      setListData([]);
+      fetchNavCategoryData(navApi, {});
+    }
+  }; //开启/关闭 编辑按钮
+
+
+
+
   const handleChange = () => {
     const status = !switchStatus;
     setSwitchStatus(status)
+    if (!status) {
+      setNavCateListData([]);
+      setListData([]);
+      fetchNavCategoryData(navApi, {});
+    }
+  }
+
+
+
+  //tab切换
+  const switchTab = (item, index) => {
+    if (index != tabIndex) {
+      setTabIndex(index)
+      const queryData = {
+        typeId: item.id
+      }
+      fetchData(navListApi, queryData)
+    }
   }
   return (
     <Page >
@@ -119,20 +176,34 @@ export default function index (props) {
                 </FormLabel>
                 <Switch size='lg' onChange={() => handleChange()} isChecked={switchStatus} />
               </FormControl>
-
             </Box>
-            {isLoading ? (
-              <Spinner />
-            ) : (
-              <Box>
-                <AutoLayout {...config} onItemClick={onUserItemClick} cb={callback} isSwtich={switchStatus} />
-              </Box>
-            )
-            }
+            <Box>
+            </Box>
+            {navCateListData && navCateListData.length > 0 ? (
+              <>
+                <TabsCompox items={navCateListData} onSwitchTab={switchTab} isSwtich={switchStatus} cb={tabscallback} />
+
+                <div style={{ marginTop: '20px' }}>
+                  {isLoading ? (
+                    <Spinner />
+                  ) : (
+                    <Box>
+                      <AutoLayout {...config} onItemClick={onUserItemClick} cb={callback} isSwtich={switchStatus} />
+                    </Box>
+                  )
+                  }
+                </div>
+              </>
+            ) : null}
+
           </VStack>
 
         </div>
-      </ChakraProvider></Page >
+
+      </ChakraProvider>
+
+    </Page >
+
   )
 
 }

@@ -46,10 +46,10 @@ module.exports = {
   navigation: {
     model: {
       api: {
-        createAPI: '/api/c/navigation/navigations',
-        getAPI: '/api/c/navigation/navigations/(id)',
-        updateAPI: '/api/c/navigation/navigations/(id)',
-        deleteAPI: '/api/c/navigation/navigations/(id)'
+        createAPI: '/api/pub/data/services/navigation',
+        getAPI: '/api/pub/data/services/navigation/(id)',
+        updateAPI: '/api/pub/data/services/navigation/(id)',
+        deleteAPI: '/api/pub/data/services/navigation/(id)'
       },
       fields: [{
         label: '标题',
@@ -82,7 +82,23 @@ module.exports = {
         field: 'path',
         type: 'input',
         required: {
-          placeholder: '请输入本地链接/第三方以https开头'
+          placeholder: '请输入本地链接/第三方以http开头'
+        }
+      }, {
+        label: '类别',
+        field: 'typeId',
+        type: 'select-fetch',
+        required: {
+          placeholder: '请类别'
+        },
+        saveData: {
+          //额外提交的字段和值
+          typeName: 'name'
+        },
+        options: {
+          api: '/api/pub/data/services/navCategory',
+          label: 'name',
+          value: 'id'
         }
       }
       ]
