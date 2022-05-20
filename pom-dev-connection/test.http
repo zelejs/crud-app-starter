@@ -3,7 +3,7 @@ sign提供smallsee/dev-cli获取signature gen key ttl
 
 ### ！！！所有api接口都需要验证sign
 @endpoint=http://localhost:8080
-@sign=sign=12b3e68455f3f3c3193694e4f8625c3d
+@sign=sign=3d99c2cba2dffd18a7e7bf6445f0522b
 
 ### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号，无需分号
 ### format = md 以表格的形式输出数据内容
