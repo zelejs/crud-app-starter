@@ -1,0 +1,51 @@
+{
+  "name": "zero-element-demo-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "umi dev",
+    "clean": "rimraf lib/",
+    "build": "node init.js && umi build && node gen"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
+    "@chakra-ui/avatar": "^1.2.5",
+    "@chakra-ui/layout": "^1.4.5",
+    "@chakra-ui/react": "^1.6.3",
+    "@chakra-ui/system": "^1.6.7",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@loadable/component": "^5.10.1",
+    "ahooks": "^2.4.0",
+    "framer-motion": "^4.1.17",
+    "fs-extra": "^10.1.0",
+    "lodash": "^4.17.19",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hook-form": "^7.22.2",
+    "zero-element": "^1.0.0",
+    "zero-element-boot": "github:kequandian/zero-element-boot#pattern"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-react": "^7.13.13",
+    "@umijs/preset-react": "^1.5.12",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "eslint": "^5.4.0",
+    "eslint-config-umi": "^1.4.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.14.3",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "react-test-renderer": "^16.9.0",
+    "rimraf": "^2.7.1",
+    "umi": "^3.2.0"
+  }
+}

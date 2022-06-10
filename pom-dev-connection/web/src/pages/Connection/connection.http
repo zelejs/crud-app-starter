@@ -1,0 +1,94 @@
+key="514528" ttl =600000
+sign提供smallsee/dev-cli获取signature gen key ttl
+####所有接口都需要带&sign参数
+
+### 执行SQL语句，仅支持 SELECT/select show/SHOW   //SELECT * FROM nft_land不带引号
+GET {{endpoint}}/dev/connection?sql=SELECT * FROM nft_player&format=md
+可选参数 ?format=md
+
+### 获取数据库数据 pattern=<table_name>
+GET {{endpoint}}/dev/connection?pattern=doc_attachment
+
+### 页面输出数据
+GET {{endpoint}}/dev/connection/print
+
+### 页面输出数据仅结构
+GET {{endpoint}}/dev/connection/print?filter=schema
+
+###下载所有的数据库
+GET {{endpoint}}/dev/connection/sql
+
+###下载所有的数据库结构
+GET {{endpoint}}/dev/connection/sql?filter=schema
+
+###数据库非全量下载
+GET {{endpoint}}/dev/connection/snapshot?ruler=basic&rule=defined&sign=63fa65e3b2dac9bc86dcf184b6be4635
+
+###
+GET {{endpoint}}/dev/connection/sqls?query=view
+
+############################################################################################
+### 以下是修改过的业务
+### ！！！所有api接口都需要验证sign
+@endpoint=http://demo.smallsaas.cn:8001
+@sign=sign=52abf62dd0f7812d91029b430ccf7baa
+
+### 显示所有表
+GET {{endpoint}}/dev/connection?{{sign}}
+
+###获取所有规则文件
+GET {{endpoint}}/dev/connection/snapshot/rulers?{{sign}}
+
+### 新建/更新规则，文件已存在就更新替换内容，不存在就新建
+### 同时支持带后缀名和不带后缀名，后缀名只支持.ruler格式
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+POST {{endpoint}}/dev/connection/snapshot/rulers/520?
+
+{
+"t_end_user":[123456],
+"t_schedule_record":[1,2],
+"nft_player":["111","20-30"],
+"t_config_field":["*"]
+}
+
+### 根据规则(ruler)保存数据库快照到本地.dbsnapshot文件夹中,以：日期_时分.sql作为文件名
+### ruler=规则文件名
+### rule=默认为defined,可给 full：下载所有数据库数据
+POST {{endpoint}}/dev/connection/snapshot?{{sign}}&ruler=mings
+
+### 删除保存在本地的快照文件
+### /dev/connection/snapshot/{snapshot_name}
+### snapshot_name ：snapshot文件名无需带后缀
+DELETE {{endpoint}}/dev/connection/snapshot/20220509_0602?{{sign}}
+
+### 下载数据库快照
+### ruler=规则文件名
+### rule=默认为defined,可给 full：下载所有数据库数据
+GET {{endpoint}}/dev/connection/snapshot/instant?{{sign}}&ruler=mings
+
+### 页面输出当前的数据库快照内容
+### ruler=规则文件名
+### rule=
+GET {{endpoint}}/dev/connection/snapshot/print/json?{{sign}}&ruler=aaa
+
+### 显示所有保存的数据库快照文件
+GET {{endpoint}}/dev/connection/snapshot?{{sign}}
+
+### 下载snapshot文件
+### pattern = 数据库快照文件名
+GET {{endpoint}}/dev/connection/snapshot/dl?{{sign}}&pattern=20220429_0945.sql
+
+### 查看具体的命名规则的配置详情
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+GET {{endpoint}}/dev/connection/snapshot/rulers/json/aaa?{{sign}}
+
+### 删除规则
+### /dev/connection/snapshot/rulers/{ruler_file_name}
+DELETE {{endpoint}}/dev/connection/snapshot/rulers/ming?{{sign}}
+
+### images接口，返回images目录下的文件列表
+GET {{endpoint}}/dev/connection/images?{{sign}}
+
+
+
+
