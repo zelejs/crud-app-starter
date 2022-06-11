@@ -1,0 +1,90 @@
+.Details-item {
+  display: flex;
+  color  : #666;
+  margin : 12px 0;
+  padding: 0 16px;
+}
+
+.Details-labelTitle {
+  text-align   : right;
+  color        : #666;
+  padding-right: 8px;
+  min-width    : 6em;
+}
+
+.Details-valueContainer {
+  color: #000;
+}
+
+.Details-other {
+  width      : 300px;
+  margin-left: 30px;
+
+  .c-Card {
+    .title {
+      font-size  : 18px;
+      font-weight: 400;
+    }
+  }
+}
+
+.Details-statusList {
+  padding: 16px;
+
+  .item {
+    display: flex;
+
+    .label {
+      color    : #666;
+      min-width: 120px;
+    }
+
+    .label::after {
+      content: ': ';
+      margin : 0 8px 0 4px;
+    }
+
+    .value {
+      color: black;
+    }
+
+  }
+
+  .item.red {
+    align-items: center;
+
+    .value {
+      font-size: 18px;
+      color    : #ff5733;
+    }
+  }
+
+  .item+.item {
+    margin-top: 8px;
+  }
+
+  .time {
+    margin-bottom: 8px;
+
+    .label {
+      font-size: 16px;
+      margin   : 6px 0;
+      color    : #444;
+    }
+
+    .label::before {
+      width         : 12px;
+      height        : 12px;
+      border-radius : 6px;
+      display       : inline-block;
+      content       : ' ';
+      border        : 3px solid #2a82e4;
+      vertical-align: middle;
+      margin-right  : 4px;
+    }
+
+    .value {
+      color: #888;
+    }
+  }
+}

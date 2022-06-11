@@ -1,0 +1,32 @@
+.ant-form .ant-form-item {
+  margin-bottom: 8px;
+}
+
+.ant-form .ant-form-item.ant-form-item-with-help {
+  margin-bottom: 0;
+}
+
+.ant-form.ant-form-inline .ant-row {
+  width: 100%;
+}
+
+.ant-form-inline .ant-form-item>.ant-form-item-label {
+  min-width: 7em;
+}
+
+.ZEle-Form-footer {
+  margin-left: 108px;
+}
+
+.ZEle-Form-footer .ant-btn+.ant-btn {
+  margin-left: 4px;
+}
+
+.ant-modal-body .ZEle-Form-footer {
+  padding-bottom: 16px;
+}
+
+.ZEleA-Form-tips-container .ant-form-item-control-input-content {
+  display    : flex;
+  align-items: center;
+}

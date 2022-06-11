@@ -1,0 +1,64 @@
+.topNav {
+  display        : flex;
+  justify-content: flex-end;
+  height         : 64px;
+  line-height    : 64px;
+
+  .logo {
+    img {
+      height      : 40px;
+      margin-right: .5em;
+    }
+
+    a {
+      color: white;
+    }
+
+    flex     : 1;
+    font-size: 18px;
+  }
+
+  .menu {
+    flex: 1;
+
+    svg {
+      display     : inline-block;
+      fill        : white;
+      width       : 20px;
+      height      : 20px;
+      margin-right: 2px;
+    }
+
+    li {
+      margin: 0 4px;
+
+      .nav-icon {
+        display: inline-block;
+      }
+    }
+  }
+
+  .login {
+    color: white;
+
+    // width: 40px;
+    span {
+      margin-left: 6px;
+    }
+  }
+}
+
+.pageContainer {
+  display: flex;
+  height : calc(100%);
+  position: relative;
+}
+
+.contentContainer {
+  flex: 1;
+  overflow-x: scroll;
+  // min-height: calc(~"100vh - 64px");
+  // &::-webkit-scrollbar{
+  //   width: 0px;
+  // }
+}

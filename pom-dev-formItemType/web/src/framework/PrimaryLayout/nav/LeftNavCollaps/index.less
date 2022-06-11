@@ -1,0 +1,91 @@
+@import '../../../../theme.less';
+
+.LeftNavCollaps {
+  background-color: @ZEle-menu-left-bgColor;
+  overflow        : hidden auto;
+  padding         : 12px;
+
+  svg {
+    fill  : @ZEle-menu-icon;
+    width : 20px;
+    height: 20px;
+  }
+
+  .collapsButton {
+    font-size: 22px;
+    width    : 32px;
+
+    svg {
+      transition: all .3s;
+    }
+  }
+
+  .nav-item,
+  .nav-item-container {
+    margin        : 6px 0;
+    // padding    : 0 6px;
+    width         : 176px;
+    user-select   : none;
+    transition    : all .3s;
+    overflow      : hidden;
+  }
+
+  .nav-item-container {
+    .nav-item {
+      height      : 32px;
+      padding-left: 1em;
+    }
+  }
+
+  .nav-item.collaps,
+  .nav-item-container.collaps {
+    width  : 32px;
+    padding: 2px 0;
+
+    .nav-item {
+      width  : 0;
+      height : 0;
+      padding: 0;
+      margin : 0;
+    }
+  }
+
+  .nav-item.selected,
+  .nav-item:hover,
+  .nav-item-container.collaps.selected {
+    background-color: @ZEle-menu-left-active-bgColor;
+
+    .nav-name {
+      color: @ZEle-menu-left-active-fontColor;
+    }
+  }
+
+  // .nav-item-container.collaps.selected {
+  //   fill: @ZEle-primary-color;
+  // }
+
+  .nav-title {
+    display    : flex;
+    align-items: center;
+    width      : 176px;
+    word-break : keep-all;
+
+    .nav-icon {
+      width          : 32px;
+      height         : 32px;
+      margin-right   : 4px;
+      display        : flex;
+      align-items    : center;
+      justify-content: center;
+
+      div {
+        display: flex;
+      }
+    }
+
+    .nav-name {
+      color    : @ZEle-menu-left-fontColor;
+      font-size: @ZEle-menu-left-fontSize;
+    }
+  }
+}
