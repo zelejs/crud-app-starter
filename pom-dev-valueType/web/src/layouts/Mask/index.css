@@ -1,0 +1,26 @@
+@keyframes show {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.MaskBox_Mask{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top:0;
+    left: 0;
+    background-color: #000;
+    z-index: 10000;
+}
+
+
+
+.MaskBox_Container{
+    animation: show .5s;
+}
+
+.MaskBox_ExitSvg{
+    position: fixed;
+    bottom: 10%;
+    cursor: pointer;
+}
