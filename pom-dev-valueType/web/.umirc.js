@@ -22,10 +22,10 @@ export default {
 
   
   chainWebpack(memo, { env, webpack, createCSSRule }) {
-    memo.output.set('path', require('path').resolve(__dirname, 'dist/valueItemType-ui'))
+    memo.output.set('path', require('path').resolve(__dirname, 'dist/valueType-ui'))
     memo.output.set('filename', 'bundle.js')
   },
   
-  // outputPath: '/dist/valueItemType-ui',
-  publicPath: process.env.NODE_ENV === 'production' ? './valueItemType-ui/' : '/',  //设置 dist/index.html 访问 js和css路径
+  // outputPath: '/dist/valueType-ui',
+  publicPath: process.env.NODE_ENV === 'production' ? './valueType-ui/' : '/',  //设置 dist/index.html 访问 js和css路径
 }
