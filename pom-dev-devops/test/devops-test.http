@@ -1,0 +1,14 @@
+@endpoint=http://localhost:8080
+
+### 查询sql语句
+# sqlFileName 不带.sql后缀文件名
+#GET {{endpoint}}/api/dev/devops/{sqlFileName}?key1=value&key2=value2
+# 示例
+GET {{endpoint}}/api/dev/devops/devopsGetTest?name1=张三&name2=王五
+
+
+### 执行sql语句
+# sqlFileName 不带.sql后缀文件名
+#Post {{endpoint}}/api/dev/devops/{sqlFileName}?key1=value&key2=value2
+# 示例
+POST {{endpoint}}/api/dev/devops/devopsPostTest?addName=李华&deleteName=王五
