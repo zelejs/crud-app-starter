@@ -14,6 +14,8 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +32,9 @@ public class ParseSqlImp implements ParseSql {
     public String readSqlFile(String fileName) {
 
         String file = "devops/".concat(fileName).concat(".sql");
-        ClassPathResource classPathResource = new ClassPathResource(file);
         try {
-            File f= classPathResource.getFile();
-            System.out.println("FilePath: "+f.getAbsolutePath());
-//            读取resources/devops的文件内容
-            String sql = FileUtils.readFileToString(f, Charset.defaultCharset());
+            logger.info(System.getProperty("java.class.path"));
+            String sql = new String(Files.readAllBytes(Paths.get(file)));
             return sql;
         }catch (IOException e){
             logger.error(e);
