@@ -1,4 +1,4 @@
-package com.jfeat.dev.devops.services.services;
+package com.jfeat.dev.devops.services.domain.service;
 
 import com.alibaba.fastjson.JSONArray;
 

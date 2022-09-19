@@ -1,4 +1,4 @@
-package com.jfeat.dev.devops.services.services;
+package com.jfeat.dev.devops.services.domain.service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

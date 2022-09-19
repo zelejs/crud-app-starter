@@ -1,6 +1,6 @@
-package com.jfeat.dev.devops.services.services.imp;
+package com.jfeat.dev.devops.services.domain.service.impl;
 
-import com.jfeat.dev.devops.services.services.ParseRequestArgument;
+import com.jfeat.dev.devops.services.domain.service.ParseRequestArgument;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

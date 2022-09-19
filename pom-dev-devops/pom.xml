@@ -11,7 +11,7 @@
 
     <parent>
         <groupId>com.jfeat</groupId>
-        <artifactId>pom-parent</artifactId>
+        <artifactId>pom-base</artifactId>
         <version>1.0.0</version>
         <relativePath />
     </parent>

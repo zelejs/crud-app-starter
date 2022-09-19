@@ -1,11 +1,11 @@
-package com.jfeat.dev.devops.services.services.imp;
+package com.jfeat.dev.devops.services.domain.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.dev.devops.services.services.DevopsServices;
-import com.jfeat.dev.devops.services.services.ParseRequestArgument;
-import com.jfeat.dev.devops.services.services.ParseSql;
+import com.jfeat.dev.devops.services.domain.service.DevopsServices;
+import com.jfeat.dev.devops.services.domain.service.ParseRequestArgument;
+import com.jfeat.dev.devops.services.domain.service.ParseSql;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;

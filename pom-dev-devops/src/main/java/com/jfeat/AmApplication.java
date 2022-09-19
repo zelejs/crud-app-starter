@@ -1,4 +1,4 @@
-package com.jfeat.dev.devops;
+package com.jfeat;
 
 
 import org.springframework.boot.SpringApplication;

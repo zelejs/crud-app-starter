@@ -1,19 +1,15 @@
-package com.jfeat.dev.devops.services.services.imp;
+package com.jfeat.dev.devops.services.domain.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfeat.dev.devops.services.services.ParseSql;
-import org.apache.commons.io.FileUtils;
+import com.jfeat.dev.devops.services.domain.service.ParseSql;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
