@@ -1,0 +1,26 @@
+{
+	"pageModule":{},
+	"name":"ContainerTest",
+	"moduleContainer":{},
+	"title":"容器组件",
+	"moduleData":{
+		"89084045-v4d5-7122-3300-1623511112885":{
+			"childType":"test",
+			"outStyle":{
+				"padding":"25rpx"
+			},
+			"subtitle":"我是副标题",
+			"box":true,
+			"title":"我是主标题"
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{},
+			"name":"容器组件展示",
+			"type":"container",
+			"key":"89084045-v4d5-7122-3300-1623511112885"
+		}
+	]
+}

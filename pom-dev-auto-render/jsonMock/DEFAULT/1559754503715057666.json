@@ -1,0 +1,46 @@
+{
+	"request":{},
+	"pageStyle":{},
+	"loadApi":"",
+	"response":{
+		"data":"data"
+	},
+	"name":"vrManage",
+	"moduleContainer":{
+		"background":"white",
+		"height":"100%"
+	},
+	"title":"VR管理",
+	"moduleData":{
+		"d4a555sd-hf22-qqds-8412-16234da445885":{
+			"navList":[
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/Community.svg",
+					"nav":"/pages/my/seniorConfig/index?id=20055710",
+					"color":"#4e7d96",
+					"title":"VR分类"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/BuildingManagement.svg",
+					"nav":"/pages/my/seniorConfig/index?id=20055720",
+					"color":"#ff844b",
+					"title":"VR列表"
+				}
+			],
+			"itemModule":{
+				"name":"MagicItem"
+			}
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{
+				"grid-template-columns":"repeat(3, 1fr)"
+			},
+			"name":"",
+			"type":"navlist",
+			"key":"d4a555sd-hf22-qqds-8412-16234da445885"
+		}
+	]
+}

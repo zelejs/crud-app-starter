@@ -1,0 +1,37 @@
+{
+	"request":{},
+	"pageStyle":{},
+	"loadApi":"",
+	"response":{
+		"data":"data"
+	},
+	"name":"landlord",
+	"moduleContainer":{},
+	"title":"房东列表",
+	"moduleData":{
+		"e59992z8-bb88-a788-9922-1623488775885":{
+			"request":{
+				"ps":"pageSize",
+				"pn":"pageNum"
+			},
+			"loadApi":"/api/u/house/sales/landlord",
+			"response":{
+				"list":"records"
+			},
+			"itemModule":{
+				"name":"landlordItem"
+			}
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{
+				"background":"#ffffff"
+			},
+			"name":"",
+			"type":"autolist",
+			"key":"e59992z8-bb88-a788-9922-1623488775885"
+		}
+	]
+}

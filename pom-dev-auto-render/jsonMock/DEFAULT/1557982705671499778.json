@@ -1,0 +1,40 @@
+{
+	"request":{},
+	"pageStyle":{},
+	"name":"myAppList",
+	"moduleContainer":{
+		"background":"#ffffff",
+		"height":"100%"
+	},
+	"title":"我的APP",
+	"moduleData":{
+		"e3b80622-4eda-3d95-435f-6058e24cf8f3":{
+			"navList":[
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/5G.svg?color=2376b7",
+					"nav":"/pages/sub/myApp/5Gapp",
+					"title":"联通5G"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/5G.svg?color=2376b7",
+					"nav":"/pages/sub/myApp/order",
+					"title":"联通5G下单"
+				}
+			],
+			"itemModule":{
+				"name":"MagicItem"
+			}
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{
+				"grid-template-columns":"repeat(3, 1fr)"
+			},
+			"name":"",
+			"type":"navlist",
+			"key":"e3b80622-4eda-3d95-435f-6058e24cf8f3"
+		}
+	]
+}

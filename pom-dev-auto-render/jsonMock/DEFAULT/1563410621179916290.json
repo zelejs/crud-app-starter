@@ -1,0 +1,36 @@
+{
+	"request":{},
+	"pageStyle":{},
+	"loadApi":"",
+	"response":{
+		"data":"data"
+	},
+	"name":"noticeList",
+	"moduleContainer":{},
+	"title":"公告管理",
+	"moduleData":{
+		"279a7a2c-71f6-4bfb-2f1a-b5be5b41d72d":{
+			"request":{
+				"default":{},
+				"ps":"pageSize",
+				"pn":"pageNum"
+			},
+			"loadApi":"/api/u/house/operations/noticeManage",
+			"response":{
+				"list":"records"
+			},
+			"itemModule":{
+				"name":"noticeItem"
+			}
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{},
+			"name":"",
+			"type":"autolist",
+			"key":"279a7a2c-71f6-4bfb-2f1a-b5be5b41d72d"
+		}
+	]
+}

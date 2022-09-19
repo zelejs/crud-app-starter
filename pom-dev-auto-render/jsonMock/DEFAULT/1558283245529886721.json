@@ -1,0 +1,40 @@
+{
+	"pageStyle":{
+		"background":"#ffffff"
+	},
+	"pageModule":{},
+	"name":"BannerTest",
+	"moduleContainer":{},
+	"title":"轮播图组件",
+	"moduleData":{
+		"89084045-v4d5-7122-3300-1623511112885":{
+			"loadApi":"/api/u/cms/adPage/1?identifier=banner",
+			"response":{
+				"list":"records"
+			},
+			"outStyle":{},
+			"binding":{
+				"image":"image",
+				"itemNavigation":""
+			},
+			"control":{
+				"duration":"600",
+				"indicator_color":"rgba(0, 0, 0, .3)",
+				"interval":"4000",
+				"circular":"100",
+				"indicator_active_color":"#000000",
+				"indicatorDot":"true",
+				"autoplay":"false"
+			}
+		}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{},
+			"name":"",
+			"type":"banner",
+			"key":"89084045-v4d5-7122-3300-1623511112885"
+		}
+	]
+}

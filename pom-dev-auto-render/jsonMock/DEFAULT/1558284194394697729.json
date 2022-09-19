@@ -1,0 +1,27 @@
+{
+	"pageStyle":{
+		"backgroundImage":"url(http://static.smallsaas.cn/house/2022/image/dealSquare/round.svg?color=ad2f33)",
+		"width":"100%",
+		"backgroundSize":"225% 110%",
+		"backgroundPosition":"50% 435%",
+		"backgroundRepeat":"no-repeat",
+		"height":"100%"
+	},
+	"name":"SemicircleTest",
+	"moduleContainer":{},
+	"title":"半圆组件",
+	"moduleData":{
+		"89084045-v4d5-7122-3300-1623511112885":{}
+	},
+	"version":"1",
+	"modules":[
+		{
+			"container":{
+				"paddingTop":"200rpx"
+			},
+			"name":"",
+			"type":"autolist",
+			"key":"89084045-v4d5-7122-3300-1623511112885"
+		}
+	]
+}
