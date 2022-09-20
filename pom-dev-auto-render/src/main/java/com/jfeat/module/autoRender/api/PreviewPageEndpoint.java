@@ -8,16 +8,20 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.autoRender.service.gen.persistence.model.PageSimpleInfo;
 import com.jfeat.module.frontPage.services.domain.dao.QueryFrontPageDao;
 import com.jfeat.module.frontPage.services.domain.model.FrontPageRecord;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +64,11 @@ public class PreviewPageEndpoint {
         }
     }
 
+    @GetMapping("/form")
+    public Tip getJson(@RequestParam(value = "pageId") Long id) {
+        return SuccessTip.create(mockJsonService.readJsonFile(id));
+    }
+
     //    获取所有form页面列表
     @GetMapping("/forms")
     public Tip getAllPages(Page<FrontPageRecord> page,
@@ -70,7 +79,7 @@ public class PreviewPageEndpoint {
                            // end tag
                            @RequestParam(name = "search", required = false) String search,
 
-                           @RequestParam(name = "count", required = false) String count,
+                           @RequestParam(name = "count", required = false) String pageId,
 
                            @RequestParam(name = "title", required = false) String title,
 
@@ -107,7 +116,7 @@ public class PreviewPageEndpoint {
         page.setSize(pageSize);
 
         FrontPageRecord record = new FrontPageRecord();
-        record.setCount(count);
+        record.setPageId(pageId);
         record.setTitle(title);
         record.setPageDescrip(pageDescrip);
         record.setContent(content);
@@ -116,15 +125,52 @@ public class PreviewPageEndpoint {
         record.setJsonPath(jsonPath);
         record.setCreateTime(createTime);
         record.setUpdateTime(updateTime);
-
-
         List<FrontPageRecord> frontPagePage = queryFrontPageDao.findFrontPagePage(page, record, tag, search, orderBy, null, null);
-
 
         page.setRecords(frontPagePage);
 
         return SuccessTip.create(page);
     }
+
+    //    获取所有form页面列表
+    @GetMapping("/forms/simple")
+    public Tip getAllSimplePages(Page<FrontPageRecord> page,
+                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                           @RequestParam(name = "pageSize", required = false, defaultValue = "50") Integer pageSize,
+                           // for tag feature query
+                           @RequestParam(name = "count", required = false) String pageId,
+                           @RequestParam(name = "title", required = false) String title) {
+
+
+        page.setCurrent(pageNum);
+        page.setSize(pageSize);
+
+        FrontPageRecord record = new FrontPageRecord();
+        record.setPageId(pageId);
+        record.setTitle(title);
+
+        List<FrontPageRecord> frontPagePage = queryFrontPageDao.findFrontPagePage(page, record, null, null, null, null, null);
+        page.setRecords(frontPagePage);
+
+        List<PageSimpleInfo> pageSimpleInfoList = new ArrayList<>();
+
+        for (int i=0;i<frontPagePage.size();i++){
+            PageSimpleInfo pageSimpleInfo = new PageSimpleInfo();
+            pageSimpleInfo.setPageId(frontPagePage.get(i).getPageId());
+            pageSimpleInfo.setTitle(frontPagePage.get(i).getTitle());
+            pageSimpleInfoList.add(pageSimpleInfo);
+        }
+
+        Page<PageSimpleInfo> result = new Page<>();
+        result.setCurrent(pageNum);
+        result.setSize(pageSize);
+        result.setRecords(pageSimpleInfoList);
+        result.setTotal(page.getTotal());
+        result.setPages(page.getPages());
+
+        return SuccessTip.create(result);
+    }
+
 
     //    获取当前预览页配置
     @GetMapping("/current/form")
