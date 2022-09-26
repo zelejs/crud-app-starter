@@ -10,7 +10,7 @@
 		"background":"white",
 		"height":""
 	},
-	"title":"高级配置",
+	"title":"高级配置1",
 	"moduleData":{
 		"c7646b23-2c47-4aa5-a7de-51c006bbc26c":{
 			"navList":[
@@ -21,16 +21,16 @@
 					"title":"小区配置"
 				},
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=42342432",
-					"color":"###207f4c",
-					"title":"社区配置12"
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/userConfig.svg",
+					"nav":"/pages/my/seniorConfig/index?id=8889",
+					"color":"#ec2c64",
+					"title":"用户配置"
 				},
 				{
 					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
 					"nav":"/pages/my/seniorConfig/index?id=8890",
-					"color":"###207f4c",
-					"title":"社区配置123"
+					"color":"#207f4c",
+					"title":"社区配置"
 				}
 			],
 			"itemModule":{

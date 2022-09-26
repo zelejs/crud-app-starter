@@ -49,6 +49,18 @@
         </if>
 
 
+        <if test="record.status != null and record.status>=0 ">
+            AND t_dev_develop.status = #{record.status}
+        </if>
+
+        <if test="record.sortNumber != null and record.sortNumber>=0 ">
+            AND t_dev_develop.sort_number = #{record.sortNumber}
+        </if>
+
+        <if test="record.paramStatus != null and record.paramStatus>0 ">
+            AND t_dev_develop.param_status LIKE CONCAT('%',#{record.paramStatus},'%')
+        </if>
+
         <if test="record.paramStatus != null and record.paramStatus>0 ">
             AND t_dev_develop.param_status LIKE CONCAT('%',#{record.paramStatus},'%')
         </if>
@@ -82,7 +94,7 @@
         OR t_dev_develop.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY update_time DESC
-        , create_time DESC
+        ORDER BY  t_dev_develop.sort_number DESC,t_dev_develop.update_time DESC
+        , t_dev_develop.create_time DESC
     </select>
 </mapper>

@@ -9,6 +9,16 @@ public class PageSimpleInfo extends Model<PageSimpleInfo> {
 
     private String title;
 
+    private String appid;
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
     public String getPageId() {
         return pageId;
     }

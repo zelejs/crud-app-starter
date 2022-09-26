@@ -1,4 +1,4 @@
-package com.jfeat.module.autoRender.api;
+package com.jfeat.module.autoRender.api.page;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -14,16 +14,15 @@ import com.jfeat.module.frontPage.services.domain.model.FrontPageRecord;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -37,7 +36,7 @@ public class PreviewPageEndpoint {
 
     private final String currentPageFromId = "currentPageFromId";
 
-    private final String pageJsonKey="page:";
+    private final String pageJsonKey = "page:";
 
     @Resource
     QueryFrontPageDao queryFrontPageDao;
@@ -59,14 +58,35 @@ public class PreviewPageEndpoint {
             logger.info("返回缓存数据");
             String value = (String) stringRedisTemplate.opsForValue().get(currentPageFromId);
             return SuccessTip.create(value);
-        }else {
-            throw new BusinessException(BusinessCode.BadRequest,"没有设置当前页面id");
+        } else {
+            throw new BusinessException(BusinessCode.BadRequest, "没有设置当前页面id");
         }
     }
 
     @GetMapping("/form")
     public Tip getJson(@RequestParam(value = "pageId") Long id) {
         return SuccessTip.create(mockJsonService.readJsonFile(id));
+    }
+
+    @PostMapping("/form/{id}")
+    public Tip addJson(@PathVariable Long id, @RequestBody JSONObject json, @RequestParam(value = "appid", required = false) String appid) {
+        String originAppid = mockJsonService.getAppId();
+        if (appid != null && !appid.equals("")) {
+            mockJsonService.setAppId(appid);
+        }
+        Integer integer = mockJsonService.saveJsonToFile(json, id);
+        mockJsonService.setAppId(originAppid);
+        return SuccessTip.create(integer);
+    }
+
+    @GetMapping("/appList")
+    public Tip getAppIdMap() {
+        Map<String, String> idMap = mockJsonService.getAppIdMap();
+        List<String> appList = new ArrayList<>();
+        for (String key : idMap.keySet()) {
+            appList.add(key);
+        }
+        return SuccessTip.create(appList);
     }
 
     //    获取所有form页面列表
@@ -79,7 +99,7 @@ public class PreviewPageEndpoint {
                            // end tag
                            @RequestParam(name = "search", required = false) String search,
 
-                           @RequestParam(name = "count", required = false) String pageId,
+                           @RequestParam(name = "pageId", required = false) String pageId,
 
                            @RequestParam(name = "title", required = false) String title,
 
@@ -135,11 +155,12 @@ public class PreviewPageEndpoint {
     //    获取所有form页面列表
     @GetMapping("/forms/simple")
     public Tip getAllSimplePages(Page<FrontPageRecord> page,
-                           @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                           @RequestParam(name = "pageSize", required = false, defaultValue = "50") Integer pageSize,
-                           // for tag feature query
-                           @RequestParam(name = "count", required = false) String pageId,
-                           @RequestParam(name = "title", required = false) String title) {
+                                 @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                 @RequestParam(name = "pageSize", required = false, defaultValue = "50") Integer pageSize,
+                                 // for tag feature query
+                                 @RequestParam(name = "count", required = false) String pageId,
+                                 @RequestParam(name = "appid", required = false) String appid,
+                                 @RequestParam(name = "title", required = false) String title) {
 
 
         page.setCurrent(pageNum);
@@ -148,16 +169,18 @@ public class PreviewPageEndpoint {
         FrontPageRecord record = new FrontPageRecord();
         record.setPageId(pageId);
         record.setTitle(title);
+        record.setAppid(appid);
 
         List<FrontPageRecord> frontPagePage = queryFrontPageDao.findFrontPagePage(page, record, null, null, null, null, null);
         page.setRecords(frontPagePage);
 
         List<PageSimpleInfo> pageSimpleInfoList = new ArrayList<>();
 
-        for (int i=0;i<frontPagePage.size();i++){
+        for (int i = 0; i < frontPagePage.size(); i++) {
             PageSimpleInfo pageSimpleInfo = new PageSimpleInfo();
             pageSimpleInfo.setPageId(frontPagePage.get(i).getPageId());
             pageSimpleInfo.setTitle(frontPagePage.get(i).getTitle());
+            pageSimpleInfo.setAppid(frontPagePage.get(i).getAppid());
             pageSimpleInfoList.add(pageSimpleInfo);
         }
 
@@ -180,34 +203,49 @@ public class PreviewPageEndpoint {
             String value = (String) stringRedisTemplate.opsForValue().get(currentPageFromId);
             Long fromId = Long.valueOf(value);
 
-            if (stringRedisTemplate.hasKey(pageJsonKey+value) && stringRedisTemplate.opsForValue().getOperations().getExpire(pageJsonKey+value) > 0){
-                String data = stringRedisTemplate.opsForValue().get(pageJsonKey+value);
+            if (stringRedisTemplate.hasKey(pageJsonKey + value) && stringRedisTemplate.opsForValue().getOperations().getExpire(pageJsonKey + value) > 0) {
+                String data = stringRedisTemplate.opsForValue().get(pageJsonKey + value);
                 JSONObject json = JSON.parseObject(data);
                 return SuccessTip.create(json);
             }
             return SuccessTip.create(mockJsonService.readJsonFile(fromId));
-        }else {
-            throw new BusinessException(BusinessCode.BadRequest,"没有设置当前页面id");
+        } else {
+            throw new BusinessException(BusinessCode.BadRequest, "没有设置当前页面id");
         }
     }
 
     //    设置当前预览页配置
     @PutMapping("/current/from")
-    public Tip updateCurrentPageJson(@RequestBody JSONObject json) {
+    public Tip updateCurrentPageJson(@RequestBody JSONObject json,@RequestParam(value = "id",required = false) Long id) {
         System.out.println("===============");
         if (stringRedisTemplate.hasKey(currentPageFromId) && stringRedisTemplate.opsForValue().getOperations().getExpire(currentPageFromId) > 0) {
             logger.info("返回缓存数据");
             String value = (String) stringRedisTemplate.opsForValue().get(currentPageFromId);
             Long fromId = Long.valueOf(value);
 
-            stringRedisTemplate.opsForValue().set(pageJsonKey+value, json.toJSONString(), 24, TimeUnit.HOURS);
+            stringRedisTemplate.opsForValue().set(pageJsonKey + value, json.toJSONString(), 24, TimeUnit.HOURS);
+
+            if (id!=null){
+                fromId = id;
+            }
             Integer integer = mockJsonService.saveJsonToFile(json, fromId);
             return SuccessTip.create(integer);
-        }else {
-            throw new BusinessException(BusinessCode.BadRequest,"没有设置当前页面id");
+        } else {
+            throw new BusinessException(BusinessCode.BadRequest, "没有设置当前页面id");
         }
+    }
 
+    @PostMapping("/setAppId/{id}")
+    @ApiOperation(value = "设置 appId")
+    public Tip setAppId(@PathVariable(name = "id") String id) {
+        mockJsonService.setAppId(id);
+        return SuccessTip.create(mockJsonService.getAppId());
+    }
 
+    @GetMapping("/getAppId")
+    @ApiOperation(value = "查看 当前appId")
+    public Tip getAppId() {
+        return SuccessTip.create(mockJsonService.getAppId());
     }
 
 

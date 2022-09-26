@@ -1,4 +1,3 @@
-#### jar-dependency
 server:
   port: 8080
 
@@ -17,6 +16,17 @@ spring:
       enabled: true
     converters:
       preferred-json-mapper: fastjson
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+###################  jwt配置  ###################
+jwt:
+  encoded-key: L7A/6zARSkK1j7Vd5SDD9pSSqZlqF7mAhiOgRbgv9Smce6tf4cJnvKOjtKPxNNnWQj+2lQEScm3XIUjhW+YVZg==
+  normal-encoded-key: bm9ybWFsLWVuY29kZWQta2V5
+  tll-mills: 2592000000  # 30 Days = 3600*1000*24*30
+  #token-type: Bearer
+  #tll-mills:
+  #token-type: Bearer
+  #enable-attempt-login: false
 
 ########################################################################
 mybatis-plus:
@@ -36,42 +46,57 @@ mybatis-plus:
     multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
 
-
 ---
+
 spring:
   profiles: dev
   datasource:
-#    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/smallsaas?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    #    url: jdbc:mysql://sh-cdb-q5vnc0iy.sql.tencentcdb.com:59449/smallsaas?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
     url: jdbc:mysql://localhost:3306/test?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
-#    url: jdbc:mysql://localhost:3307/uaas-saas?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    #    url: jdbc:mysql://localhost:3306/smallsaas?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
     username: root
     password: root
-#    password: zb2014@888
+    #    password: zb2014@888
     driver-class-name: com.mysql.jdbc.Driver
     filters: log4j,wall,mergeStat
     sql-script-encoding: UTF-8
     schema: classpath*:sql/**/*-schema.sql
     data: classpath*:sql/**/*-data.sql
-    initialize: true
+    initialize: false
+  redis:
+    # redis数据库索引(默认为0)
+    database: 0
+    # redis服务器地址（默认为loaclhost）
+    host: house.cloud.smallsaas.cn
+    # redis端口（默认为6379）
+    port: 6379
+    # redis访问密码（默认为空）
+    password: root
+    # redis连接超时时间（单位毫秒）
+    timeout: 0
+    # redis连接池配置
+    pool:
+      # 最大可用连接数（默认为8，负数表示无限）
+      max-active: 8
+      # 最大空闲连接数（默认为8，负数表示无限）
+      max-idle: 8
+      # 最小空闲连接数（默认为0，该值只有为正数才有用）
+      min-idle: 0
+      # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+      max-wait: -1
 
 
+crud-plus:
+  features:
+    - eav
+    - saas
+    - tag
+io:
+  excel-template-dir: "excel-templates"
 
 logging:
   level: debug
-  file: logs/access.log
-  
+  file: logs/trace.log
+
+
 ---
-spring:
-  profiles: dev
-
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-        trace: false
-
-logging:
-  level:
-    root: info
-  file: logs/access.log

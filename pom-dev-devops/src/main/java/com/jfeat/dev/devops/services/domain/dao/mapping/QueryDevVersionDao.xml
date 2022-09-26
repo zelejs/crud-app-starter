@@ -133,8 +133,8 @@
         OR t_dev_version.name LIKE CONCAT('%',#{search},'%')
     </if>
     -->
-        ORDER BY update_time DESC
-        , create_time DESC
+        ORDER BY t_dev_version.sort_number DESC ,t_dev_version.update_time DESC
+        ,t_dev_version create_time DESC
     </select>
 
     <select id="devVersionsSubquery" resultType="com.jfeat.dev.devops.services.gen.persistence.model.DevDevelop">

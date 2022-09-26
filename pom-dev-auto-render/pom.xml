@@ -32,6 +32,12 @@
             <artifactId>zero-io-json</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>lc_low_auto_component</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
