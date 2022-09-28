@@ -2,7 +2,7 @@ package com.jfeat.module.autoRender.service.gen.persistence.model;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-public class Route extends Model<Route> {
+public class AutoRoute extends Model<AutoRoute> {
     private static final long serialVersionUID=1L;
 
     private Integer index;
@@ -25,6 +25,18 @@ public class Route extends Model<Route> {
 
     private Long pageId;
 
+    private String moduleName;
+
+    private Integer currentModule;
+
+    public Integer getCurrentModule() {
+        return currentModule;
+    }
+
+    public void setCurrentModule(Integer currentModule) {
+        this.currentModule = currentModule;
+    }
+
     public Long getPageId() {
         return pageId;
     }
@@ -39,6 +51,14 @@ public class Route extends Model<Route> {
 
     public void setFrom(Integer from) {
         this.from = from;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public Integer getTo() {

@@ -2,7 +2,7 @@ package com.jfeat.module.autoRender.service.gen.persistence.model;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-public class PageSimpleInfo extends Model<PageSimpleInfo> {
+public class AutoPageSimpleInfo extends Model<AutoPageSimpleInfo> {
     private static final long serialVersionUID=1L;
 
     private String pageId;

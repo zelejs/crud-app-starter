@@ -27,7 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dev/auto/component")
-public class Component {
+public class ComponentStandardEndpoint {
 
 
     @Resource

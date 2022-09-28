@@ -8,7 +8,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-import com.jfeat.module.autoRender.service.gen.persistence.model.PageSimpleInfo;
+import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPageSimpleInfo;
 import com.jfeat.module.frontPage.services.domain.dao.QueryFrontPageDao;
 import com.jfeat.module.frontPage.services.domain.model.FrontPageRecord;
 import io.swagger.annotations.ApiOperation;
@@ -174,20 +174,20 @@ public class PreviewPageEndpoint {
         List<FrontPageRecord> frontPagePage = queryFrontPageDao.findFrontPagePage(page, record, null, null, null, null, null);
         page.setRecords(frontPagePage);
 
-        List<PageSimpleInfo> pageSimpleInfoList = new ArrayList<>();
+        List<AutoPageSimpleInfo> autoPageSimpleInfoList = new ArrayList<>();
 
         for (int i = 0; i < frontPagePage.size(); i++) {
-            PageSimpleInfo pageSimpleInfo = new PageSimpleInfo();
-            pageSimpleInfo.setPageId(frontPagePage.get(i).getPageId());
-            pageSimpleInfo.setTitle(frontPagePage.get(i).getTitle());
-            pageSimpleInfo.setAppid(frontPagePage.get(i).getAppid());
-            pageSimpleInfoList.add(pageSimpleInfo);
+            AutoPageSimpleInfo autoPageSimpleInfo = new AutoPageSimpleInfo();
+            autoPageSimpleInfo.setPageId(frontPagePage.get(i).getPageId());
+            autoPageSimpleInfo.setTitle(frontPagePage.get(i).getTitle());
+            autoPageSimpleInfo.setAppid(frontPagePage.get(i).getAppid());
+            autoPageSimpleInfoList.add(autoPageSimpleInfo);
         }
 
-        Page<PageSimpleInfo> result = new Page<>();
+        Page<AutoPageSimpleInfo> result = new Page<>();
         result.setCurrent(pageNum);
         result.setSize(pageSize);
-        result.setRecords(pageSimpleInfoList);
+        result.setRecords(autoPageSimpleInfoList);
         result.setTotal(page.getTotal());
         result.setPages(page.getPages());
 

@@ -61,7 +61,7 @@ spring:
     filters: log4j,wall,mergeStat
     sql-script-encoding: UTF-8
     schema: classpath*:sql/**/*-schema.sql
-    data: classpath*:sql/**/*-data.sql
+    data: classpath*:sql/**V/*-data.sql
     initialize: false
   redis:
     # redis数据库索引(默认为0)
