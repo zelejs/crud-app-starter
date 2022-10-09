@@ -4,15 +4,21 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class ModuleServiceImp implements ModuleService {
+
+
+    @Resource
+    ModuleDataService moduleDataService;
 
 
 //    获取给定的type module列表
@@ -60,37 +66,9 @@ public class ModuleServiceImp implements ModuleService {
         return result;
     }
 
-    @Override
-    public JSONObject getModuleDataByKey(JSONObject json, String key) {
-        if (json==null){
-            throw new BusinessException(BusinessCode.BadRequest,"json配置不能为空");
-        }
-        if (json.containsKey("moduleData") && json.get("moduleData")!=null){
-            JSONObject moduleData = json.getJSONObject("moduleData");
 
-            if (moduleData.containsKey(key)&&moduleData.get(key)!=null){
-                return moduleData.getJSONObject(key);
-            }
-        }
-        return null;
-    }
 
-    @Override
-    public JSONObject replaceModuleData(JSONObject json, JSONObject moduleData, String key) {
-        if (json==null){
-            throw new BusinessException(BusinessCode.BadRequest,"json配置不能为空");
-        }
-        if (json.containsKey("moduleData") && json.get("moduleData")!=null){
-            JSONObject moduleDataList = json.getJSONObject("moduleData");
 
-            if (moduleDataList.containsKey(key)&&moduleDataList.get(key)!=null){
-                moduleDataList.put(key,moduleData);
-                json.put("moduleData",moduleDataList);
-                return json;
-            }
-        }
-        return null;
-    }
 
     @Override
     public JSONObject addModule(JSONObject json, JSONObject module) {
@@ -111,22 +89,7 @@ public class ModuleServiceImp implements ModuleService {
         return json;
     }
 
-    @Override
-    public JSONObject addModuleData(JSONObject json, JSONObject moduleData,String key) {
-        if (json==null){
-            throw new BusinessException(BusinessCode.BadRequest,"json配置不能为空");
-        }
-        if (json.containsKey("moduleData") && json.get("moduleData")!=null){
-            JSONObject jsonObject = json.getJSONObject("moduleData");
-            jsonObject.put(key,moduleData);
-            json.put("moduleData",jsonObject);
-        }else {
-           JSONObject jsonObject = new JSONObject();
-           jsonObject.put(key,moduleData);
-           json.put("moduleData",jsonObject);
-        }
-        return json;
-    }
+
 
     @Override
     public Boolean existModule(JSONObject json, String key) {
@@ -257,7 +220,7 @@ public class ModuleServiceImp implements ModuleService {
                 moduleList.add(module);
                 json.put("modules",moduleList);
 
-                JSONObject moduleDataItem = JSONObject.parseObject(getModuleDataByKey(json,key).toJSONString());
+                JSONObject moduleDataItem = JSONObject.parseObject(moduleDataService.getModuleDataByKey(json,key).toJSONString());
                 System.out.println(moduleDataItem);
                 JSONObject moduleData = json.getJSONObject("moduleData");
                 moduleData.put(uuid,moduleDataItem);

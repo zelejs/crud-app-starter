@@ -8,6 +8,7 @@ import com.jfeat.module.frontPage.services.gen.persistence.model.FrontPage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
 
 @Service
 public class AutoPageServiceImp implements AutoPageService {
@@ -27,5 +28,31 @@ public class AutoPageServiceImp implements AutoPageService {
 
         }
         return null;
+    }
+
+    @Override
+    public JSONObject updatePageProp(JSONObject json, JSONObject prop) {
+        if (prop==null){
+            return json;
+        }
+        Iterator<String> propKeys = prop.keySet().iterator();
+        while (propKeys.hasNext()){
+            String key = propKeys.next();
+            json.put(key,prop.get(key));
+        }
+        return json;
+    }
+
+    @Override
+    public JSONObject removePageProp(JSONObject json, JSONObject prop) {
+        if (prop==null){
+            return json;
+        }
+        Iterator<String> propKeys = prop.keySet().iterator();
+        while (propKeys.hasNext()){
+            String key = propKeys.next();
+            json.remove(key);
+        }
+        return json;
     }
 }

@@ -9,6 +9,7 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
+import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoModule;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPage;
@@ -70,6 +71,9 @@ public class ComponentOperationEndpoint {
     @Resource
     ModuleService moduleService;
 
+    @Resource
+    ModuleDataService moduleDataService;
+
 
 
     @PostMapping("/current")
@@ -121,7 +125,7 @@ public class ComponentOperationEndpoint {
         Map<String,Object> moduleDataMap = (Map<String, Object>) map.get("data");
 
         JSONObject moduleData = new JSONObject(moduleDataMap);
-        json = moduleService.addModuleData(json,moduleData,key);
+        json = moduleDataService.addModuleData(json,moduleData,key);
 
 
         mockJsonService.saveJsonToFile(json,id);

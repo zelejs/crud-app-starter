@@ -10,7 +10,9 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.crud.plus.CRUD;
 import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
+import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoRoute;
 import com.jfeat.module.autoRender.util.ParameterUtil;
@@ -34,6 +36,9 @@ public class RouteEndpoint {
     @Resource
     AutoPageService autoPageService;
 
+    @Resource
+    ModuleDataService moduleDataService;
+
 
     //    查看路由
     @GetMapping("{id}/routes")
@@ -42,7 +47,7 @@ public class RouteEndpoint {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(json,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(json,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             return SuccessTip.create(navList);
@@ -59,7 +64,7 @@ public class RouteEndpoint {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(json,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(json,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             if (navList!=null && navList.size()>0 && index<navList.size()){
@@ -83,7 +88,7 @@ public class RouteEndpoint {
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
 
 
-        JSONObject module =  moduleService.getModuleDataByKey(json,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(json,key);
         if (module!=null && module.containsKey("navList")){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -97,7 +102,7 @@ public class RouteEndpoint {
                 module.put("navList",array);
 
 
-                JSONObject newJson  =moduleService.replaceModuleData(json,module,key);
+                JSONObject newJson  =moduleDataService.replaceModuleData(json,module,key);
                 mockJsonService.saveJsonToFile(json,id);
                 return SuccessTip.create(newJson);
             }
@@ -119,7 +124,7 @@ public class RouteEndpoint {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(json,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(json,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -134,7 +139,7 @@ public class RouteEndpoint {
                 JSONArray array = JSONArray.parseArray(JSON.toJSONString(autoRouteList));
                 module.put("navList",array);
 
-                JSONObject newJson  =moduleService.replaceModuleData(json,module,key);
+                JSONObject newJson  =moduleDataService.replaceModuleData(json,module,key);
                 mockJsonService.saveJsonToFile(json,id);
                 return SuccessTip.create(newJson);
             }
@@ -157,7 +162,7 @@ public class RouteEndpoint {
         JSONObject jsonObject = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(jsonObject,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(jsonObject,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(jsonObject,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -195,7 +200,7 @@ public class RouteEndpoint {
                 JSONArray array = JSONArray.parseArray(JSON.toJSONString(autoRouteList));
                 module.put("navList",array);
 
-                JSONObject json  =moduleService.replaceModuleData(jsonObject,module,key);
+                JSONObject json  =moduleDataService.replaceModuleData(jsonObject,module,key);
                 mockJsonService.saveJsonToFile(jsonObject,id);
                 return SuccessTip.create(json);
             }
@@ -216,7 +221,7 @@ public class RouteEndpoint {
         JSONObject jsonObject = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(jsonObject,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(jsonObject,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(jsonObject,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -238,8 +243,9 @@ public class RouteEndpoint {
                 JSONArray array = JSONArray.parseArray(JSON.toJSONString(autoRouteList,SerializerFeature.DisableCircularReferenceDetect));
                 module.put("navList",array);
 
-                JSONObject json  =moduleService.replaceModuleData(jsonObject,module,key);
+                JSONObject json  =moduleDataService.replaceModuleData(jsonObject,module,key);
                 mockJsonService.saveJsonToFile(jsonObject,id);
+
                 return SuccessTip.create(json);
             }
 
@@ -262,7 +268,7 @@ public class RouteEndpoint {
         JSONObject jsonObject = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(jsonObject,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(jsonObject,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(jsonObject,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -279,7 +285,7 @@ public class RouteEndpoint {
                 module.put("navList",array);
 
 
-                JSONObject json  =moduleService.replaceModuleData(jsonObject,module,key);
+                JSONObject json  =moduleDataService.replaceModuleData(jsonObject,module,key);
                 mockJsonService.saveJsonToFile(jsonObject,id);
                 return SuccessTip.create(json);
             }
@@ -300,7 +306,7 @@ public class RouteEndpoint {
         JSONObject jsonObject = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(jsonObject,currentModule);
 
-        JSONObject module =  moduleService.getModuleDataByKey(jsonObject,key);
+        JSONObject module =  moduleDataService.getModuleDataByKey(jsonObject,key);
         if (module!=null && module.containsKey("navList") && module.get("navList")!=null){
             JSONArray navList =module.getJSONArray("navList");
             String navListS = JSONObject.toJSONString(navList);
@@ -320,7 +326,7 @@ public class RouteEndpoint {
                 module.put("navList",array);
 
 
-                JSONObject json  =moduleService.replaceModuleData(jsonObject,module,key);
+                JSONObject json  =moduleDataService.replaceModuleData(jsonObject,module,key);
                 mockJsonService.saveJsonToFile(jsonObject,id);
                 return SuccessTip.create(json);
             }

@@ -24,29 +24,8 @@ public interface ModuleService {
     List<String> getModuleKeyByType(JSONObject json,String type);
 
 
-    /**
-     * 获取module 对应数据
-     * @param json
-     * @param key
-     * @return
-     */
-    JSONObject getModuleDataByKey(JSONObject json,String key);
-
-    /**
-     * 替换module 数据
-     * @param json
-     * @param moduleData
-     * @param key
-     * @return
-     */
-    JSONObject replaceModuleData(JSONObject json,JSONObject moduleData,String key);
-
 
     JSONObject addModule(JSONObject json,JSONObject module);
-
-    JSONObject addModuleData(JSONObject json,JSONObject moduleData,String key);
-
-
 
 
     Boolean existModule(JSONObject json,String key);
