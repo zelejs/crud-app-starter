@@ -8,9 +8,11 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPage;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPageSimpleInfo;
 import com.jfeat.module.frontPage.services.domain.dao.QueryFrontPageDao;
 import com.jfeat.module.frontPage.services.domain.model.FrontPageRecord;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@Api("PreviewPage")
 @RequestMapping("/dev/auto/preview")
 public class PreviewPageEndpoint {
 
@@ -46,6 +49,7 @@ public class PreviewPageEndpoint {
 
     //    设置当前预览页ID
     @PutMapping("/current/{id}")
+    @ApiOperation(value = "设置当前预览页ID")
     public Tip updateCurrentPageId(@PathVariable("id") Long id) {
         stringRedisTemplate.opsForValue().set(currentPageFromId, String.valueOf(id), 24, TimeUnit.HOURS);
         return SuccessTip.create(1);
@@ -53,6 +57,7 @@ public class PreviewPageEndpoint {
 
     //    获取当前预览页ID
     @GetMapping("/current")
+    @ApiOperation(value = "获取当前预览页ID")
     public Tip getCurrentPageId() {
         if (stringRedisTemplate.hasKey(currentPageFromId) && stringRedisTemplate.opsForValue().getOperations().getExpire(currentPageFromId) > 0) {
             logger.info("返回缓存数据");
@@ -64,11 +69,13 @@ public class PreviewPageEndpoint {
     }
 
     @GetMapping("/form")
+    @ApiOperation(value = "获取pageidJson")
     public Tip getJson(@RequestParam(value = "pageId") Long id) {
         return SuccessTip.create(mockJsonService.readJsonFile(id));
     }
 
     @PostMapping("/form/{id}")
+    @ApiOperation(value = "提交pageid 的json配置")
     public Tip addJson(@PathVariable Long id, @RequestBody JSONObject json, @RequestParam(value = "appid", required = false) String appid) {
         String originAppid = mockJsonService.getAppId();
         if (appid != null && !appid.equals("")) {
@@ -80,6 +87,7 @@ public class PreviewPageEndpoint {
     }
 
     @GetMapping("/appList")
+    @ApiOperation(value = "页面配置列表")
     public Tip getAppIdMap() {
         Map<String, String> idMap = mockJsonService.getAppIdMap();
         List<String> appList = new ArrayList<>();
@@ -91,6 +99,7 @@ public class PreviewPageEndpoint {
 
     //    获取所有form页面列表
     @GetMapping("/forms")
+    @ApiOperation(value = "获取所有form页面列表")
     public Tip getAllPages(Page<FrontPageRecord> page,
                            @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -154,6 +163,7 @@ public class PreviewPageEndpoint {
 
     //    获取所有form页面列表
     @GetMapping("/forms/simple")
+    @ApiOperation(value = "获取所有form页面列表")
     public Tip getAllSimplePages(Page<FrontPageRecord> page,
                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                  @RequestParam(name = "pageSize", required = false, defaultValue = "50") Integer pageSize,
@@ -197,6 +207,7 @@ public class PreviewPageEndpoint {
 
     //    获取当前预览页配置
     @GetMapping("/current/form")
+    @ApiOperation(value = "获取当前预览页配置")
     public Tip getCurrentPageJson() {
         if (stringRedisTemplate.hasKey(currentPageFromId) && stringRedisTemplate.opsForValue().getOperations().getExpire(currentPageFromId) > 0) {
             logger.info("返回缓存数据");
@@ -216,6 +227,7 @@ public class PreviewPageEndpoint {
 
     //    设置当前预览页配置
     @PutMapping("/current/from")
+    @ApiOperation(value = "设置当前预览页配置")
     public Tip updateCurrentPageJson(@RequestBody JSONObject json,@RequestParam(value = "id",required = false) Long id) {
         System.out.println("===============");
         if (stringRedisTemplate.hasKey(currentPageFromId) && stringRedisTemplate.opsForValue().getOperations().getExpire(currentPageFromId) > 0) {

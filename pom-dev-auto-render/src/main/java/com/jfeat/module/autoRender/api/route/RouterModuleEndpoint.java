@@ -8,11 +8,14 @@ import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoRoute;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
+@Api("RouterModule")
 @RequestMapping("/dev/auto/forms")
 public class RouterModuleEndpoint {
 
@@ -26,6 +29,7 @@ public class RouterModuleEndpoint {
     ModuleDataService moduleDataService;
 
     @GetMapping("/{id}//route/module")
+    @ApiOperation(value = "获取路由module")
     public Tip getRouteModule(@PathVariable("id")Long id,@RequestParam(value = "currentModule",required = false,defaultValue = "0") Integer currentModule){
 
 
@@ -42,6 +46,7 @@ public class RouterModuleEndpoint {
     }
 
     @PostMapping("/{id}/route/module")
+    @ApiOperation(value = "更新路由module")
     public Tip updateRouteModule(@PathVariable("id") Long id, @RequestBody AutoRoute autoRoute){
 
         int currentModule = 0;

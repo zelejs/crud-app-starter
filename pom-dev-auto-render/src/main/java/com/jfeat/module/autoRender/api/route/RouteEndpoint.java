@@ -16,6 +16,8 @@ import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoRoute;
 import com.jfeat.module.autoRender.util.ParameterUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
+@Api("Route")
 @RequestMapping("/dev/auto/forms")
 public class RouteEndpoint {
 
@@ -42,6 +45,7 @@ public class RouteEndpoint {
 
     //    查看路由
     @GetMapping("{id}/routes")
+    @ApiOperation(value = "查看路由")
     public Tip getRouterList(@PathVariable("id")Long id,@RequestParam(value = "currentModule",required = false,defaultValue = "0") Integer currentModule){
 
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
@@ -60,6 +64,7 @@ public class RouteEndpoint {
 
     //    查看路由
     @GetMapping("{id}/routes/{index}")
+    @ApiOperation(value = "查看路由")
     public Tip getRouter(@PathVariable("id")Long id,@PathVariable Integer index,@RequestParam(value = "currentModule",required = false,defaultValue = "0") Integer currentModule){
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
@@ -78,6 +83,7 @@ public class RouteEndpoint {
 
     //    添加路由
     @PostMapping("/{id}/routes")
+    @ApiOperation(value = "添加路由")
     public Tip addRoute(@PathVariable("id")Long id, @RequestBody AutoRoute autoRoute){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){
@@ -115,6 +121,7 @@ public class RouteEndpoint {
 
 //    修改路由
     @PutMapping("/{id}/routes/{index}")
+    @ApiOperation(value = "修改路由")
     public Tip updateRouteDate(@PathVariable("id")Long id, @PathVariable("index")Integer index,@RequestBody AutoRoute autoRoute){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){
@@ -153,6 +160,7 @@ public class RouteEndpoint {
 
 //   变更路由跳转页面
     @PostMapping("/{id}/routes/{index}/op/next")
+    @ApiOperation(value = "变更路由跳转页面")
     public Tip updateRouteDate(@PathVariable("id")Long id, @RequestBody AutoRoute autoRoute, @PathVariable("index") Integer index){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){
@@ -212,6 +220,7 @@ public class RouteEndpoint {
 
 //    移动路由位置
     @PostMapping("/{id}/route/op/arrange")
+    @ApiOperation(value = "移动路由位置")
     public Tip updateRoutePosition(@PathVariable("id")Long id, @RequestBody AutoRoute autoRoute){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){
@@ -259,6 +268,7 @@ public class RouteEndpoint {
 
 //    移除路由
     @PostMapping("/{id}/route/op/remove")
+    @ApiOperation(value = "移除路由")
     public Tip removeRoute(@PathVariable("id")Long id, @RequestBody AutoRoute autoRoute){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){
@@ -297,6 +307,7 @@ public class RouteEndpoint {
 
 //    复制路由
     @PostMapping("/{id}/route/op/copy")
+    @ApiOperation(value = "复制路由")
     public Tip copyRoute(@PathVariable("id")Long id, @RequestBody AutoRoute autoRoute){
         int currentModule = 0;
         if (autoRoute.getCurrentModule()!=null && autoRoute.getCurrentModule()>0){

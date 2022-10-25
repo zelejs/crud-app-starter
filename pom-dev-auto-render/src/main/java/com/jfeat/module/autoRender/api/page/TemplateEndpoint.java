@@ -11,6 +11,8 @@ import com.jfeat.module.frontPage.services.domain.dao.QueryFrontPageDao;
 import com.jfeat.module.frontPage.services.domain.model.FrontPageRecord;
 import com.jfeat.module.frontPage.services.gen.persistence.dao.FrontPageMapper;
 import com.jfeat.module.frontPage.services.gen.persistence.model.FrontPage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Api("Template")
 @RequestMapping("/dev/auto/template")
 public class TemplateEndpoint {
 
@@ -32,6 +35,7 @@ public class TemplateEndpoint {
 
     //    获取模板列表
     @GetMapping
+    @ApiOperation(value = "获取模板列表")
     public Tip getTemplate(Page<FrontPageRecord> page,
                            @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -53,6 +57,7 @@ public class TemplateEndpoint {
 
     //    获取所有form页面列表
     @GetMapping("/simple")
+    @ApiOperation(value = "获取所有form页面列表")
     public Tip getAllSimplePages(Page<FrontPageRecord> page,
                                  @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                  @RequestParam(name = "pageSize", required = false, defaultValue = "50") Integer pageSize,
@@ -101,6 +106,7 @@ public class TemplateEndpoint {
 
 //    设置模板
     @PutMapping("/confirmTemplate/{id}")
+    @ApiOperation(value = "设置模板")
     public Tip setTemplateStatus(@PathVariable("id") String id){
         QueryWrapper<FrontPage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(FrontPage.TEMPLATE_STATUS,id);
@@ -114,6 +120,7 @@ public class TemplateEndpoint {
 
 //    取消模板
     @PutMapping("/cancelTemplate/{id}")
+    @ApiOperation(value = "修改模板")
     public Tip cancelTemplateStatus(@PathVariable("id") String id){
         QueryWrapper<FrontPage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(FrontPage.TEMPLATE_STATUS,id);
