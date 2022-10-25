@@ -26,12 +26,6 @@ import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.crud.base.annotation.BusinessLog;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.plus.CRUDObject;
-import com.jfeat.crud.plus.DefaultFilterResult;
-import com.jfeat.dev.devops.api.permission.*;
-import com.jfeat.am.common.annotation.Permission;
-
-import java.math.BigDecimal;
 
 import com.jfeat.dev.devops.services.domain.service.*;
 import com.jfeat.dev.devops.services.domain.model.DevVersionRecord;
@@ -42,8 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.JSONArray;
 
 /**
  * <p>
@@ -66,7 +58,6 @@ public class DevVersionEndpoint {
 
 
     @BusinessLog(name = "DevVersion", value = "create DevVersion")
-    @Permission(DevVersionPermission.DEVVERSION_NEW)
     @PostMapping
     @ApiOperation(value = "新建 DevVersion", response = DevVersion.class)
     public Tip createDevVersion(@RequestBody DevVersion entity) {
@@ -80,7 +71,6 @@ public class DevVersionEndpoint {
         return SuccessTip.create(affected);
     }
 
-    @Permission(DevVersionPermission.DEVVERSION_VIEW)
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 DevVersion", response = DevVersion.class)
     public Tip getDevVersion(@PathVariable Long id) {
@@ -88,7 +78,6 @@ public class DevVersionEndpoint {
     }
 
     @BusinessLog(name = "DevVersion", value = "update DevVersion")
-    @Permission(DevVersionPermission.DEVVERSION_EDIT)
     @PutMapping("/{id}")
     @ApiOperation(value = "修改 DevVersion", response = DevVersion.class)
     public Tip updateDevVersion(@PathVariable Long id, @RequestBody DevVersion entity) {
@@ -97,14 +86,12 @@ public class DevVersionEndpoint {
     }
 
     @BusinessLog(name = "DevVersion", value = "delete DevVersion")
-    @Permission(DevVersionPermission.DEVVERSION_DELETE)
     @DeleteMapping("/{id}")
     @ApiOperation("删除 DevVersion")
     public Tip deleteDevVersion(@PathVariable Long id) {
         return SuccessTip.create(devVersionService.deleteMaster(id));
     }
 
-    @Permission(DevVersionPermission.DEVVERSION_VIEW)
     @ApiOperation(value = "DevVersion 列表信息", response = DevVersionRecord.class)
     @GetMapping
     @ApiImplicitParams({

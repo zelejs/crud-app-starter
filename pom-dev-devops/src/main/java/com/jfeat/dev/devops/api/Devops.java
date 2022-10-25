@@ -10,8 +10,6 @@ import com.jfeat.dev.devops.services.domain.dao.QueryDevVersionDao;
 import com.jfeat.dev.devops.services.domain.model.DevVersionRecord;
 import com.jfeat.dev.devops.services.domain.service.DevopsServices;
 import com.jfeat.dev.devops.services.gen.persistence.model.DevVersion;
-import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
-import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +29,6 @@ public class Devops {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
-
-    @Resource
-    UserAccountMapper userAccountMapper;
 
 //    存储当前用户选择的 用户条件key  dev:userId:id
     private static final String redisKeyPrefix = "dev:userId:";
@@ -72,7 +67,8 @@ public class Devops {
         if (stringRedisTemplate.hasKey(redisKey)){
             Long targetUser = Long.parseLong(stringRedisTemplate.opsForValue().get(redisKey)==null?"0":stringRedisTemplate.opsForValue().get(redisKey));
             if (targetUser!=null && targetUser>0){
-                return SuccessTip.create(userAccountMapper.selectById(targetUser));
+                //return SuccessTip.create(userAccountMapper.selectById(targetUser));
+                return SuccessTip.create(targetUser);
             }
         }
 

@@ -28,7 +28,6 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.plus.CRUDObject;
 import com.jfeat.crud.plus.DefaultFilterResult;
-import com.jfeat.dev.devops.api.permission.*;
 import com.jfeat.am.common.annotation.Permission;
 
 import java.math.BigDecimal;
@@ -66,7 +65,6 @@ public class DevDevelopEndpoint {
 
 
     @BusinessLog(name = "DevDevelop", value = "create DevDevelop")
-    @Permission(DevDevelopPermission.DEVDEVELOP_NEW)
     @PostMapping
     @ApiOperation(value = "新建 DevDevelop", response = DevDevelop.class)
     public Tip createDevDevelop(@RequestBody DevDevelop entity) {
@@ -80,7 +78,6 @@ public class DevDevelopEndpoint {
         return SuccessTip.create(affected);
     }
 
-    @Permission(DevDevelopPermission.DEVDEVELOP_VIEW)
     @GetMapping("/{id}")
     @ApiOperation(value = "查看 DevDevelop", response = DevDevelop.class)
     public Tip getDevDevelop(@PathVariable Long id) {
@@ -88,7 +85,6 @@ public class DevDevelopEndpoint {
     }
 
     @BusinessLog(name = "DevDevelop", value = "update DevDevelop")
-    @Permission(DevDevelopPermission.DEVDEVELOP_EDIT)
     @PutMapping("/{id}")
     @ApiOperation(value = "修改 DevDevelop", response = DevDevelop.class)
     public Tip updateDevDevelop(@PathVariable Long id, @RequestBody DevDevelop entity) {
@@ -97,14 +93,12 @@ public class DevDevelopEndpoint {
     }
 
     @BusinessLog(name = "DevDevelop", value = "delete DevDevelop")
-    @Permission(DevDevelopPermission.DEVDEVELOP_DELETE)
     @DeleteMapping("/{id}")
     @ApiOperation("删除 DevDevelop")
     public Tip deleteDevDevelop(@PathVariable Long id) {
         return SuccessTip.create(devDevelopService.deleteMaster(id));
     }
 
-    @Permission(DevDevelopPermission.DEVDEVELOP_VIEW)
     @ApiOperation(value = "DevDevelop 列表信息", response = DevDevelopRecord.class)
     @GetMapping
     @ApiImplicitParams({
