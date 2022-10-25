@@ -13,6 +13,7 @@ import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoModule;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPage;
+import com.jfeat.module.autoRender.service.gen.persistence.model.AutoTableItemColumns;
 import com.jfeat.module.frontPage.services.gen.persistence.dao.FrontPageMapper;
 import com.jfeat.module.frontPage.services.gen.persistence.model.FrontPage;
 import com.jfeat.module.lc.lc_low_auto_module_prop.services.domain.dao.QueryLowAutoModulePropDao;
@@ -23,6 +24,7 @@ import com.jfeat.module.lc_low_auto_module.services.domain.service.LowAutoModule
 import com.jfeat.module.lc_low_auto_module.services.gen.persistence.dao.LowAutoModuleMapper;
 import com.jfeat.module.lc_low_auto_module.services.gen.persistence.model.LowAutoModule;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +79,7 @@ public class ComponentOperationEndpoint {
 
 
     @PostMapping("/current")
+    @ApiOperation(value = "创建页面模板",response = AutoPage.class)
     public Tip createPageTemplate(@RequestBody AutoPage autoPage){
         QueryWrapper<FrontPage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(FrontPage.PAGE_ID,"module").eq(FrontPage.TITLE,autoPage.getPageType());
@@ -101,7 +104,8 @@ public class ComponentOperationEndpoint {
         }
     }
 
-    @RequestMapping("/{id}/modules")
+    @PutMapping("/{id}/modules")
+    @ApiOperation(value = "创建组件item",response = AutoModule.class)
     public Tip addComponent(@PathVariable("id")Long id,@RequestBody AutoModule autoModule){
 
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
@@ -133,6 +137,7 @@ public class ComponentOperationEndpoint {
     }
 
     @PostMapping("/{id}/module/op/arrange")
+    @ApiOperation(value = "移动组件顺序",response = AutoModule.class)
     public Tip arrangeComponent(@PathVariable("id")Long id,@RequestBody AutoModule autoModule){
         JSONObject json  = autoPageService.getPageConfigJsonByPageId(id);
         json =  moduleService.moveModule(json,autoModule.getFrom(),autoModule.getTo());
@@ -141,6 +146,7 @@ public class ComponentOperationEndpoint {
     }
 
     @PostMapping("/{id}/module/op/remove")
+    @ApiOperation(value = "移除组件",response = AutoModule.class)
     public Tip removeComponent(@PathVariable("id")Long id,@RequestBody AutoModule autoModule){
         JSONObject json  = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKey(json,autoModule.getIndex());
@@ -150,6 +156,7 @@ public class ComponentOperationEndpoint {
     }
 
     @PostMapping("/{id}/module/op/copy")
+    @ApiOperation(value = "复制组件",response = AutoModule.class)
     public Tip copyComponent(@PathVariable("id")Long id,@RequestBody AutoModule autoModule){
         JSONObject json  = autoPageService.getPageConfigJsonByPageId(id);
         json = moduleService.copyModule(json,autoModule.getIndex());

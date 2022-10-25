@@ -16,6 +16,7 @@ import com.jfeat.module.lc_low_auto_component.services.domain.dao.QueryLowAutoCo
 import com.jfeat.module.lc_low_auto_component.services.domain.model.LowAutoComponentRecord;
 import com.jfeat.module.lc_low_auto_component.services.domain.service.LowAutoComponentOverModelService;
 import com.jfeat.module.lc_low_auto_component.services.gen.crud.model.LowAutoComponentModel;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
+@Api("组件操作")
 @RequestMapping("/dev/auto/component")
 public class ComponentStandardEndpoint {
 

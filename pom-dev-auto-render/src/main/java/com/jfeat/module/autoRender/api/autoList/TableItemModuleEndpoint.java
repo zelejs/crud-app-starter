@@ -13,16 +13,17 @@ import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleDataService;
 import com.jfeat.module.autoRender.service.domain.service.ModuleService;
 import com.jfeat.module.autoRender.service.domain.service.TableItemModuleService;
-import com.jfeat.module.autoRender.service.domain.service.imp.TableItemModuleServiceImp;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoTableItemColumns;
 import com.jfeat.module.autoRender.util.ParameterUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.swing.table.TableColumn;
 import java.util.List;
 
 @RestController
+@Api("TableItemModule")
 @RequestMapping("/dev/auto/forms")
 public class TableItemModuleEndpoint {
 
@@ -42,6 +43,7 @@ public class TableItemModuleEndpoint {
     MockJsonService mockJsonService;
 
     //    查看全部的columns
+    @ApiOperation(value = "查看全部的columns")
     @GetMapping("/{id}/columns")
     public Tip getAllColumns(
             @PathVariable("id") Long id,
@@ -55,6 +57,7 @@ public class TableItemModuleEndpoint {
 
     //    查看指定columns
     @GetMapping("/{id}/columns/{index}")
+    @ApiOperation(value = "查看指定columns")
     public Tip getColumnsById(@PathVariable("id") Long id,
                               @PathVariable("index") Integer index,
                               @RequestParam(value = "currentModule", defaultValue = "0", required = false) Integer currentModule) {
@@ -71,6 +74,7 @@ public class TableItemModuleEndpoint {
 
     //    添加新的columns
     @PostMapping("/{id}/columns")
+    @ApiOperation(value = "添加新的columns",response = AutoTableItemColumns.class)
     public Tip addColumns(
             @PathVariable("id") Long id,
             @RequestBody AutoTableItemColumns columns) {
@@ -95,6 +99,7 @@ public class TableItemModuleEndpoint {
 
     //    修改指定位置的colums
     @PutMapping("/{id}/columns/{index}")
+    @ApiOperation(value = "修改指定位置的colums",response = AutoTableItemColumns.class)
     public Tip updateColumns(@PathVariable("id") Long id,
                              @PathVariable("index") int index,
                              @RequestBody AutoTableItemColumns columns) {
@@ -125,6 +130,7 @@ public class TableItemModuleEndpoint {
 
     //    移动colums
     @PostMapping("/{id}/columns/op/arrange")
+    @ApiOperation(value = "移动colums",response = AutoTableItemColumns.class)
     public Tip moveColumn(@PathVariable("id") Long id,
                           @RequestBody AutoTableItemColumns columns) {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
@@ -159,6 +165,7 @@ public class TableItemModuleEndpoint {
 
     //    移除colums
     @PostMapping("/{id}/columns/op/remove")
+    @ApiOperation(value = "移除colums",response = AutoTableItemColumns.class)
     public Tip removeColumn(@PathVariable("id") Long id,
                           @RequestBody AutoTableItemColumns columns) {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
@@ -190,6 +197,7 @@ public class TableItemModuleEndpoint {
 //    复制colums
 
     @PostMapping("/{id}/columns/op/copy")
+    @ApiOperation(value = "复制colums",response = AutoTableItemColumns.class)
     public Tip copyColumn(@PathVariable("id") Long id,
                           @RequestBody AutoTableItemColumns columns) {
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
