@@ -7,14 +7,10 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.io.*;
 import java.lang.String;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.zip.*;
 
@@ -26,7 +22,7 @@ import java.util.zip.*;
 @RestController
 @Api("dev-logs")
 @RequestMapping("/dev/logs")
-public class Logs {
+public class LogsEndpoint {
 
     /**
      * 获取日志文件列表
