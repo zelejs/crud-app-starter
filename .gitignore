@@ -47,4 +47,5 @@ indexes/
 *.tar
 
 ## 
-pom-dev-dependency/META-INF/
+.mvn/
+

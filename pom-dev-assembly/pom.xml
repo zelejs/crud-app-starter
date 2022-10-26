@@ -19,11 +19,16 @@
     </parent>
 
     <properties>
-        <skipStandalone>true</skipStandalone>
+        <skipStandalone>false</skipStandalone>
     </properties>
 
     <dependencies>
         <!-- dev tools -->
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>dev-runtime</artifactId>
+            <version>0.0.1</version>
+        </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>dev-cors</artifactId>
@@ -41,10 +46,33 @@
         </dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
+            <artifactId>dev-navigation</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
             <artifactId>dev-connection</artifactId>
             <version>0.0.1</version>
         </dependency>
         <!-- end dev -->
+
+
+        <!-- crud -->
+        <!-- <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-base</artifactId>
+            <version>${crud-base.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-core</artifactId>
+            <version>${crud-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>crud-plus</artifactId>
+            <version>${crud-plus.version}</version>
+        </dependency> -->
 
         <!--swagger -->
         <dependency>
@@ -113,6 +141,35 @@
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.5</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>
+                                <location>com.jfeat</location>
+                            </locations>
+                            <info>
+                                <title>${project.name}</title>
+                                <version>${project.version}</version>
+                                <description>${project.description}</description>
+                            </info>
+                            <swaggerDirectory>${project.build.directory}/swagger/</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
