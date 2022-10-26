@@ -20,6 +20,10 @@ public class AmApplication extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+        // navigation-ui.html
+        registry.addResourceHandler("nav-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/nav-ui/**").addResourceLocations("classpath:/META-INF/resources/nav-ui/");        
     }
 
     public static void main(String[] args) {
