@@ -246,19 +246,19 @@ public class PreviewPageEndpoint {
             throw new BusinessException(BusinessCode.BadRequest, "没有设置当前页面id");
         }
     }
-
-    @PostMapping("/setAppId/{id}")
-    @ApiOperation(value = "设置 appId")
-    public Tip setAppId(@PathVariable(name = "id") String id) {
-        mockJsonService.setAppId(id);
-        return SuccessTip.create(mockJsonService.getAppId());
-    }
-
-    @GetMapping("/getAppId")
-    @ApiOperation(value = "查看 当前appId")
-    public Tip getAppId() {
-        return SuccessTip.create(mockJsonService.getAppId());
-    }
+//
+//    @PostMapping("/setAppId/{id}")
+//    @ApiOperation(value = "设置 appId")
+//    public Tip setAppId(@PathVariable(name = "id") String id) {
+//        mockJsonService.setAppId(id);
+//        return SuccessTip.create(mockJsonService.getAppId());
+//    }
+//
+//    @GetMapping("/getAppId")
+//    @ApiOperation(value = "查看 当前appId")
+//    public Tip getAppId() {
+//        return SuccessTip.create(mockJsonService.getAppId());
+//    }
 
 
 }

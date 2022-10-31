@@ -3,6 +3,7 @@ package com.jfeat.module.autoRender.api.page;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.jfeat.am.module.ioJson.services.domain.service.MockJsonService;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Api("PagePropOperation")
@@ -39,41 +41,45 @@ public class PagePropOperationEndpoint {
 
 
     @PutMapping("/{id}/page")
-    @ApiOperation(value = "修改页面属性id",response = AutoPage.class)
+    @ApiOperation(value = "修改页面属性id", response = AutoPage.class)
     public Tip updatePageProp(@PathVariable("id") Long id,
-                              @RequestBody JSONObject prop){
-        JSONObject json  = autoPageService.getPageConfigJsonByPageId(id);
-        autoPageService.updatePageProp(json,prop);
-        mockJsonService.saveJsonToFile(json,id);
+                              @RequestBody JSONObject prop) {
+        JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
+        autoPageService.updatePageProp(json, prop);
+        mockJsonService.saveJsonToFile(json, id);
         return SuccessTip.create(json);
     }
 
 
-    @PostMapping("/{id}/page/{category}")
+
+    @PostMapping("/page/{id}")
     @ApiOperation(value = "创建页面")
-    public Tip createPage(@PathVariable("id") Long id,
-                              @PathVariable("category") String category){
-        QueryWrapper<FrontPage> frontPageQueryWrapper = new QueryWrapper<>();
-        frontPageQueryWrapper.eq(FrontPage.PAGE_ID,id);
-        FrontPage frontPage = frontPageMapper.selectOne(frontPageQueryWrapper);
-        if (frontPage!=null){
-            throw new BusinessException(BusinessCode.CodeBase,"该页面id已存在,请重填");
+    public Tip createPage(
+            @PathVariable("id") Long id) {
+
+        Long pageId = IdWorker.getId();
+        FrontPage template = frontPageMapper.selectById(id);
+
+        if (template == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "没有该模板");
         }
 
-        QueryWrapper<FrontPage> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(FrontPage.TEMPLATE_STATUS,FrontPage.TEMPLATE_STATUS_YES).eq(FrontPage.TITLE,category).eq(FrontPage.APPID,"module");
-        FrontPage template = frontPageMapper.selectOne(queryWrapper);
-
-        if (template==null){
-            throw new BusinessException(BusinessCode.CodeBase,"没有该模板");
-        }
-
-        if (template.getContent()!=null){
+        if (template.getContent() != null) {
             JSONObject jsonObject = JSON.parseObject(template.getContent());
-            mockJsonService.saveJsonToFile(jsonObject,id);
+            mockJsonService.saveJsonToFile(jsonObject, pageId);
             return SuccessTip.create(jsonObject);
         }
         return null;
+
+    }
+
+    @GetMapping("/page/template")
+    @ApiOperation(value = "获取页面列表模板")
+    public Tip getTemplatePageList() {
+        QueryWrapper<FrontPage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(FrontPage.TEMPLATE_STATUS, FrontPage.TEMPLATE_STATUS_YES).eq(FrontPage.APPID, "module");
+        List<FrontPage> template = frontPageMapper.selectList(queryWrapper);
+        return SuccessTip.create(template);
 
     }
 
