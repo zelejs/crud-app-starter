@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.jfeat.am.crud.tag.services.persistence.model.StockTagRelation;
 import com.jfeat.am.module.ioJson.services.domain.service.MockJsonService;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
@@ -80,8 +81,10 @@ public class PagePropOperationEndpoint {
         queryWrapper.eq(FrontPage.TEMPLATE_STATUS, FrontPage.TEMPLATE_STATUS_YES).eq(FrontPage.APPID, "module");
         List<FrontPage> template = frontPageMapper.selectList(queryWrapper);
         return SuccessTip.create(template);
-
     }
+
+
+
 
 
 }

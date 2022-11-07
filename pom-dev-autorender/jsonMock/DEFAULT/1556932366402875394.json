@@ -7,7 +7,7 @@
 	},
 	"name":"seniorConfig",
 	"moduleContainer":{
-		"background":"white",
+		"background":"",
 		"height":""
 	},
 	"title":"高级配置",
@@ -15,52 +15,228 @@
 		"c7646b23-2c47-4aa5-a7de-51c006bbc26c":{
 			"navList":[
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/houseEstateConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=8888",
-					"color":"#2376b7",
-					"title":"小区配置"
+					"group":"小区配置"
 				},
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=42342432",
-					"color":"###207f4c",
-					"title":"社区配置12"
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/BuildingManagement.svg",
+					"nav":"/pages/my/seniorConfig/index?id=5555762",
+					"color":"#ff844b",
+					"title":"创建楼栋"
 				},
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=8890",
-					"color":"###207f4c",
-					"title":"社区配置123"
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/floor.svg",
+					"nav":"/pages/my/seniorConfig/index?id=5555962",
+					"color":"#f21137",
+					"title":"设置楼层"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/CreateFloorPlan.svg",
+					"nav":"/pages/my/seniorConfig/index?id=20055630",
+					"color":"#d96846",
+					"title":"创建户型"
+				},
+				{
+					"container":{},
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/tag.svg",
+					"nav":"/pages/my/seniorConfig/index?id=110055962",
+					"color":"#2fa889",
+					"title":"门牌绑定"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/BindUnitType.svg",
+					"nav":"/pages/my/seniorConfig/index?id=8885961",
+					"color":"#5eb670",
+					"title":"单元绑定"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/BindUnitType.svg",
+					"nav":"/pages/my/seniorConfig/index?id=8885960",
+					"color":"#f21137",
+					"title":"复式绑定"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/InformationSettings.svg",
+					"nav":"/pages/my/seniorConfig/index?id=77766662",
+					"color":"#687477",
+					"title":"小区信息配置"
+				},
+				{
+					"container":{},
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/statistics.svg",
+					"nav":"/pages/my/seniorConfig/index?id=77777772",
+					"color":"#edb518",
+					"title":"小区统计信息"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/vr.svg",
+					"nav":"/pages/my/seniorConfig/index?id=20055700",
+					"color":"#f21137",
+					"title":"VR管理"
+				},
+				{
+					"group":"用户配置"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/userSet.svg",
+					"nav":"/pages/my/seniorConfig/index?id=5555862",
+					"color":"#d96846",
+					"title":"用户类型设置"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/propertyRights.svg",
+					"nav":"/pages/my/seniorConfig/index?id=77777771",
+					"color":"#5eb670",
+					"title":"产权申请处理"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/Inquire.svg",
+					"nav":"/pages/my/seniorConfig/index?id=88789661",
+					"color":"#5eb670",
+					"title":"置业顾问申请处理"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/complaints.svg",
+					"nav":"/pages/my/seniorConfig/index?id=88866661",
+					"color":"#be1120",
+					"title":"用户投诉建议"
+				},
+				{
+					"group":"社区配置"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/Community.svg",
+					"nav":"/pages/my/seniorConfig/index?id=5555662",
+					"color":"#4e7d96",
+					"title":"创建小区"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/posters.svg",
+					"nav":"/pages/my/seniorConfig/index?id=1222761",
+					"color":"#a95fdc",
+					"title":"社区海报配置"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/RoomChangeRecords.svg",
+					"nav":"/pages/my/seniorConfig/index?id=1000006652",
+					"color":"#0a62d0",
+					"title":"匹配记录"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/complaints.svg",
+					"nav":"/pages/sub/noticeManage/index",
+					"color":"#be1120",
+					"title":"公告管理"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/FeatureRelease_icon.svg",
+					"nav":"/pages/my/seniorConfig/index?id=5667763",
+					"color":"#57c3c2",
+					"title":"功能发布"
+				},
+				{
+					"img":"http://static.smallsaas.cn/house/2022/svg/senior/FeatureRelease.svg",
+					"nav":"/pages/my/seniorConfig/index?id=77777776",
+					"color":"#57c3c2",
+					"title":"换房条件控制"
 				}
 			],
+			"itemGroupModule":{
+				"container":{
+					"color":"#707070",
+					"background":"white",
+					"fontSize":"35rpx",
+					"fontWeight":"bold"
+				}
+			},
 			"itemModule":{
 				"name":"MagicItem"
 			}
 		},
-		"a7bdcf0f-1026-43b7-a0ba-f485480237e3":{
+		"cf984ff3-4871-4eea-b0c5-1d57fe9c2fd3":{
+			"itemModule":{}
+		},
+		"681dde08-d3ab-49ce-b258-e8bef8b0c37b":{
 			"navList":[
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/houseEstateConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=8888",
-					"color":"#2376b7",
-					"title":"小区配置"
+					"group":"组名"
 				},
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=423424321",
-					"color":"###207f4c",
-					"title":"社区配置12"
+					"img":"图标",
+					"nav":"跳转路径",
+					"color":"#ff844b",
+					"title":""
 				},
 				{
-					"img":"http://static.smallsaas.cn/house/2022/svg/senior/communityConfig.svg",
-					"nav":"/pages/my/seniorConfig/index?id=423424321",
-					"color":"###207f4c",
-					"title":"社区配置12"
+					"group":"用户配置"
+				},
+				{
+					"img":"",
+					"nav":"",
+					"color":"#f21137",
+					"title":""
 				}
 			],
+			"itemGroupModule":{
+				"container":{
+					"color":"#707070",
+					"background":"white",
+					"fontSize":"35rpx",
+					"fontWeight":"bold"
+				}
+			},
 			"itemModule":{
 				"name":"MagicItem"
 			}
+		},
+		"7938bb39-3bb8-407e-a0c2-7092facea8eb":{
+			"navList":[
+				{
+					"group":"组名"
+				},
+				{
+					"img":"图标",
+					"nav":"跳转路径",
+					"color":"#ff844b",
+					"title":""
+				},
+				{
+					"group":"用户配置"
+				},
+				{
+					"img":"",
+					"nav":"",
+					"color":"#f21137",
+					"title":""
+				}
+			],
+			"itemGroupModule":{
+				"container":{
+					"color":"#707070",
+					"background":"white",
+					"fontSize":"35rpx",
+					"fontWeight":"bold"
+				}
+			},
+			"itemModule":{
+				"name":"MagicItem"
+			}
+		},
+		"442d6e43-a748-45eb-a283-e829525a1a2e":{
+			"outStyle":{},
+			"control":{
+				"duration":"600",
+				"indicator_color":"rgba(0, 0, 0, .3)",
+				"interval":"4000",
+				"circular":"100",
+				"indicator_active_color":"#000000",
+				"indicatorDot":"true",
+				"autoplay":"false"
+			},
+			"banners":[
+				{
+					"img":""
+				}
+			]
 		}
 	},
 	"version":"1",
@@ -74,12 +250,20 @@
 			"key":"c7646b23-2c47-4aa5-a7de-51c006bbc26c"
 		},
 		{
-			"container":{
-				"grid-template-columns":"repeat(3, 1fr)"
-			},
-			"name":"",
 			"type":"navlist",
-			"key":"a7bdcf0f-1026-43b7-a0ba-f485480237e3"
+			"key":"cf984ff3-4871-4eea-b0c5-1d57fe9c2fd3"
+		},
+		{
+			"type":"navlist",
+			"key":"7938bb39-3bb8-407e-a0c2-7092facea8eb"
+		},
+		{
+			"type":"navlist",
+			"key":"681dde08-d3ab-49ce-b258-e8bef8b0c37b"
+		},
+		{
+			"type":"banner",
+			"key":"442d6e43-a748-45eb-a283-e829525a1a2e"
 		}
 	]
 }

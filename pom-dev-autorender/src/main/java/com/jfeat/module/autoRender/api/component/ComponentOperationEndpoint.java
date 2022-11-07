@@ -1,6 +1,7 @@
 package com.jfeat.module.autoRender.api.component;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jfeat.am.module.ioJson.services.domain.service.MockJsonService;
@@ -104,35 +105,196 @@ public class ComponentOperationEndpoint {
         }
     }
 
-    @PutMapping("/{id}/modules")
+    @PostMapping("/{id}/modules")
     @ApiOperation(value = "创建组件item",response = AutoModule.class)
     public Tip addComponent(@PathVariable("id")Long id,@RequestBody AutoModule autoModule){
 
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
 
+
         String moduleName = autoModule.getModuleName();
-        QueryWrapper<LowAutoModule> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("module_name",moduleName);
-        LowAutoModule lowAutoModule =  lowAutoModuleMapper.selectOne(queryWrapper);
-
-        JSONObject module = new JSONObject();
-        module.put("type",lowAutoModule.getModuleName());
-        String key = UUID.randomUUID().toString();
-        module.put("key",key);
-        json = moduleService.addModule(json,module);
-
-
-
-        LowAutoModulePropModel lowAutoModulePropModels = queryLowAutoModulePropDao.queryProModelChile(-1L, lowAutoModule.getId());
-        Map<String, Object> map = lowAutoModulePropService.autoModulePropToJson(lowAutoModulePropModels);
-
-        Map<String,Object> moduleDataMap = (Map<String, Object>) map.get("data");
-
-        JSONObject moduleData = new JSONObject(moduleDataMap);
-        json = moduleDataService.addModuleData(json,moduleData,key);
+//        QueryWrapper<LowAutoModule> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("module_name",moduleName);
+//        LowAutoModule lowAutoModule =  lowAutoModuleMapper.selectOne(queryWrapper);
+//
+//        JSONObject module = new JSONObject();
+//        module.put("type",lowAutoModule.getModuleName());
+//        String key = UUID.randomUUID().toString();
+//        module.put("key",key);
+//        json = moduleService.addModule(json,module);
+//
+//
+//        LowAutoModulePropModel lowAutoModulePropModels = queryLowAutoModulePropDao.queryProModelChile(-1L, lowAutoModule.getId());
+//        Map<String, Object> map = lowAutoModulePropService.autoModulePropToJson(lowAutoModulePropModels);
+//
+//        Map<String,Object> moduleDataMap = (Map<String, Object>) map.get("data");
+//
+//        JSONObject moduleData = new JSONObject(moduleDataMap);
 
 
-        mockJsonService.saveJsonToFile(json,id);
+        String data  = "{\n" +
+                "\t\"navlist\": {\n" +
+                "\t\t\"itemModule\": {\n" +
+                "\t\t\t\"name\": \"MagicItem\"\n" +
+                "\t\t},\n" +
+                "\t\t\"itemGroupModule\": {\n" +
+                "\t\t\t\"container\": {\n" +
+                "\t\t\t\t\"fontWeight\": \"bold\",\n" +
+                "\t\t\t\t\"fontSize\": \"35rpx\",\n" +
+                "\t\t\t\t\"background\": \"white\",\n" +
+                "\t\t\t\t\"color\": \"#707070\"\n" +
+                "\t\t\t}\n" +
+                "\t\t},\n" +
+                "\t\t\"navList\": [{\n" +
+                "\t\t\t\t\"group\": \"组名\"\n" +
+                "\t\t\t},\n" +
+                "\t\t\t{\n" +
+                "\t\t\t\t\"img\": \"图标\",\n" +
+                "\t\t\t\t\"color\": \"#ff844b\",\n" +
+                "\t\t\t\t\"title\": \"\",\n" +
+                "\t\t\t\t\"nav\": \"跳转路径\"\n" +
+                "\t\t\t},\n" +
+                "\t\t\t{\n" +
+                "\t\t\t\t\"group\": \"用户配置\"\n" +
+                "\t\t\t},\n" +
+                "\t\t\t{\n" +
+                "\t\t\t\t\"img\": \"\",\n" +
+                "\t\t\t\t\"color\": \"#f21137\",\n" +
+                "\t\t\t\t\"title\": \"\",\n" +
+                "\t\t\t\t\"nav\": \"\"\n" +
+                "\t\t\t}\n" +
+                "\t\t]\n" +
+                "\t},\n" +
+                "\t\"autolist\": {\n" +
+                "\t\t\"loadApi\": \"\",\n" +
+                "\t\t\"itemNavigation\": \"\",\n" +
+                "\t\t\"response\": {\n" +
+                "\t\t\t\"list\": \"\"\n" +
+                "\t\t},\n" +
+                "\t\t\"request\": {\n" +
+                "\t\t\t\"default\": {},\n" +
+                "\t\t\t\"ps\": \"pageSize\",\n" +
+                "\t\t\t\"pn\": \"pageNum\"\n" +
+                "\t\t},\n" +
+                "\t\t\"itemModule\": {\n" +
+                "\t\t\t\"name\": \"saleHouseItem\"\n" +
+                "\t\t},\n" +
+                "\t\t\"columns\": 2\n" +
+                "\t},\n" +
+                "\t\"banner\": {\n" +
+                "\t\t\"banners\": [{\n" +
+                "\t\t\t\t\"img\": \"\"\n" +
+                "\t\t\t}\n" +
+                "\n" +
+                "\t\t],\n" +
+                "\t\t\"outStyle\": {},\n" +
+                "\t\t\"control\": {\n" +
+                "\t\t\t\"autoplay\": \"false\",\n" +
+                "\t\t\t\"interval\": \"4000\",\n" +
+                "\t\t\t\"duration\": \"600\",\n" +
+                "\t\t\t\"circular\": \"100\",\n" +
+                "\t\t\t\"indicatorDot\": \"true\",\n" +
+                "\t\t\t\"indicator_color\": \"rgba(0, 0, 0, .3)\",\n" +
+                "\t\t\t\"indicator_active_color\": \"#000000\"\n" +
+                "\t\t}\n" +
+                "\t},\n" +
+                "\t\"autoform\": {\n" +
+                "\t\t\"fields\": [{\n" +
+                "\t\t\t\t\"__config__\": {\n" +
+                "\t\t\t\t\t\"label\": \"标签\",\n" +
+                "\t\t\t\t\t\"labelWidth\": null,\n" +
+                "\t\t\t\t\t\"showLabel\": true,\n" +
+                "\t\t\t\t\t\"tag\": \"el-input\",\n" +
+                "\t\t\t\t\t\"tagIcon\": \"input\",\n" +
+                "\t\t\t\t\t\"defaultValue\": \"\",\n" +
+                "\t\t\t\t\t\"required\": true,\n" +
+                "\t\t\t\t\t\"layout\": \"colFormItem\",\n" +
+                "\t\t\t\t\t\"regList\": [],\n" +
+                "\t\t\t\t\t\"formId\": 101,\n" +
+                "\t\t\t\t\t\"renderKey\": 1621415022993\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"__slot__\": {\n" +
+                "\t\t\t\t\t\"prepend\": \"\",\n" +
+                "\t\t\t\t\t\"append\": \"\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"placeholder\": \"请输入\",\n" +
+                "\t\t\t\t\"style\": {\n" +
+                "\t\t\t\t\t\"width\": \"100%\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"clearable\": true,\n" +
+                "\t\t\t\t\"prefix-icon\": \"\",\n" +
+                "\t\t\t\t\"suffix-icon\": \"\",\n" +
+                "\t\t\t\t\"maxlength\": null,\n" +
+                "\t\t\t\t\"show-word-limit\": false,\n" +
+                "\t\t\t\t\"readonly\": false,\n" +
+                "\t\t\t\t\"disabled\": false,\n" +
+                "\t\t\t\t\"__vModel__\": \"code\"\n" +
+                "\t\t\t},\n" +
+                "\t\t\t{\n" +
+                "\t\t\t\t\"__config__\": {\n" +
+                "\t\t\t\t\t\"label\": \"标签\",\n" +
+                "\t\t\t\t\t\"showLabel\": true,\n" +
+                "\t\t\t\t\t\"labelWidth\": null,\n" +
+                "\t\t\t\t\t\"tag\": \"el-select\",\n" +
+                "\t\t\t\t\t\"tagIcon\": \"select\",\n" +
+                "\t\t\t\t\t\"layout\": \"colFormItem\",\n" +
+                "\t\t\t\t\t\"required\": false,\n" +
+                "\t\t\t\t\t\"regList\": [],\n" +
+                "\t\t\t\t\t\"formId\": 103,\n" +
+                "\t\t\t\t\t\"renderKey\": 1621415255861\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"__slot__\": {\n" +
+                "\t\t\t\t\t\"options\": [{\n" +
+                "\t\t\t\t\t\t\t\"label\": \"选项一\",\n" +
+                "\t\t\t\t\t\t\t\"value\": 1\n" +
+                "\t\t\t\t\t\t},\n" +
+                "\t\t\t\t\t\t{\n" +
+                "\t\t\t\t\t\t\t\"label\": \"选项二\",\n" +
+                "\t\t\t\t\t\t\t\"value\": 2\n" +
+                "\t\t\t\t\t\t}\n" +
+                "\t\t\t\t\t]\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"placeholder\": \"请选择\",\n" +
+                "\t\t\t\t\"style\": {\n" +
+                "\t\t\t\t\t\"width\": \"100%\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"clearable\": true,\n" +
+                "\t\t\t\t\"disabled\": false,\n" +
+                "\t\t\t\t\"filterable\": false,\n" +
+                "\t\t\t\t\"multiple\": false,\n" +
+                "\t\t\t\t\"__vModel__\": \"绑定api字段\"\n" +
+                "\t\t\t}\n" +
+                "\t\t],\n" +
+                "\t\t\"formRef\": \"elForm\",\n" +
+                "\t\t\"formModel\": \"formData\",\n" +
+                "\t\t\"size\": \"medium\",\n" +
+                "\t\t\"labelPosition\": \"right\",\n" +
+                "\t\t\"labelWidth\": 100,\n" +
+                "\t\t\"formRules\": \"rules\",\n" +
+                "\t\t\"gutter\": 15,\n" +
+                "\t\t\"disabled\": false,\n" +
+                "\t\t\"span\": 24,\n" +
+                "\t\t\"formBtns\": true,\n" +
+                "\t\t\"saveApi\": \"提交api\",\n" +
+                "\t\t\"saveMethod\": \"POST\",\n" +
+                "\t\t\"loadApi\": \"\",\n" +
+                "\t\t\"isLawForm\": false\n" +
+                "\t}\n" +
+                "\n" +
+                "\n" +
+                "}";
+
+        JSONObject jsonObject = JSON.parseObject(data);
+        if (jsonObject.containsKey(moduleName)){
+            JSONObject module = new JSONObject();
+            module.put("type",moduleName);
+            String key = UUID.randomUUID().toString();
+            module.put("key",key);
+            json = moduleService.addModule(json,module);
+            JSONObject moduleData = jsonObject.getJSONObject(moduleName);
+            json = moduleDataService.addModuleData(json,moduleData,key);
+            mockJsonService.saveJsonToFile(json,id);
+        }
         return SuccessTip.create(json);
     }
 

@@ -8,6 +8,7 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPage;
 import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPageSimpleInfo;
 import com.jfeat.module.frontPage.services.domain.dao.QueryFrontPageDao;
@@ -47,6 +48,9 @@ public class PreviewPageEndpoint {
     @Resource
     MockJsonService mockJsonService;
 
+    @Resource
+    AutoPageService autoPageService;
+
     //    设置当前预览页ID
     @PutMapping("/current/{id}")
     @ApiOperation(value = "设置当前预览页ID")
@@ -71,7 +75,7 @@ public class PreviewPageEndpoint {
     @GetMapping("/form")
     @ApiOperation(value = "获取pageidJson")
     public Tip getJson(@RequestParam(value = "pageId") Long id) {
-        return SuccessTip.create(mockJsonService.readJsonFile(id));
+        return SuccessTip.create(autoPageService.getPageConfigJsonByPageId(id));
     }
 
     @PostMapping("/form/{id}")
@@ -219,7 +223,7 @@ public class PreviewPageEndpoint {
                 JSONObject json = JSON.parseObject(data);
                 return SuccessTip.create(json);
             }
-            return SuccessTip.create(mockJsonService.readJsonFile(fromId));
+            return SuccessTip.create(autoPageService.getPageConfigJsonByPageId(fromId));
         } else {
             throw new BusinessException(BusinessCode.BadRequest, "没有设置当前页面id");
         }

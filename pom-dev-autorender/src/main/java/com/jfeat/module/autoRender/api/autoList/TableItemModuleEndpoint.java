@@ -218,8 +218,6 @@ public class TableItemModuleEndpoint {
         }
 
         JSONObject indexJson = JSON.parseObject(JSONObject.toJSONString(jsonArray.getJSONObject(columns.getIndex().intValue())));
-
-
         jsonArray.add(jsonArray.size(), indexJson);
 
         mockJsonService.saveJsonToFile(json, id);
