@@ -152,8 +152,6 @@ public class RouteEndpoint {
             }
 
         }
-
-
         return SuccessTip.create();
     }
 
@@ -185,7 +183,7 @@ public class RouteEndpoint {
                 String nav = navRouter.getNav();
 
                 if (nav!=null&& !nav.equals("")){
-                    String pattern = "=(\\d+)";
+                    String pattern = "=.*(\\d+).*";
 
                     Pattern p = Pattern.compile(pattern);
                     // get a matcher object
@@ -196,9 +194,6 @@ public class RouteEndpoint {
                     }else {
                         throw new BusinessException(BusinessCode.CodeBase,"未找到pageID");
                     }
-
-
-
                     autoRouteList.set(index,navRouter);
                 }else {
                     throw new BusinessException(BusinessCode.EmptyNotAllowed,"nav为空");

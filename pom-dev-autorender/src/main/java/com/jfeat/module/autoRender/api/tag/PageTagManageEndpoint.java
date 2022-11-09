@@ -13,12 +13,14 @@ import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.module.autoRender.service.gen.persistence.model.AutoPageTag;
 import com.jfeat.module.frontPage.services.domain.service.FrontPageService;
 import com.jfeat.module.frontPage.services.gen.persistence.model.FrontPage;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -55,7 +57,20 @@ public class PageTagManageEndpoint {
             }
         }
 
-        return SuccessTip.create(stockTagList);
+        List<AutoPageTag> autoPageTagList = new ArrayList<>();
+
+        for (StockTag stockTag:stockTagList){
+            AutoPageTag autoPageTag = new AutoPageTag();
+            autoPageTag.setId(stockTag.getId());
+            autoPageTag.setIsPrimary(stockTag.getIsPrimary());
+            autoPageTag.setSortOrder(stockTag.getSortOrder());
+            autoPageTag.setTagName(stockTag.getTagName());
+            autoPageTag.setTagType(stockTag.getTagType());
+            autoPageTag.setName(stockTag.getTagName());
+            autoPageTagList.add(autoPageTag);
+        }
+
+        return SuccessTip.create(autoPageTagList);
     }
 
     @PutMapping("/{id}")
