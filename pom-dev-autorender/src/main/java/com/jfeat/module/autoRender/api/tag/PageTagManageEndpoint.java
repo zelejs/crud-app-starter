@@ -65,6 +65,9 @@ public class PageTagManageEndpoint {
             autoPageTag.setIsPrimary(stockTag.getIsPrimary());
             autoPageTag.setSortOrder(stockTag.getSortOrder());
             autoPageTag.setTagName(stockTag.getTagName());
+            if (autoPageTag.getTagName().equals("全部")){
+                autoPageTag.setTagName("");
+            }
             autoPageTag.setTagType(stockTag.getTagType());
             autoPageTag.setName(stockTag.getTagName());
             autoPageTagList.add(autoPageTag);
@@ -103,7 +106,12 @@ public class PageTagManageEndpoint {
         QueryWrapper<StockTagRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(StockTagRelation.TAG_ID,entity.getTagId()).eq(StockTagRelation.STOCK_ID,entity.getStockId()).eq(StockTagRelation.STOCK_TYPE,entity.getStockType());
         StockTagRelation stockTagRelation = stockTagRelationMapper.selectOne(queryWrapper);
+
         if (stockTagRelation==null){
+            stockTagRelation = new StockTagRelation();
+            stockTagRelation.setTagId(entity.getTagId());
+            stockTagRelation.setStockId(entity.getStockId());
+            stockTagRelation.setStockType(frontPageService.getEntityName());
            affected+= stockTagRelationMapper.insert(stockTagRelation);
         }
         return SuccessTip.create(affected);
@@ -111,17 +119,16 @@ public class PageTagManageEndpoint {
     }
 
     @PostMapping("/unbing")
-    public Tip unbingPageTag(@RequestBody StockTagRelation entity){
+    public Tip unbindPageTag(@RequestBody StockTagRelation entity){
         Integer affected = 0;
 
         if (entity.getTagId()==null || entity.getStockId()==null){
             throw new BusinessException(BusinessCode.BadRequest,"tageId 和 stockId 为必填项");
         }
         QueryWrapper<StockTagRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StockTagRelation.TAG_ID,entity.getTagId()).eq(StockTagRelation.STOCK_ID,entity.getStockId()).eq(StockTagRelation.STOCK_TYPE,entity.getStockType());
+        queryWrapper.eq(StockTagRelation.TAG_ID,entity.getTagId()).eq(StockTagRelation.STOCK_ID,entity.getStockId()).eq(StockTagRelation.STOCK_TYPE,frontPageService.getEntityName());
         affected+=stockTagRelationMapper.delete(queryWrapper);
         return SuccessTip.create(affected);
-
     }
 
 }
