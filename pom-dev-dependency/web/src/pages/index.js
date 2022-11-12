@@ -1,7 +1,6 @@
 import React from 'react';
 
 import StandalonePage from '@/pages/Standalone'
-import DevLogsPage from '@/pages/dev'
 import useTokenRequest from 'zero-element-boot/lib/components/hooks/useTokenRequest';
 
 export default function index(props) {
