@@ -1,0 +1,1 @@
+curl --proto '=https' https://gitee.com/smallsaas/sandbox/raw/master/tag/build/mvn/mvn-cli -sSf
