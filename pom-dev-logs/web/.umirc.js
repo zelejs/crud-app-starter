@@ -31,6 +31,6 @@ export default {
     memo.output.set('filename', 'bundle.js')
   },
 
-  // outputPath: '/dist/logs-ui',
-  publicPath: process.env.NODE_ENV === 'production' ? './logs-ui/' : '/',  //设置 dist/index.html 访问 js和css路径
+  // outputPath: '/dist/connection-ui',
+  publicPath: process.env.NODE_ENV === 'production' ? './' : './',  //设置 dist/index.html 访问 js和css路径
 }
