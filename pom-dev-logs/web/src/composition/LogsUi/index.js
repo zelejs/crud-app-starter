@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { ChakraProvider, Flex, Center, Box, Stack, Spacer, VStack, Container, Button, Input, Select } from "@chakra-ui/react";
+import { ChakraProvider, Flex, Center, Box, Stack, Spacer, VStack, Container, Button, Input } from "@chakra-ui/react";
 import { AutoLayout } from 'zero-element-boot/lib/components';
 // import AutoLayout from '../AutoLayout';
 import Loading from 'zero-element-boot/lib/components/loading';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
-import JarItem from './JarItem';
+import JarItem from './Sandbox/JarItem';
 
 import layout from './layout';
+
 
 export default function Index (props) {
 
@@ -17,6 +18,8 @@ export default function Index (props) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDetail, setDetail] = useState('');
   const [currentItemName, setCurrentItemName] = useState('');
+  const [searchLogContent, setSearchLogContent] = useState('');
+  const [searchLogCount, setSearchLogCount] = useState('');
   //
 
   let layoutData = '';
@@ -25,9 +28,9 @@ export default function Index (props) {
 
   let api = '/dev/logs/json';
 
-  if (process.env.NODE_ENV === 'development') {
-    api = `${api}`;
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   api = `${api}`;
+  // }
 
 
   if (layoutJsonPath) {
@@ -55,6 +58,8 @@ export default function Index (props) {
 
   //
   const getDetailFetch = async (name, num) => {
+    setSearchLogContent('')
+    setSearchLogCount('')
     if (num == 1) {
       setCurrentItemName(name)
     }
@@ -77,16 +82,18 @@ export default function Index (props) {
 
   }
   // console.log(statenum);
-  var searchData = ''
+  // var searchData = ''
   // var upDown =''
   //搜索输入框
   const setSearchContent = async (e,) => {
-    searchData = e
+    // searchData = e
+    setSearchLogContent(e)
   }
 
-  var upDown = ''
+  // var upDown = ''
   const setupDown = (N) => {
-    upDown = N
+    // upDown = N
+    setSearchLogCount(N)
   }
 
   //搜索按钮--获取返回的数据
@@ -110,10 +117,21 @@ export default function Index (props) {
 
   //搜索方法
   function seach () {
+
+    if(!currentItemName){
+      alert('请选择日志文件')
+      return
+    }
+
+    if(!searchLogContent){
+      alert('请输入日志内容')
+      return
+    }
+
     const body = {
       pattern: currentItemName,
-      filter: searchData,
-      N: upDown
+      filter: searchLogContent,
+      n: searchLogCount
     }
     anniu(body)
 
@@ -166,6 +184,8 @@ export default function Index (props) {
     setIsShowList(true)
     setIsShowData(false)
     setCurrentItemName('')
+    setSearchLogContent('')
+    setSearchLogCount('')
 
   }
 
@@ -187,11 +207,11 @@ export default function Index (props) {
             <div style={{ minWidth: '800px', width: '100%', lineHeight: '60px', backgroundColor: '#ffffff', padding: '20px 10px 10px 25px' }}>
 
               <div style={{ left: '60%', width: '200px', top: '100px', height: '40px' }}>
-                <Input placeholder='输入上下文数量' onChange={(N) => setupDown(N.target.value)} width='150px' />
+                <Input placeholder='输入上下文数量' value={searchLogCount} onChange={(N) => setupDown(N.target.value)} width='150px' />
               </div>
 
               <div style={{ position: 'absolute', left: '180px', top: '54px' }}>
-                <Input placeholder='请输入您想要的日志内容' onChange={(e) => setSearchContent(e.target.value)} width='300px' /></div>
+                <Input placeholder='请输入您想要的日志内容' value={searchLogContent}  onChange={(e) => setSearchContent(e.target.value)} width='300px' /></div>
 
               <div style={{ position: 'absolute', left: '486px', top: '52px' }}>
                 <Button colorScheme='teal' onClick={() => seach()} >搜索</Button>
@@ -203,11 +223,6 @@ export default function Index (props) {
                 <option value='3'>3</option>
               </Select> */}
             </div>
-
-
-
-
-
 
 
             {/* <Input placeholder='请输入搜索内容' onChange={(e) => setSearchContent(SearchContent, 2)} /> */}
@@ -225,7 +240,7 @@ export default function Index (props) {
 
             {
               isLoading ? (
-                <Loading styles={{ marginTop: '60px' }} />
+                <Loading styles={{ marginTop: '100px' }} />
               )
                 : isShowData && showDetail ? (
                   <div style={{ width: '100%', paddingLeft: '25px' }}>

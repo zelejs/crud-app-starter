@@ -4,7 +4,7 @@ import { setEndpoint, setToken } from 'zero-element-boot/lib/components/config/c
 import { set as NamedIndicatorSet } from 'zero-element-boot/lib/components/config/NamedIndicatorConfig';
 import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/config/NamedPresenterConfig';
 
-import JarItem from '@/composition/LogsUi/JarItem';
+import JarItem from '@/composition/LogsUi/Sandbox/JarItem';
 
 
 // //cart

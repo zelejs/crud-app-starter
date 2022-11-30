@@ -4,7 +4,7 @@ import { setEndpoint, setToken } from 'zero-element-boot/lib/components/config/c
 import { set as NamedIndicatorSet } from 'zero-element-boot/lib/components/config/NamedIndicatorConfig';
 import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/config/NamedPresenterConfig';
 
-// import JarItem from '@/composition/Standalone/JarItem';
+import SwaggerItem from '@/composition/ApisUi/SwaggerItem';
 
 
 // //cart
@@ -29,7 +29,7 @@ NamedIndicatorSet({
 })
 
 NamedPresenterSet({
-    // JarItem 
+    SwaggerItem 
 })
 
 //开发模式设置endpoint, token
