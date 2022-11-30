@@ -24,11 +24,11 @@
 
     <dependencies>
         <!-- dev tools -->
-        <dependency>
+	<dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>dev-runtime</artifactId>
             <version>0.0.1</version>
-        </dependency>
+	</dependency>
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>dev-cors</artifactId>
@@ -55,6 +55,13 @@
             <version>0.0.1</version>
         </dependency>
         <!-- end dev -->
+
+       <!--h2-->
+       <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
 
 
         <!-- crud -->

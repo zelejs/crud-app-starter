@@ -1,0 +1,26 @@
+{
+  "parser": "babel-eslint",
+  "plugins": ["compat","react-hooks"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "mocha": true,
+    "jest": true,
+    "jasmine": true
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "global-require": [1],
+    "no-undef": 2,
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "settings": {
+    "polyfills": ["promises"]
+  }
+}

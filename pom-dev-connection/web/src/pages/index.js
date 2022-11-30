@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Connection from '@/pages/Connection'
+import Connection from '@/composition/Connection'
 
 export default function index (props) {
 
