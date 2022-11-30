@@ -1,5 +1,6 @@
 package com.jfeat.module.autoRender.service.gen.persistence.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 public class AutoModule extends Model<AutoModule> {
@@ -9,6 +10,16 @@ public class AutoModule extends Model<AutoModule> {
     private Integer from;
     private Integer to;
     private Integer index;
+
+    private JSONObject container;
+
+    public JSONObject getContainer() {
+        return container;
+    }
+
+    public void setContainer(JSONObject container) {
+        this.container = container;
+    }
 
     public String getModuleName() {
         return moduleName;

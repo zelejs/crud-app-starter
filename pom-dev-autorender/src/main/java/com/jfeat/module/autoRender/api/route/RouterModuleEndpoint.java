@@ -2,6 +2,7 @@ package com.jfeat.module.autoRender.api.route;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.jfeat.am.module.ioJson.services.domain.service.MockJsonService;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.module.autoRender.service.domain.service.AutoPageService;
@@ -27,6 +28,10 @@ public class RouterModuleEndpoint {
 
     @Resource
     ModuleDataService moduleDataService;
+
+
+    @Resource
+    MockJsonService mockJsonService;
 
     @GetMapping("/{id}//route/module")
     @ApiOperation(value = "获取路由module")
@@ -55,12 +60,15 @@ public class RouterModuleEndpoint {
         }
         JSONObject json = autoPageService.getPageConfigJsonByPageId(id);
         String key = moduleService.getModuleKeyByIndex(json,currentModule);
-
         JSONObject jsonObject =  moduleDataService.getModuleDataByKey(json,key);
+
+
         if (jsonObject!=null&& jsonObject.containsKey("itemModule")&&jsonObject.getJSONObject("itemModule")!=null){
             JSONObject itemModule = jsonObject.getJSONObject("itemModule");
             itemModule.put("name",autoRoute.getModuleName());
         }
+
+        mockJsonService.saveJsonToFile(json, id);
         return SuccessTip.create(json);
     }
 

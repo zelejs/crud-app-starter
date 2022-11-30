@@ -9,6 +9,7 @@ import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
+import com.jfeat.crud.core.util.Md5Util;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
@@ -50,7 +51,7 @@ public class DevConnectionEndpoint {
 
     protected final static Logger logger = LoggerFactory.getLogger(DevConnectionEndpoint.class);
     private final String SCHEDULE = "schema";
-    private static final Long ttl = 600000L;
+    private static final Long ttl = 14400000L;
     private static final String key = "514528";
     @Autowired
     DataSource dataSource;
@@ -60,6 +61,13 @@ public class DevConnectionEndpoint {
 
     @Resource
     TableServer tableServer;
+
+    @GetMapping("/sing")
+    public Tip getSign(){
+        String base = key+(new Date()).getTime()/ttl;
+        System.out.println(new Date().getTime());
+        return SuccessTip.create(Md5Util.encrypt(base));
+    }
 
     /**
      * 数据库查询

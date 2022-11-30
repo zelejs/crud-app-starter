@@ -67,6 +67,7 @@ public class PagePropOperationEndpoint {
 
         if (template.getContent() != null) {
             JSONObject jsonObject = JSON.parseObject(template.getContent());
+            jsonObject.put("title",pageId);
             mockJsonService.saveJsonToFile(jsonObject, pageId);
             return SuccessTip.create(jsonObject);
         }
