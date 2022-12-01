@@ -336,7 +336,7 @@ public class LogsEndpoint {
                 return SuccessTip.create(logList);
             } else {
                 // 当filter不为空，如果没有传n则默认n=6
-                if (n == 0) {
+                if (n == -1) {
                     n = 6;
                 }
                 // 有n参数传入,则且传入的n参数>0就直接使用传入的n
