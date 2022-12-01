@@ -4,9 +4,12 @@ package com.jfeat.dev.logs.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.AmApplication;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
+import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,10 @@ import java.util.zip.*;
 @Api("dev-logs")
 @RequestMapping("/dev/logs")
 public class LogsEndpoint {
+
+
+    private static final Long ttl = 14400000L;
+    private static final String key = "514528";
 
     /**
      * 获取日志文件列表
@@ -124,8 +131,13 @@ public class LogsEndpoint {
     @GetMapping()
     private void getLogContext(@RequestParam(name = "pattern", required = false) String pattern,
                                @RequestParam(name = "filter", required = false) String filter,
+                               @RequestParam(name = "sign", required = true) String sign,
                                @RequestParam(name = "n", defaultValue = "0") int n,
                                HttpServletResponse response) throws IOException {
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+
         response.setContentType("text/plain;charset=utf-8"); //设置响应的内容类型
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         StringBuilder logKeywordTextArea = new StringBuilder();
@@ -275,7 +287,13 @@ public class LogsEndpoint {
     @GetMapping(value = "/json", produces = {"application/json;charset=utf-8"})
     private Tip getLogFileList(@RequestParam(name = "pattern", required = false) String pattern,
                                @RequestParam(name = "filter", required = false) String filter,
+                               @RequestParam(name = "sign", required = true) String sign,
                                @RequestParam(name = "n", defaultValue = "-1") int n) throws IOException {
+
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+
         List<String> logList = new ArrayList<>();
 
         // pattern为空
