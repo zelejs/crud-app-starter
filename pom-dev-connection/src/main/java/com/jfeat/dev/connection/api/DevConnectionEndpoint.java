@@ -548,14 +548,16 @@ public class DevConnectionEndpoint {
                                 var table1 = strValue.split(",");
                                 for (int k = 0; k < table1.length; k++) {
                                     var table2 = table1[k].split("-");
-                                    var limit = "";
+                                    var limit = 0;
                                     if (table2.length>=2){
-                                        Integer.parseInt(table2[1].trim());
+                                        limit = Integer.parseInt(table2[1].trim());
                                     }
 //                                    var limit = Integer.parseInt(table2[1].trim());
                                     String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) ;
-                                    if (!limit.equals("")){
+                                    if (limit!=0){
                                         insertSql =  insertSql+ "," + limit + ";";
+                                    }else {
+                                        insertSql =  insertSql+ "," + Integer.parseInt(table2[0]) + ";";
                                     }
 //                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
                                     sqlList.add(insertSql);
