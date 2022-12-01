@@ -62,12 +62,12 @@ public class DevConnectionEndpoint {
     @Resource
     TableServer tableServer;
 
-    @GetMapping("/sing")
-    public Tip getSign(){
-        String base = key+(new Date()).getTime()/ttl;
-        System.out.println(new Date().getTime());
-        return SuccessTip.create(Md5Util.encrypt(base));
-    }
+//    @GetMapping("/sing")
+//    public Tip getSign(){
+//        String base = key+(new Date()).getTime()/ttl;
+//        System.out.println(new Date().getTime());
+//        return SuccessTip.create(Md5Util.encrypt(base));
+//    }
 
     /**
      * 数据库查询
@@ -548,8 +548,16 @@ public class DevConnectionEndpoint {
                                 var table1 = strValue.split(",");
                                 for (int k = 0; k < table1.length; k++) {
                                     var table2 = table1[k].split("-");
-                                    var limit = Integer.parseInt(table2[1].trim());
-                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                    var limit = "";
+                                    if (table2.length>=2){
+                                        Integer.parseInt(table2[1].trim());
+                                    }
+//                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) ;
+                                    if (!limit.equals("")){
+                                        insertSql =  insertSql+ "," + limit + ";";
+                                    }
+//                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
                                     sqlList.add(insertSql);
                                 }
                             } else {
