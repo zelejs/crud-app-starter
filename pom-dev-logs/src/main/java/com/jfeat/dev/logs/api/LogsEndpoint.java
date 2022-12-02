@@ -429,11 +429,11 @@ public class LogsEndpoint {
 
     @GetMapping("/down/log")
     @ApiOperation("下载文件")
-    public void downLog(@RequestParam("fileName")String fileName,@RequestParam(name = "sign", required = true) String sign,HttpServletResponse response) throws Exception {
+    public void downLog(@RequestParam("fileName")String fileName,@RequestParam(name = "sign", required = false) String sign,HttpServletResponse response) throws Exception {
 
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
-        }
+//        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+//            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+//        }
         response.reset();
         response.setContentType("application/octet-stream;charset=utf-8");
         response.setHeader(
