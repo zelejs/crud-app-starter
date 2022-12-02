@@ -942,7 +942,7 @@ public class DevConnectionEndpoint {
      * @param sign 签名
      * @param rule full
      * @param ruler 规则文件名（不带后缀）
-     * @return
+     * @returnf
      * @throws IOException
      */
     @PostMapping("/snapshot")

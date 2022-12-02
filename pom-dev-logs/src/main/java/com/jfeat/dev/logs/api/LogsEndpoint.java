@@ -11,6 +11,7 @@ import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -424,4 +425,31 @@ public class LogsEndpoint {
             return SuccessTip.create(logList);
         }
     }
+
+
+    @GetMapping("/down/log")
+    @ApiOperation("下载文件")
+    public void downLog(@RequestParam("fileName")String fileName,@RequestParam(name = "sign", required = true) String sign,HttpServletResponse response) throws Exception {
+
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+        response.reset();
+        response.setContentType("application/octet-stream;charset=utf-8");
+        response.setHeader(
+                "Content-disposition",
+                "attachment; filename=".concat(fileName));
+        try(
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(".".concat(File.separator).concat("logs").concat(File.separator).concat(fileName)));
+                // 输出流
+                BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
+        ){
+            byte[] buff = new byte[1024];
+            int len = 0;
+            while ((len = bis.read(buff)) > 0) {
+                bos.write(buff, 0, len);
+            }
+        }
+    }
+
 }
