@@ -310,9 +310,10 @@ public class LogsEndpoint {
             // 在filter参数为null的情况下将n设为100，输出文件最后的100行
             if (filter == null || filter.isEmpty()) {
                 //如果n=0那么就默认设n=100
-                if (n == 0) {
-                    n = 100;
-                } else if (n == -1) {
+//                if (n == 0) {
+//                    n = 100;
+//                } else
+                    if (n == -1||n==0) {
                     //如果n == -1，那么就把该日志的内容全部输出
                     for (int key : gzipFileMap.keySet()) {
                         String aLog = gzipFileMap.get(key);
@@ -337,7 +338,7 @@ public class LogsEndpoint {
                 return SuccessTip.create(logList);
             } else {
                 // 当filter不为空，如果没有传n则默认n=6
-                if (n == -1) {
+                if (n == -1||n==0) {
                     n = 6;
                 }
                 // 有n参数传入,则且传入的n参数>0就直接使用传入的n
@@ -373,9 +374,10 @@ public class LogsEndpoint {
         // pattern不为空，但是filter为空，则默认n=100，输出最新的100行
         if (filter == null || filter.isEmpty()) {
             // 没有传入n参数，则默认n=100，输出最新的100行
-            if (n == 0) {
-                n = 100;
-            } else if (n == -1) {
+//            if (n == 0) {
+//                n = 100;
+//            } else
+                if (n==0||n == -1) {
                 //如果n=-1那么就把该日志内容全部输出
                 for (int key : map.keySet()) {
                     String aLog = map.get(key);
@@ -400,7 +402,7 @@ public class LogsEndpoint {
             return SuccessTip.create(logList);
         } else {
             // 当filter不为空，则输出filter上下文,如果没有n参数的传入，
-            if (n == 0) {
+            if (n == 0||n==-1) {
                 n = 6;
             }
             for (int key : map.keySet()) {
