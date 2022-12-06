@@ -11,7 +11,6 @@ export default function (props) {
 
   const params = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1]))
 
-  
   const [ data, setData ] = useState([])
   const [ jsonTreeParams, setJsonTreeParams ] = useState({})
 
@@ -35,10 +34,7 @@ export default function (props) {
       };
       promiseAjax(api, queryData).then(resp => {
           if (resp && resp.code === 200) {
-            
-            const dataX = []
-            dataX.push({items: resp.data.records})
-            setData(dataX)
+            setData(resp.data.records)
           } else {
               console.error("获取api 数据失败")
           }

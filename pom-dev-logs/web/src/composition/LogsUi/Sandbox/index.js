@@ -1,28 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import LogsUi from '@/composition/LogsUi'
-import useTokenRequest from 'zero-element-boot/lib/components/hooks/useTokenRequest';
+const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 export default function index (props) {
 
-  const api = `/dev/logs/json`
-  const [data] = useTokenRequest({ api })
+  const params = props.location.query ||  qs.parse(props.location.search.split('?')[1])
 
-  const newData = []
-  data.map(item=>{
-    const newItem = {}
-    newItem.id = index + 1;
-    newItem.value = item;
-    newData.push(newItem)
-  })
+  const [ data, setData ] = useState([])
 
-  const dataX = []
-  dataX.push({ items: newData })
+  const [ sign, setSign ] = useState('')
+
+  const [ errorMessage, setErrorMessage ] = useState(!sign && 'sign 无效')
+
+  useEffect(_ => {
+    setSign('')
+    setData([])
+    if(params && params.sign){
+      setSign(params.sign)
+      getLogList(params.sign)
+    }
+  }, [params])
+
+  function getLogList(sign) {
+    
+    const api = `/dev/logs/json?sign=${sign}`;
+    const queryData = {};
+    promiseAjax(api, queryData).then(resp => {
+        if (resp && resp.code === 200) {
+          const newData = []
+          resp.data.map((item, index) => {
+              const newItem = {}
+              newItem.id = index + 1;
+              newItem.value = item;
+              newData.push(newItem)
+          })
+          setData(newData)
+        } else {
+            setErrorMessage('签名错误或已过期!')
+        }
+      }).catch(err =>{
+        setErrorMessage('签名错误或已过期!')
+      });
+    
+  }
 
   return (
     <>
-      { dataX && dataX[0].items && dataX[0].items.length > 0 ? (
-          <LogsUi data={dataX} />
-      ):<></>}
+      { sign ? (
+        <>
+          { data && data.length > 0 ? (
+              <LogsUi data={data} sign={sign}/>
+          ):<div style={{margin: '10px'}}>{errorMessage}</div>}
+        </>
+      ):<div style={{margin: '10px'}}>{errorMessage}</div>}
     </>
   )
 
