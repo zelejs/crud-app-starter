@@ -139,6 +139,15 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>sign-sdk</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

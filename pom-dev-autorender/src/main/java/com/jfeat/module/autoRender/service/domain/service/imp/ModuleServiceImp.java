@@ -239,7 +239,8 @@ public class ModuleServiceImp implements ModuleService {
         if (json.containsKey("modules") && json.get("modules")!=null){
             JSONArray moduleList = json.getJSONArray("modules");
             if (index>=0&&index<moduleList.size()){
-                JSONObject module = JSONObject.parseObject(moduleList.getJSONObject(index).toJSONString());
+//                JSONObject module = JSONObject.parseObject(moduleList.getJSONObject(index).toJSONString());
+                JSONObject module = moduleList.getJSONObject(index);
                 return module;
             }
         }

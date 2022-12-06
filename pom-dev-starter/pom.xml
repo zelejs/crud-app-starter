@@ -52,6 +52,7 @@
             <artifactId>crud-core</artifactId>
             <version>${crud-core.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.jfeat</groupId>
             <artifactId>dev-cors</artifactId>
@@ -109,6 +110,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
+
+
     </dependencies>
 
     <build>

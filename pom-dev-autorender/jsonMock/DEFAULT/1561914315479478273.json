@@ -16,11 +16,6 @@
 				"name":"developsItem"
 			}
 		},
-		"8dd4970d-d60e-5e68-a789-bd5763712079":{
-			"subtitle":"当前数据库版本",
-			"title":"",
-			"tags":"prod v1.0"
-		},
 		"5c57736b-89cf-44fe-7300-67acdfc98940":{
 			"subtitle":"先备份好测试数据库，切换至待发布的生产数据",
 			"title":"清理测试数据"
@@ -31,17 +26,6 @@
 		"api":"/api/u/house/administrators/develops/appidOperationList?appid=1"
 	},
 	"modules":[
-		{
-			"binding":{
-				"sqlVersion":"tags"
-			},
-			"type":"pageTitleModule",
-			"key":"8dd4970d-d60e-5e68-a789-bd5763712079"
-		},
-		{
-			"type":"pageTitleModule",
-			"key":"5c57736b-89cf-44fe-7300-67acdfc98940"
-		},
 		{
 			"container":{
 				"background":"#ffffff",

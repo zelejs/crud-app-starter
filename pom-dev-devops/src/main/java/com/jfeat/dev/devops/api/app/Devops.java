@@ -14,13 +14,10 @@ import com.jfeat.dev.devops.services.domain.model.DevVersionRecord;
 import com.jfeat.dev.devops.services.domain.service.DevopsServices;
 import com.jfeat.dev.devops.services.gen.persistence.model.DevDevelop;
 import com.jfeat.dev.devops.services.gen.persistence.model.DevVersion;
-<<<<<<< HEAD:pom-dev-devops/src/main/java/com/jfeat/dev/devops/api/Devops.java
-=======
 import com.jfeat.users.account.services.gen.persistence.dao.UserAccountMapper;
 import com.jfeat.users.account.services.gen.persistence.model.UserAccount;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
->>>>>>> be26af9f63f5220cf2d321ebe0ed8a3b62b2df89:pom-dev-devops/src/main/java/com/jfeat/dev/devops/api/app/Devops.java
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 

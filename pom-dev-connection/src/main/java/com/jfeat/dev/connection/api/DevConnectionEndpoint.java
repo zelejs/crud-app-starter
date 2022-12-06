@@ -9,6 +9,7 @@ import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
+import com.jfeat.crud.core.util.Md5Util;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
@@ -50,7 +51,7 @@ public class DevConnectionEndpoint {
 
     protected final static Logger logger = LoggerFactory.getLogger(DevConnectionEndpoint.class);
     private final String SCHEDULE = "schema";
-    private static final Long ttl = 600000L;
+    private static final Long ttl = 14400000L;
     private static final String key = "514528";
     @Autowired
     DataSource dataSource;
@@ -60,6 +61,13 @@ public class DevConnectionEndpoint {
 
     @Resource
     TableServer tableServer;
+
+//    @GetMapping("/sing")
+//    public Tip getSign(){
+//        String base = key+(new Date()).getTime()/ttl;
+//        System.out.println(new Date().getTime());
+//        return SuccessTip.create(Md5Util.encrypt(base));
+//    }
 
     /**
      * 数据库查询
@@ -540,8 +548,18 @@ public class DevConnectionEndpoint {
                                 var table1 = strValue.split(",");
                                 for (int k = 0; k < table1.length; k++) {
                                     var table2 = table1[k].split("-");
-                                    var limit = Integer.parseInt(table2[1].trim());
-                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
+                                    var limit = 0;
+                                    if (table2.length>=2){
+                                        limit = Integer.parseInt(table2[1].trim());
+                                    }
+//                                    var limit = Integer.parseInt(table2[1].trim());
+                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) ;
+                                    if (limit!=0){
+                                        insertSql =  insertSql+ "," + limit + ";";
+                                    }else {
+                                        insertSql =  insertSql+ "," + Integer.parseInt(table2[0]) + ";";
+                                    }
+//                                    String insertSql = "SELECT * FROM " + name + " limit " + (Integer.parseInt(table2[0]) - 1) + "," + limit + ";";
                                     sqlList.add(insertSql);
                                 }
                             } else {
@@ -924,7 +942,7 @@ public class DevConnectionEndpoint {
      * @param sign 签名
      * @param rule full
      * @param ruler 规则文件名（不带后缀）
-     * @return
+     * @returnf
      * @throws IOException
      */
     @PostMapping("/snapshot")

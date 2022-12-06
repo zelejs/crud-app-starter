@@ -2,10 +2,14 @@ package com.jfeat.jar.dependency.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfeat.crud.base.exception.BusinessCode;
+import com.jfeat.crud.base.exception.BusinessException;
+import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.jar.dependency.DecompileUtils;
 import com.jfeat.jar.dependency.ZipFileUtils;
+import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,47 +51,55 @@ import java.util.stream.Collectors;
 public class DependencyEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DependencyEndpoint.class);
 
+
+    private static final Long ttl = 14400000L;
+    private static final String key = "514528";
+
     /**
      * 获取依赖树
+     *
      * @param jarFile
      * @param pattern
      * @param verbose
      * @return
      */
-    private JSONArray getDependencyEntries(File jarFile, String pattern, Boolean verbose){
-        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern, verbose,false);
+    private JSONArray getDependencyEntries(File jarFile, String pattern, Boolean verbose) {
+        var tree = ZipFileUtils.getJarArchiveTreeData(jarFile, pattern, verbose, false);
 
         JSONArray jsonArray = new JSONArray();
-        for (Map.Entry<String,List<String>> entry : tree.entrySet()){
-            if(entry.getValue().size()==0){
+        for (Map.Entry<String, List<String>> entry : tree.entrySet()) {
+            if (entry.getValue().size() == 0) {
                 jsonArray.add(entry.getKey());
-            }else{
-                entry.getValue().stream().forEach(subEntry-> {
+            } else {
+                entry.getValue().stream().forEach(subEntry -> {
                     jsonArray.add(String.join("", entry.getKey(), "!", subEntry));
                 });
             }
         }
-        jsonArray.sort((Comparator<Object>)(s1,s2)->{return s1.toString().compareTo(s2.toString());});
+        jsonArray.sort((Comparator<Object>) (s1, s2) -> {
+            return s1.toString().compareTo(s2.toString());
+        });
         return jsonArray;
     }
 
 
     /**
      * 对单个.class decompile
+     *
      * @param jarFile
      * @param pattern
      * @return
      */
-    private List<String> decompileJarEntries(File jarFile, String pattern){
-        List<String>  decompileLines = new ArrayList<>();
+    private List<String> decompileJarEntries(File jarFile, String pattern) {
+        List<String> decompileLines = new ArrayList<>();
 
         List<String> entries = ZipFileUtils.searchWithinJarArchive(jarFile, pattern, true);
 
-        if(entries.size()==1) {
+        if (entries.size() == 1) {
             String singleEntryPattern = entries.get(0);
             String filesOrContent = ZipFileUtils.inspectJarEntryContentWithinArchive(jarFile, singleEntryPattern);
 
-            boolean requiredDecompile = filesOrContent.lines().count()==1 && new File(filesOrContent.trim()).exists();
+            boolean requiredDecompile = filesOrContent.lines().count() == 1 && new File(filesOrContent.trim()).exists();
 
             // start to decompile
             List<String> lines = requiredDecompile ? DecompileUtils.decompileFiles(filesOrContent, false) : filesOrContent.lines().collect(Collectors.toList());
@@ -99,7 +112,7 @@ public class DependencyEndpoint {
 //            writer.flush();
             decompileLines.addAll(lines);
 
-        }else {
+        } else {
 //            PrintWriter writer = new PrintWriter(response.getOutputStream());
 //            for (String line : entries) {
 //                writer.println(line);
@@ -117,22 +130,29 @@ public class DependencyEndpoint {
     public Tip getDependencyJson(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
-                                 @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
-                                 @RequestParam(value = "all", required = false) Boolean all,
-                                 HttpServletResponse response) throws IOException {
-        if(all==null){all=false;}
+            @RequestParam(name = "sign", required = true) String sign,
+            @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
+            @RequestParam(value = "all", required = false) Boolean all,
+            HttpServletResponse response) throws IOException {
+
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+        if (all == null) {
+            all = false;
+        }
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        if(jarPath.contains("!")){
+        if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
-        }else{
+        } else {
             // just for debug
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
-        logger.info("jarPath: "+jarPath);
+        logger.info("jarPath: " + jarPath);
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
-        if(StringUtils.isBlank(pattern)) {
+        if (StringUtils.isBlank(pattern)) {
             boolean verbose = all || StringUtils.isNotBlank(pattern); // means not search, just return the dependencies
             JSONArray entries = getDependencyEntries(jarFile, pattern, verbose);
             return SuccessTip.create(entries);
@@ -148,26 +168,32 @@ public class DependencyEndpoint {
     public void printDependencyEntries(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
-                                 @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
-                                 @RequestParam(value = "all", required = false) Boolean all,
+            @RequestParam(name = "sign", required = true) String sign,
+            @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
+            @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
-        if(all==null){all=false;}
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+           throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+        if (all == null) {
+            all = false;
+        }
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         logger.info("domain jar path: " + jarPath);
-        if(jarPath.contains("!")){
+        if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
-        }else{
+        } else {
             // just for debug
             //jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
             jarPath = new File(".").getCanonicalPath() + "/dev-dependency-0.0.1-standalone.jar";
         }
-        logger.info("jarPath: "+jarPath);
+        logger.info("jarPath: " + jarPath);
 
 
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
-        if(StringUtils.isBlank(pattern)) {
+        if (StringUtils.isBlank(pattern)) {
             boolean verbose = all || StringUtils.isNotBlank(pattern); // means not search, just return the dependencies
             JSONArray entries = getDependencyEntries(jarFile, pattern, verbose);
 
@@ -194,20 +220,25 @@ public class DependencyEndpoint {
     public void extraDependencyEntry(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
+            @RequestParam(name = "sign", required = true) String sign,
             HttpServletResponse response) throws IOException {
 
+        if (! SignatureKit.parseSignature(sign, key,ttl) ){
+            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+
         String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        if(jarPath.contains("!")){
+        if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
-        }else{
+        } else {
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
-        logger.info("jarPath: "+jarPath);
+        logger.info("jarPath: " + jarPath);
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
         var list = ZipFileUtils.listEntriesFromArchive(jarFile, "", pattern);
-        if(list.size()==0 || list.size()>1){
+        if (list.size() == 0 || list.size() > 1) {
             PrintWriter writer = new PrintWriter(response.getOutputStream());
             for (String line : list) {
                 writer.println(line);

@@ -1,7 +1,7 @@
 {
 	"request":{},
-	"pageStyle":{},
 	"loadApi":"",
+	"pageStyle":{},
 	"response":{
 		"data":""
 	},
@@ -12,6 +12,53 @@
 	},
 	"title":"社区",
 	"moduleData":{
+		"8a47d90c-3f24-450b-a627-d6e97185ab72":{
+			"navList":[],
+			"itemGroupModule":{
+				"container":{
+					"color":"#707070",
+					"background":"white",
+					"fontSize":"35rpx",
+					"fontWeight":"bold"
+				}
+			},
+			"itemModule":{
+				"name":"MagicItem"
+			}
+		},
+		"65c48a39-a492-4471-a9ce-b0a6633b75fc":{
+			"navList":[
+				{
+					"group":"组名"
+				},
+				{
+					"img":"图标",
+					"nav":"跳转路径",
+					"color":"#ff844b",
+					"title":""
+				},
+				{
+					"group":"用户配置"
+				},
+				{
+					"img":"",
+					"nav":"",
+					"color":"#f21137",
+					"title":""
+				}
+			],
+			"itemGroupModule":{
+				"container":{
+					"color":"#707070",
+					"background":"white",
+					"fontSize":"35rpx",
+					"fontWeight":"bold"
+				}
+			},
+			"itemModule":{
+				"name":"MagicItem"
+			}
+		},
 		"e59992z8-bb88-a788-9922-1623488775885":{
 			"request":{
 				"default":{
@@ -72,7 +119,7 @@
 				]
 			},
 			"itemModule":{
-				"name":"tenantChildrenTypeItem"
+				"name":"capsuleItem"
 			}
 		}
 	},
@@ -83,6 +130,14 @@
 			"name":"",
 			"type":"autolist",
 			"key":"e59992z8-bb88-a788-9922-1623488775885"
+		},
+		{
+			"type":"navlist",
+			"key":"65c48a39-a492-4471-a9ce-b0a6633b75fc"
+		},
+		{
+			"type":"navlist",
+			"key":"8a47d90c-3f24-450b-a627-d6e97185ab72"
 		}
 	]
 }

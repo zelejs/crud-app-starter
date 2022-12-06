@@ -1,5 +1,6 @@
 package com.jfeat.module.autoRender.service.gen.persistence.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 public class AutoPage extends Model<AutoPage> {
@@ -13,6 +14,16 @@ public class AutoPage extends Model<AutoPage> {
 
     private String title;
 
+    private JSONObject container;
+
+
+    public JSONObject getContainer() {
+        return container;
+    }
+
+    public void setContainer(JSONObject container) {
+        this.container = container;
+    }
 
     public String getVersion() {
         return version;
