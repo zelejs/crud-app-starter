@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.String;
+import java.net.BindException;
 import java.util.*;
 import java.util.zip.*;
 
@@ -289,10 +290,19 @@ public class LogsEndpoint {
     private Tip getLogFileList(@RequestParam(name = "pattern", required = false) String pattern,
                                @RequestParam(name = "filter", required = false) String filter,
                                @RequestParam(name = "sign", required = true) String sign,
-                               @RequestParam(name = "n", defaultValue = "-1") int n) throws IOException {
+                               @RequestParam(value = "blank",required = false,defaultValue = "10") Integer blank,
+                               @RequestParam(name = "n", defaultValue = "0") int n) throws IOException {
 
         if (! SignatureKit.parseSignature(sign, key,ttl) ){
             throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        }
+        if (n<0||n>2000){
+            throw new BusinessException(BusinessCode.OutOfRange,"0<=n<=2000");
+        }
+
+        List<String> blankList = new ArrayList<>();
+        for (int i=0;i<blank;i++){
+            blankList.add("");
         }
 
         List<String> logList = new ArrayList<>();
@@ -310,10 +320,10 @@ public class LogsEndpoint {
             // 在filter参数为null的情况下将n设为100，输出文件最后的100行
             if (filter == null || filter.isEmpty()) {
                 //如果n=0那么就默认设n=100
-//                if (n == 0) {
-//                    n = 100;
-//                } else
-                    if (n == -1||n==0) {
+                if (n == 0) {
+                    n = 2000;
+                } else
+                    if (n == -1) {
                     //如果n == -1，那么就把该日志的内容全部输出
                     for (int key : gzipFileMap.keySet()) {
                         String aLog = gzipFileMap.get(key);
@@ -335,6 +345,8 @@ public class LogsEndpoint {
                         logList.add(String.format("%06d", gzipFileMap.size() - (n - i)) + " |  " + aLog);
                     }
                 }
+
+                logList.addAll(blankList);
                 return SuccessTip.create(logList);
             } else {
                 // 当filter不为空，如果没有传n则默认n=6
@@ -361,6 +373,7 @@ public class LogsEndpoint {
                     }
                     break;
                 }
+                logList.addAll(blankList);
                 return SuccessTip.create(logList);
             }
 
@@ -374,10 +387,9 @@ public class LogsEndpoint {
         // pattern不为空，但是filter为空，则默认n=100，输出最新的100行
         if (filter == null || filter.isEmpty()) {
             // 没有传入n参数，则默认n=100，输出最新的100行
-//            if (n == 0) {
-//                n = 100;
-//            } else
-                if (n==0||n == -1) {
+            if (n == 0) {
+                n = 2000;
+            } else if (n == -1) {
                 //如果n=-1那么就把该日志内容全部输出
                 for (int key : map.keySet()) {
                     String aLog = map.get(key);
@@ -399,6 +411,7 @@ public class LogsEndpoint {
                     logList.add(String.format("%06d", map.size() - (n - i)) + " |  " + aLog);
                 }
             }
+            logList.addAll(blankList);
             return SuccessTip.create(logList);
         } else {
             // 当filter不为空，则输出filter上下文,如果没有n参数的传入，
@@ -424,6 +437,7 @@ public class LogsEndpoint {
                 }
                 break;
             }
+            logList.addAll(blankList);
             return SuccessTip.create(logList);
         }
     }

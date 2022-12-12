@@ -75,6 +75,29 @@ public class PagePropOperationEndpoint {
 
     }
 
+
+    @PostMapping("/{appid}/page/{id}")
+    @ApiOperation(value = "创建页面")
+    public Tip createAppPage(@PathVariable("appid") String appid,
+            @PathVariable("id") Long id) {
+
+        Long pageId = IdWorker.getId();
+        FrontPage template = frontPageMapper.selectById(id);
+
+        if (template == null) {
+            throw new BusinessException(BusinessCode.CodeBase, "没有该模板");
+        }
+
+        if (template.getContent() != null) {
+            JSONObject jsonObject = JSON.parseObject(template.getContent());
+            jsonObject.put("title",pageId);
+            mockJsonService.saveJsonToFile(jsonObject,appid,pageId);
+            return SuccessTip.create(jsonObject);
+        }
+        return null;
+
+    }
+
     @GetMapping("/page/template")
     @ApiOperation(value = "获取页面列表模板")
     public Tip getTemplatePageList() {
