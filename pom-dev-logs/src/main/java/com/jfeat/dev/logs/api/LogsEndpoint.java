@@ -9,11 +9,13 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
+import com.jfeat.dev.logs.service.DevLogsService;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.String;
@@ -35,6 +37,10 @@ public class LogsEndpoint {
 
     private static final Long ttl = 14400000L;
     private static final String key = "514528";
+
+
+    @Resource
+    DevLogsService devLogsService;
 
     /**
      * 获取日志文件列表
@@ -309,7 +315,15 @@ public class LogsEndpoint {
 
         // pattern为空
         if (pattern == null || pattern.isEmpty()) {
-            return SuccessTip.create(this.getLogFiles());
+            List<String> result = new ArrayList<>();
+            File[] files = devLogsService.orderByDate("./logs");
+            if (files!=null&&files.length>0){
+                for (File file:files){
+                    result.add(file.getName());
+                }
+            }
+
+            return SuccessTip.create(result);
         }
         // 文件为压缩文件
         if (pattern.substring(pattern.lastIndexOf(".") + 1).equals("gz")) {
