@@ -98,7 +98,7 @@ export default function Index(props) {
         promiseAjax(api, queryData).then(resp => {
             if (resp && resp.code === 200) {
                 setIsShowBackBtn(resp.data.records.length > 0 && true)
-                setListData([{items: resp.data.records}])
+                setListData(resp.data.records || [])
             } else {
                 console.error("获取 api 列表失败")
             }

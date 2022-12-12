@@ -9,7 +9,7 @@ import layout from './layout';
 
 export default function Index(props) {
 
-    const { data=[] } = props;
+    const { data=[], sign='' } = props;
 
     const [ isShowList, setIsShowList ] = useState(true);
     const [ isShowData, setIsShowData ] = useState(false);
@@ -64,7 +64,7 @@ export default function Index(props) {
         // const api = `http://localhost:8080/api/dev/dependency/decompile`;
         setIsShowList(false)
         setIsLoading(true)
-        promiseAjax(api, {pattern:name}, {})
+        promiseAjax(api, {pattern:name, sign}, {})
             .then(responseData => {
                 if (responseData && responseData.code === 200) {
                     let respData = responseData.data;

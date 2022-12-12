@@ -11,7 +11,7 @@ import layout from './layout';
 
 export default function Index (props) {
 
-  const { data = [] } = props;
+  const { data = [], sign='' } = props;
 
   const [isShowList, setIsShowList] = useState(true);
   const [isShowData, setIsShowData] = useState(false);
@@ -28,11 +28,6 @@ export default function Index (props) {
 
   let api = '/dev/logs/json';
 
-  // if (process.env.NODE_ENV === 'development') {
-  //   api = `${api}`;
-  // }
-
-
   if (layoutJsonPath) {
     layoutData = { path: layoutJsonPath };
   } else {
@@ -45,7 +40,7 @@ export default function Index (props) {
   };
 
   const onJarItemClick = (item) => {
-    console.log(item, ' === item')
+    // console.log(item, ' === item')
     let name = item.value;
 
     if (name.indexOf('@') > -1) {
@@ -66,7 +61,7 @@ export default function Index (props) {
     
     setIsShowList(false)
     setIsLoading(true)
-    promiseAjax(api, { pattern: name }, {})
+    promiseAjax(api, { pattern: name, sign }, {})
       .then(responseData => {
         if (responseData && responseData.code === 200) {
           let respData = responseData.data;
@@ -99,7 +94,7 @@ export default function Index (props) {
   //搜索按钮--获取返回的数据
   function anniu (body) {
     let url = '/dev/logs/json'
-    promiseAjax(url, { ...body })
+    promiseAjax(url, { ...body, sign })
       .then(responseData => {
         {
           if (responseData && responseData.code === 200) {
@@ -230,7 +225,7 @@ export default function Index (props) {
 
 
             {/* <Select placeholder='medium size' size='md' /> */}
-            <div style={{ minWidth: '800px' }}>   {
+            <div style={{ minWidth: '800px', marginTop: '15px' }}>   {
               isShowList ? (
                 <AutoLayout {...config} onItemClick={onJarItemClick}>
                   {/* <StandaloneBody  onItemClick={onJarItemClick}/> */}
