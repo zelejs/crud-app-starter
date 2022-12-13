@@ -10,19 +10,23 @@ export default function (props) {
   const params = props.location.query ||  qs.parse(props.location.search.split('?')[1])
   
   const [ data, setData ] = useState([])
+  const [ sign, setSign ] = useState('')
+  const [ errorMessage, setErrorMessage ] = useState('')
 
   useEffect(_ => {
+    setSign('')
     setData([])
     if(params && params.sign){
-      getJarList()
+      setSign(params.sign)
+      getJarList(params.sign)
     }else{
-      alert('sign 无效')
+      setErrorMessage('sign 无效')
     }
   }, [params])
 
-  function getJarList() {
+  function getJarList(sign) {
     
-    const api = `/dev/dependency/json?sign=${params.sign}`;
+    const api = `/dev/dependency/json?sign=${sign}`;
       const queryData = {};
       promiseAjax(api, queryData).then(resp => {
           if (resp && resp.code === 200) {
@@ -35,20 +39,23 @@ export default function (props) {
             })
             setData(newData)
           } else {
-              console.error("获取 dependency 列表失败")
+            setErrorMessage('签名错误或已过期!')
           }
         }).catch(err =>{
-          alert('签名错误或已过期!')
+          setErrorMessage('签名错误或已过期!')
         })
     
   }
 
-  const dataX = []
-  dataX.push({items:data})
-  
   return (
-        data.length > 0 ? (
-          <StandaloneContainer {...props} sign={params.sign} data={dataX}/>
-        ):<></>
+    <>
+        { sign ? (
+          <>
+            { data && data.length > 0 ? (
+              <StandaloneContainer {...props} sign={params.sign} data={data}/>
+            ):<div style={{margin: '10px'}}>{errorMessage}</div>}
+          </>
+        ):<div style={{margin: '10px'}}>{errorMessage}</div>}
+      </>
   )
 }
