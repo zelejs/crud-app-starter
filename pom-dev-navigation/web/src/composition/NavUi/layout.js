@@ -1,7 +1,6 @@
 module.exports = {
-  xname: 'Gridbox',
+  xname: 'Wrap',
   props: {
-    columns: 6 //列数
   },
   presenter: {
     xname: 'Flexbox',
@@ -13,15 +12,7 @@ module.exports = {
       {
         presenter: 'DefaultAvatar',
         binding: {
-          path: 'url'
-        },
-        indicator:{
-          xname:'ClickIndicator',
-          binding: {
-            "id":"id",
-            "path":"path",
-            "name":"name",
-          }
+          url: 'url'
         },
       },
       {
@@ -133,6 +124,17 @@ module.exports = {
           placeholder: '描述属性'
         }
       },
+      {
+        label: '排序号',
+        field: 'sortNum',
+        type: 'input',
+        rules: {
+          isRequired: false
+        },
+        props:{
+          placeholder: '请输入',
+        }
+      }
       
       // {
       //   label: '复选框',

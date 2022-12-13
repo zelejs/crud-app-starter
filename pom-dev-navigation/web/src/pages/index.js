@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { ChakraProvider } from "@chakra-ui/react";
 import NavUi from '@/composition/NavUi'
 
 export default function index (props) {
 
   return (
-    <NavUi {...props} />
+    <ChakraProvider>
+      <NavUi {...props} />
+    </ChakraProvider>
   )
 
 }

@@ -12,7 +12,8 @@ import JsonTree from '@/composition/JsonTree/Sandbox'
 
 export default function Index(props) {
 
-    const { data=[], method='' } = props;
+    const { data=[], method='', op, onDelAction } = props;
+
 
     const [ listData, setListData ] = useState(data)
     const [ isShowList, setIsShowList ] = useState(true);
@@ -34,6 +35,7 @@ export default function Index(props) {
         layoutData = { path: layoutJsonPath};
     }else{
         layoutData = localLayoutJson;
+        layoutData.indicator.props.op = op
     }
 
     const config = {
@@ -158,8 +160,10 @@ export default function Index(props) {
                         
                         {
                             isShowList ? (
-                                <AutoLayout {...config} onItemClick={onApiItemClick}>
-                                </AutoLayout>
+                                <>
+                                    <AutoLayout {...config} onItemClick={onApiItemClick} onItemDeleted={onDelAction}>
+                                    </AutoLayout>
+                                </>
                             ): <></>
                         }
                         

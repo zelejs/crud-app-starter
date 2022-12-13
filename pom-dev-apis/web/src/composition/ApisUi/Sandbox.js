@@ -43,10 +43,16 @@ export default function (props) {
     
   }
 
+  function delAction (state){
+    if(state){
+      getData()
+    }
+  }
+
   return (
     <>
       { data && data.length > 0 ? (
-        <StandaloneContainer method={(params && params.method) || ''} data={data}/>
+        <StandaloneContainer method={(params && params.method) || ''} op={params.op} data={data} onDelAction={delAction}/>
       ): jsonTreeParams && JSON.stringify(jsonTreeParams) != '{}' ? (
         <JsonTreePage compParams={jsonTreeParams} />
       ):<></>}

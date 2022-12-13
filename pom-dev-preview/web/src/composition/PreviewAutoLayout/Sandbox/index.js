@@ -44,13 +44,14 @@ export default function (props) {
   //
   let apiName = params.apiName || ''
   let testLayoutName = params.testLayoutName || ''
+  let testBindingName = params.testBindingName || ''
   
   // 获取layoutJson的本地接口
   // let layoutJsonApi = '/api/layoutJson'
 
   // let layoutJsonApi = `/openapi/lc/module/getAutoLayout/autoLayOut`
 
-  let layoutJsonApi = params.layoutJsonApi
+  let layoutJsonApi = params.layoutJsonApi || ''
 
   // if (process.env.NODE_ENV === 'development') {
   //   layoutJsonApi = 'http://192.168.3.112:8080/openapi/lc/module/getAutoLayout/autoLayOut'
@@ -59,17 +60,25 @@ export default function (props) {
   // 获取layoutJson的api接口，如果本地接口为空，则会使用该接口请求api
   // let layoutName = 'thisAutoLayout'
   let layoutName = params.layoutName || ''
+  let bindingName = params.bindingName || ''
   let layoutId = params.layoutId || ''
 
   const allComponents = { PreviewItem }
 
   const layoutData = {}
 
+  let mockName = params.mockName || ''
+
   return (
     <>
         <PreviewAutoLayout api={apiPath} apiName={apiName} 
-          layoutData={layoutData} layoutApi={layoutJsonApi} layoutName={layoutName} layoutId={layoutId} allComponents={allComponents} 
+          layoutData={layoutData} layoutApi={layoutJsonApi} 
+          layoutName={layoutName} 
+          bindingName={bindingName}
+          layoutId={layoutId} allComponents={allComponents} 
           testLayoutName={testLayoutName}
+          testBindingName={testBindingName}
+          mockName={mockName}
         />
     </>
   )

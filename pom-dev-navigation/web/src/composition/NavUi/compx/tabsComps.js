@@ -28,7 +28,7 @@ const formItemTypeMap = require('zero-element-boot/lib/components/config/formIte
 
 export default function Index(props) {
 
-    const { items = [], currentTabIndex = 0, onSwitchTab, isSwtich, cb } = props;
+    const { items = [], currentTabIndex = 0, onSwitchTab, isSwitch, cb } = props;
     const {
         api: { createAPI, getAPI, updateAPI, deleteAPI }
     } = tabFormConfig;
@@ -267,7 +267,7 @@ export default function Index(props) {
     }
 
     function handleSwitchTab(item, index) {
-        if (isSwtich) {
+        if (isSwitch) {
             getData(item.id)
             setCurrentId(item.id)
             setModelTitle('编辑导航类别')
@@ -293,13 +293,13 @@ export default function Index(props) {
         <>
 
             {items && items.length > 0 ? (
-                <Tabs variant='enclosed' style={{ width: '670px' }} defaultIndex={tabIndex}>
+                <Tabs variant='enclosed' style={{ width: '1000px' }} defaultIndex={tabIndex}>
                     <TabList>
                         {items.map((item, index) => {
-                            if (item.id === '-1' && isSwtich) {
+                            if (item.id === '-1' && isSwitch) {
                                 return <CustomAddTab key={`${index}_tab`} onClick={() => addNavItem()}></CustomAddTab>
                             }
-                            if (item.id === '-2' && isSwtich) {
+                            if (item.id === '-2' && isSwitch) {
                                 return <CustomDelTab key={`${index}_tab`} onClick={() => delNavItem()}></CustomDelTab>
                             }
                             return <Tab key={`${index}_tab`} onClick={() => handleSwitchTab(item, index)}>{item.name}</Tab>
@@ -312,7 +312,7 @@ export default function Index(props) {
                                     <Spinner />
                                 ) : (
                                     <Box>
-                                        <AutoLayout {...config} onItemClick={onNavItemClick} cb={callback} isSwtich={isSwtich} />
+                                        <AutoLayout {...config} onItemClick={onNavItemClick} cb={callback} isSwitch={isSwitch} />
                                     </Box>
                                 )}
                             </TabPanel>

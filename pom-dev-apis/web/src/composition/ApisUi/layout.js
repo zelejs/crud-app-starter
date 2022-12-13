@@ -10,7 +10,7 @@ module.exports = {
       margin: '0',
       corner: 0,
       linewidth: '0',
-      padding: '10px 25px',
+      padding: '10px 32px 10px 25px',
       isOnHover:false
     }
   },
@@ -34,5 +34,14 @@ module.exports = {
         },
       },
     ]
+  },
+  indicator:{
+    xname:'DeleteIndicator',
+    props:{
+      action: '/openapi/lc/apis/(id)'
+    },
+    binding: {
+      "id":"id"
+    }
   }
 }

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Flex } from "@chakra-ui/react";
-// require('./index.less');
 import styles from './index.less'
 
 const itemStyleMap = {
@@ -39,27 +37,23 @@ export default function (props) {
         <div className={styles.swagger_item} style={{ backgroundColor: itemStyle.itemBg, border: itemStyle.itemBorder, borderColor: hoverColor }}
             onMouseEnter={() => toggleHover()} onMouseLeave={() => toggleHover()}
         >
+            <div className={styles.api_method} style={{backgroundColor: itemStyle.methodBg}}>
+                {`${apiMethod || ''}`}
+            </div>
 
-            <Flex h="46px" direction="row" alignItems="center">
+            <div className={styles.textColor}>
+                {`${api || ''}`}
+            </div>
 
-                <div className={styles.api_method} style={{backgroundColor: itemStyle.methodBg}}>
-                    {`${apiMethod || ''}`}
-                </div>
+            <div style={{width:'15px', height:'1px'}}></div>
 
-                <div className={styles.textColor}>
-                    {`${api || ''}`}
-                </div>
-
-                <div style={{width:'20px', height:'1px'}}></div>
-
-                {
-                    name && (
-                        <div className={styles.note}>
-                            {`${name}`}
-                        </div>
-                    )
-                }
-            </Flex>
+            {
+                name && (
+                    <div className={styles.note}>
+                        {`${name}`}
+                    </div>
+                )
+            }
         </div>
             
     )
