@@ -26,7 +26,8 @@
     "react-dom": "^16.8.6",
     "react-hook-form": "^7.22.2",
     "zero-element": "^1.0.0",
-    "zero-element-boot": "github:kequandian/zero-element-boot#pattern"
+    "zero-element-boot": "github:kequandian/zero-element-boot#master",
+    "rc-pagination": "^3.2.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",

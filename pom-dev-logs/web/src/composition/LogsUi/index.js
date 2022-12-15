@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChakraProvider, Flex, Center, Box, Stack, Spacer, VStack, Container, Button, Input } from "@chakra-ui/react";
+import { Flex, Box, Stack, VStack, Container, Button, Input } from "@chakra-ui/react";
 import { AutoLayout } from 'zero-element-boot/lib/components';
 // import AutoLayout from '../AutoLayout';
 import Loading from 'zero-element-boot/lib/components/loading';
@@ -8,11 +8,10 @@ import JarItem from './Sandbox/JarItem';
 
 import layout from './layout';
 
-
 export default function Index (props) {
 
   const { data = [], sign='' } = props;
-
+  
   const [isShowList, setIsShowList] = useState(true);
   const [isShowData, setIsShowData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +19,6 @@ export default function Index (props) {
   const [currentItemName, setCurrentItemName] = useState('');
   const [searchLogContent, setSearchLogContent] = useState('');
   const [searchLogCount, setSearchLogCount] = useState('');
-  //
 
   let layoutData = '';
   const layoutJsonPath = '';
@@ -186,7 +184,6 @@ export default function Index (props) {
 
 
   return (
-    <ChakraProvider>
       <Flex>
         <Box>
           <VStack spacing='3px'>
@@ -254,6 +251,5 @@ export default function Index (props) {
         </Box>
 
       </Flex>
-    </ChakraProvider>
   )
 }

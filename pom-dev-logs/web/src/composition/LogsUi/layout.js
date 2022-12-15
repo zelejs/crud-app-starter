@@ -8,7 +8,7 @@ module.exports = {
   cart: {
     xname: 'Cart',
     props: {
-      margin: '0',
+      margin: 0,
       corner: 0,
       linewidth: '0',
       padding: '5px 25px',
@@ -28,6 +28,7 @@ module.exports = {
   presenter: {
     xname: 'Flexbox',
     props: {
+      justify: 'full'
     },
     children: [
       {

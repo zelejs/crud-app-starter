@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, VStack, Spinner, Switch, FormControl, FormLabel
 } from "@chakra-ui/react";
@@ -93,25 +93,15 @@ export default function Index(props) {
 
     //列表item点击事件
     const onNavItemClick = (item) => {
-        const id = item.id;
-        // console.log('id = ', id)
-        // alert(`选择的用户id为: ${id}`)
+        // const id = item.id;
         //点击跳转页面
         if (item.url.indexOf('http') != -1) {
-          // window.location.replace(item.path)
-    
-          // history.push(url);
           const w = window.open('about:blank');
           w.location.href = item.url
-        //   console.log(item.path);
-    
         } else {
           const w = window.open('about:blank');
           const host = getEndpoint || location.host
           w.location.href = host + item.url
-    
-        //   console.log(host);
-    
         }
     }
 
@@ -194,73 +184,72 @@ export default function Index(props) {
     }
 
     return (
-        <div style={{ maxWidth: '1000px' }}>
-            <VStack align='stretch' spacing='-2'>
-                <Box style={{ margin: '10px 10px 30px 10px', paddingLeft: '8px' }}>
-                    <FormControl display='flex' alignItems='center'>
-                        <FormLabel htmlFor='email-alerts' mb='0'>
-                            编辑开关：
-                        </FormLabel>
-                        <Switch isFocusable size='lg' onChange={() => handleChange()} isChecked={switchStatus} />
-                    </FormControl>
+        <VStack align='stretch' spacing='-2'>
+            <Box style={{ margin: '10px 10px 30px 10px', paddingLeft: '8px' }}>
+                <FormControl display='flex' alignItems='center'>
+                    <FormLabel htmlFor='email-alerts' mb='0'>
+                        编辑开关：
+                    </FormLabel>
+                    <Switch isFocusable size='lg' onChange={() => handleChange()} isChecked={switchStatus} />
+                </FormControl>
 
-                </Box>
+            </Box>
 
-                <Box>
-                    {/* {navCateListData && navCateListData.length > 0 ? (
-                        <Tabs variant='enclosed' style={{ width: '900px' }} defaultIndex={tabIndex}>
-                            <TabList>
-                                {navCateListData.map((item, index) => {
-                                    if (item.id === '-1' && switchStatus) {
-                                        return <CustomTab key={`${index}_tab`} onClick={() => addNavItem()}></CustomTab>
-                                    }
-                                    return <Tab key={`${index}_tab`} onClick={() => switchTab(item, index)}>{item.name}</Tab>
-                                })}
-                            </TabList>
-                            <TabPanels>
-                                {navCateListData.map((item, index) => (
-                                    <TabPanel key={`${index}_tabPanel`} >
-                                        {isLoading ? (
-                                            <Spinner />
-                                        ) : (
-                                            <Box>
-                                                <AutoLayout {...config} onItemClick={onNavItemClick} cb={callback} isSwitch={switchStatus} />
-                                            </Box>
-                                        )}
-                                    </TabPanel>
-                                ))}
+            <Box>
+                {/* {navCateListData && navCateListData.length > 0 ? (
+                    <Tabs variant='enclosed' style={{ width: '900px' }} defaultIndex={tabIndex}>
+                        <TabList>
+                            {navCateListData.map((item, index) => {
+                                if (item.id === '-1' && switchStatus) {
+                                    return <CustomTab key={`${index}_tab`} onClick={() => addNavItem()}></CustomTab>
+                                }
+                                return <Tab key={`${index}_tab`} onClick={() => switchTab(item, index)}>{item.name}</Tab>
+                            })}
+                        </TabList>
+                        <TabPanels>
+                            {navCateListData.map((item, index) => (
+                                <TabPanel key={`${index}_tabPanel`} >
+                                    {isLoading ? (
+                                        <Spinner />
+                                    ) : (
+                                        <Box>
+                                            <AutoLayout {...config} onItemClick={onNavItemClick} cb={callback} isSwitch={switchStatus} />
+                                        </Box>
+                                    )}
+                                </TabPanel>
+                            ))}
 
-                            </TabPanels>
-                        </Tabs>
-                    ) : null} */}
+                        </TabPanels>
+                    </Tabs>
+                ) : null} */}
 
-                    {navCateListData && navCateListData.length > 0 ? (
-                        <>
-                            <TabsCompox items={navCateListData} currentTabIndex={tabIndex} onSwitchTab={switchTab} isSwitch={switchStatus} cb={tabscallback}/>
-                            
-                            <div style={{marginTop:'10px'}}>
-                                {isLoading ? (
-                                    <Spinner />
-                                ) : (
-                                    <Box>
-                                        <AutoLayout {...config} 
-                                            cb={callback}
-                                            onItemClick={onNavItemClick}
-                                            onItemDeleted={delateAction}
-                                            onItemAdded={addAction}
-                                            onItemChanged={updateAction}
-                                            onItemIndicated={indicatedAction}
-                                            isSwitch={switchStatus} 
-                                        />
-                                    </Box>
-                                )}
-                            </div>
-                        </>
-                    ) : null}
+                {navCateListData && navCateListData.length > 0 ? (
+                    <>
+                        <TabsCompox items={navCateListData} currentTabIndex={tabIndex} onSwitchTab={switchTab} isSwitch={switchStatus} cb={tabscallback}/>
+                        
+                        <div style={{marginTop:'10px'}}>
+                            {isLoading ? (
+                                <Spinner />
+                            ) : (
+                                <Box>
+                                    <AutoLayout {...config} 
+                                        cb={callback}
+                                        onItemClick={onNavItemClick}
+                                        onItemDeleted={delateAction}
+                                        onItemAdded={addAction}
+                                        onItemChanged={updateAction}
+                                        onItemIndicated={indicatedAction}
+                                        isSwitch={switchStatus} 
+                                    />
+                                </Box>
+                            )}
+                        </div>
+                    </>
+                ) : null}
 
-                </Box>
+            </Box>
 
-            </VStack>
-        </div>
+        </VStack>
     )
+
 }

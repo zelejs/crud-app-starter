@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import StandaloneContainer from './index';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
-import JsonTreePage from '@/composition/JsonTree/Sandbox'
+import JsonTreePage from 'zero-element-boot/lib/components/presenter/tree/JsonTree/Sandbox'
 
 // import useTokenRequest from '@/components/hooks/useTokenRequest';
 
@@ -13,6 +13,8 @@ export default function (props) {
 
   const [ data, setData ] = useState([])
   const [ jsonTreeParams, setJsonTreeParams ] = useState({})
+  const [ total, setTotal ] = useState(0)
+  const [ size, setSize ] = useState(0)
 
   useEffect(_ => {
     setData([])
@@ -29,11 +31,13 @@ export default function (props) {
     const api = `${apiStr}`;
       const queryData = {
         pageNum: 1,
-        pageSize: 1000,
+        pageSize: 10,
         apiMethod: (params && params.method) || ''
       };
       promiseAjax(api, queryData).then(resp => {
           if (resp && resp.code === 200) {
+            setTotal(resp.data.total)
+            setSize(resp.data.size)
             setData(resp.data.records)
           } else {
               console.error("获取api 数据失败")
@@ -52,7 +56,14 @@ export default function (props) {
   return (
     <>
       { data && data.length > 0 ? (
-        <StandaloneContainer method={(params && params.method) || ''} op={params.op} data={data} onDelAction={delAction}/>
+        <StandaloneContainer 
+          method={(params && params.method) || ''} 
+          op={params.op} 
+          data={data} 
+          onDelAction={delAction}
+          total={total}
+          size={size}
+        />
       ): jsonTreeParams && JSON.stringify(jsonTreeParams) != '{}' ? (
         <JsonTreePage compParams={jsonTreeParams} />
       ):<></>}

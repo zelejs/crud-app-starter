@@ -293,7 +293,7 @@ export default function Index(props) {
         <>
 
             {items && items.length > 0 ? (
-                <Tabs variant='enclosed' style={{ width: '1000px' }} defaultIndex={tabIndex}>
+                <Tabs variant='enclosed' defaultIndex={tabIndex}>
                     <TabList>
                         {items.map((item, index) => {
                             if (item.id === '-1' && isSwitch) {

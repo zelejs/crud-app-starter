@@ -10,7 +10,7 @@ export default function index (props) {
 
   const [ sign, setSign ] = useState('')
 
-  const [ errorMessage, setErrorMessage ] = useState(!sign && 'sign 无效')
+  const [ errorMessage, setErrorMessage ] = useState('')
 
   useEffect(_ => {
     setSign('')
@@ -18,6 +18,8 @@ export default function index (props) {
     if(params && params.sign){
       setSign(params.sign)
       getLogList(params.sign)
+    }else{
+      setSign('sign 无效')
     }
   }, [params])
 
