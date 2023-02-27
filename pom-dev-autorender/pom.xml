@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jfeat</groupId>
-    <artifactId>pom-dev-auto-render</artifactId>
+    <artifactId>dev-autorender</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
 
