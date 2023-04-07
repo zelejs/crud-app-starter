@@ -1,0 +1,38 @@
+#   java -jar *-standalone.jar --spring.profiles.active=prod --server.port=8080
+version: "3.7"
+services:
+  datasource:
+    image: adoptopenjdk:11-jre-hotspot
+    container_name: dev-dependency-api
+    privileged: true
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+    working_dir: /webapps
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro    
+      - ./api:/webapps
+    cpus: "0.05"
+    mem_reservation: "100m"
+    mem_limit: "250m"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+    command:
+      - /bin/sh
+      - -c
+      - |
+        java -jar *-standalone.jar --server.port=8080
+    networks:
+      - devnet_default
+
+networks:
+  devnet_default:
+    external: true
+

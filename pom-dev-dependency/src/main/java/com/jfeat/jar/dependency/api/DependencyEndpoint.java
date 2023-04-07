@@ -136,7 +136,7 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+            throw new BusinessException(BusinessCode.NoPermission,"sign invalid !");
         }
         if (all == null) {
             all = false;
