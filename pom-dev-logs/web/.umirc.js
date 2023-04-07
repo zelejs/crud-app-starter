@@ -1,7 +1,7 @@
 
 // ref: https://umijs.org/config/
 export default {
-  title: 'demo-page',
+  title: 'logs-ui',
   hash: true,
   history: {
     type: 'hash',
