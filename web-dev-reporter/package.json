@@ -19,14 +19,15 @@
     "@emotion/styled": "^11.3.0",
     "@loadable/component": "^5.10.1",
     "ahooks": "^2.4.0",
+    "antd-mobile": "^5.24.0",
     "framer-motion": "^4.1.17",
     "fs-extra": "^10.1.0",
     "lodash": "^4.17.19",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-hook-form": "^7.22.2",
-    "zero-element": "^1.0.0",
-    "zero-element-boot": "git+https://gitee.com/smallsaas/zero-element-boot.git#master"
+    "weixin-js-sdk": "^1.6.0",
+    "zero-element": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",

@@ -19,7 +19,7 @@
     </parent>
 
     <properties>
-        <skipStandalone>true</skipStandalone>
+        <skipStandalone>false</skipStandalone>
         <!---only produce, scope provided-->
         <projectlombok.version>1.18.8</projectlombok.version>
         <jdk-comelier.version>11</jdk-comelier.version>
@@ -137,6 +137,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.jfeat</groupId>
+            <artifactId>sign-sdk</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -155,7 +161,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <finalName>${project.artifactId}-all</finalName>
+                    <finalName>${project.artifactId}-${project.version}-all</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -176,49 +182,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
-            </plugin> -->
-
-            <!-- <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <configuration>
-                    <imageName>${project.artifactId}</imageName>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}-standalone.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin> -->
-
-            <!--asurefire:test-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version> 
-                <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
-                </configuration>
-            </plugin>
-
-            <!-- <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway-core.version}</version>
-            </plugin> -->
         </plugins>
 
         <resources>
