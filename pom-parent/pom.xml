@@ -28,7 +28,9 @@
         <perm-core.version>0.1.2</perm-core.version>
         <field-config.version>1.2.2</field-config.version>
         <eav.version>2.1.1</eav.version>
-        <uaas.version>3.1.0</uaas.version>
+        <!-- <uaas.version>3.1.0</uaas.version> -->
+        <uaas.version>4.0.0</uaas.version>
+
         <!-- sprintboot  -->
         <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
         <spring-test.version>5.3.9</spring-test.version>
