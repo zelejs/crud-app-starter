@@ -17,6 +17,10 @@
     </parent>
 
     <properties>
+        <!-- community's -->
+        <lombok.version>1.18.24</lombok.version>
+        <hutool.version>5.8.16</hutool.version>
+
         <!-- crud -->
         <crud-base.version>0.0.1</crud-base.version>
         <crud-core.version>0.0.5</crud-core.version> 
@@ -35,7 +39,6 @@
         <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
         <spring-test.version>5.3.9</spring-test.version>
         <mysql-connector-java.version>8.0.15</mysql-connector-java.version> <!--old version 5.1.43-->
-        <lombok.version>1.18.24</lombok.version>
 
         <!-- common -->
         <hutool-all.version>5.7.2</hutool-all.version>
