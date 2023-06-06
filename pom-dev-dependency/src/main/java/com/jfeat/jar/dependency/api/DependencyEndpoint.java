@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
-import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.jar.dep.properties.JarDeployProperties;
@@ -28,7 +27,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -205,7 +203,7 @@ public class DependencyEndpoint {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
             if (!SignatureKit.parseSignature(sign, key, ttl)) {
-                throw new BusinessException(BusinessCode.NoPermission, "sign错误");
+                throw new BusinessException(BusinessCode.NoPermission, "sign invalid!");
             }
         }
 
@@ -265,24 +263,45 @@ public class DependencyEndpoint {
     }
 
 
-    @GetMapping("/extra")
-    @ApiOperation(value = "从jar文件中获取指定的Entry文件")
+    @GetMapping("/dl")
+    @ApiOperation(value = "从jar文件中获取并下载指定的Entry文件")
     public void extraDependencyEntry(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
             @RequestParam(name = "sign", required = true) String sign,
             HttpServletResponse response) throws IOException {
 
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
+            }
         }
 
-        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String rootPath = jarDeployProperties.getRootPath();
+        String rootPathJar = null;
+        if(new File(rootPath).exists()){
+            // find the first .jar
+            File[] jarFiles = new File(rootPath).listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String s) {
+                    var ext = FilenameUtils.getExtension(s);
+                    return ext.equals("jar") || ext.equals("war");
+                }
+            });
+
+            // just get the first .jar
+            for (File f : jarFiles) {
+                rootPathJar = f.getCanonicalPath();
+            }
+        }
+
+        String jarPath = StringUtils.isNotBlank(rootPathJar)? rootPathJar : this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
         } else {
             jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
+
         logger.info("jarPath: " + jarPath);
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
@@ -302,9 +321,15 @@ public class DependencyEndpoint {
         ZipFileUtils.extraJarEntries(jarFile, "", pattern, response.getOutputStream());
     }
 
-/*    @Autowired
+
+
+    /**
+     * for debug below
+     */
+
+    @Autowired
     BuildProperties buildProperties;
-    @GetMapping("/build")
+    @GetMapping("/build-info")
     public Tip buildInfo() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("artifact", buildProperties.getName());
@@ -313,5 +338,13 @@ public class DependencyEndpoint {
         jsonObject.put("artifactId:", buildProperties.getArtifact());
         jsonObject.put("groupId:", buildProperties.getGroup());
         return SuccessTip.create(jsonObject);
-    }*/
+    }
+
+    @GetMapping("/config-info")
+    public Tip configInfo() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("rootPath", jarDeployProperties.getRootPath());
+        jsonObject.put("signatureOpt", jarDeployProperties.getSignatureOpt());
+        return SuccessTip.create(jsonObject);
+    }
 }
