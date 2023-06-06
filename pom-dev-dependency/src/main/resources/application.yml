@@ -1,8 +1,9 @@
 #### jar-dependency
 jar-dependency:
-  root-path: jar-dependency-api/target
-  container: testapi
-  docker-api-endpoint: http://192.168.3.239:2375
+  root-path: ${JAR_ROOT}
+  signature-opt: ${SIGN_OPT}  #enable
+#  container: testapi
+#  docker-api-endpoint: http://192.168.3.239:2375
 
 #### default
 server:

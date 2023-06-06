@@ -7,12 +7,14 @@ import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
+import com.jfeat.jar.dep.properties.JarDeployProperties;
 import com.jfeat.jar.dependency.DecompileUtils;
 import com.jfeat.jar.dependency.ZipFileUtils;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.BindException;
@@ -125,8 +128,12 @@ public class DependencyEndpoint {
     }
 
 
+    @Autowired
+    private JarDeployProperties jarDeployProperties;
+
+
     @GetMapping("/json")
-    @ApiOperation(value = "返回所有的依赖文件[JSON格式]")
+    @ApiOperation(value = "[JSON格式] 返回所有的依赖文件,如果只有一个文件匹配,则反编译文件")
     public Tip getDependencyJson(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
@@ -135,19 +142,42 @@ public class DependencyEndpoint {
             @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
 
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign invalid !");
+        // 默认没有配置需要签名保护
+        if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
+            }
         }
         if (all == null) {
             all = false;
         }
-        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String rootPath = jarDeployProperties.getRootPath();
+        String rootPathJar = null;
+        if(new File(rootPath).exists()){
+            // find the first .jar
+            File[] jarFiles = new File(rootPath).listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String s) {
+                    var ext = FilenameUtils.getExtension(s);
+                    return ext.equals("jar") || ext.equals("war");
+                }
+            });
+
+            // just get the first .jar
+            for (File f : jarFiles) {
+                rootPathJar = f.getCanonicalPath();
+            }
+        }
+
+        String jarPath = StringUtils.isNoneBlank(rootPathJar)? rootPathJar : this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
-        } else {
-            // just for debug
-            jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
         }
+        //else {
+        //    // just for debug
+        //    jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+        //}
+
         logger.info("jarPath: " + jarPath);
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
@@ -164,7 +194,7 @@ public class DependencyEndpoint {
     }
 
     @GetMapping
-    @ApiOperation(value = "返回所有的依赖文件")
+    @ApiOperation(value = "返回所有的依赖文件,如果只有一个文件匹配,则反编译文件")
     public void printDependencyEntries(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
@@ -172,24 +202,44 @@ public class DependencyEndpoint {
             @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
             @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-           throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+
+        if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign错误");
+            }
         }
+
         if (all == null) {
             all = false;
         }
-        String jarPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        logger.info("domain jar path: " + jarPath);
+        String rootPath = jarDeployProperties.getRootPath();
+        String rootPathJar = null;
+        if(new File(rootPath).exists()){
+            // find the first .jar
+            File[] jarFiles = new File(rootPath).listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String s) {
+                    var ext = FilenameUtils.getExtension(s);
+                    return ext.equals("jar") || ext.equals("war");
+                }
+            });
+
+            // just get the first .jar
+            for (File f : jarFiles) {
+                rootPathJar = f.getCanonicalPath();
+            }
+        }
+        String jarPath = StringUtils.isNotBlank(rootPathJar)? rootPathJar : this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         if (jarPath.contains("!")) {
             jarPath = jarPath.substring("file:".length(), jarPath.indexOf("!"));
-        } else {
-            // just for debug
-            //jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
-            jarPath = new File(".").getCanonicalPath() + "/dev-dependency-0.0.1-standalone.jar";
         }
+        //else {
+        //    // just for debug
+        //    //jarPath = new File(".").getCanonicalPath() + "/target/dev-dependency-0.0.1-standalone.jar";
+        //    jarPath = new File(".").getCanonicalPath() + "/dev-dependency-0.0.1-standalone.jar";
+        //}
+
         logger.info("jarPath: " + jarPath);
-
-
         File jarFile = new File(jarPath);
         Assert.isTrue(jarFile.exists(), jarPath + " not exits !");
 
