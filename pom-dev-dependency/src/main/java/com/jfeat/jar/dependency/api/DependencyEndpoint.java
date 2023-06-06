@@ -137,7 +137,7 @@ public class DependencyEndpoint {
     public Tip getDependencyJson(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
-            @RequestParam(name = "sign", required = true) String sign,
+            @RequestParam(name = "sign", required = false) String sign,
             @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
             @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
@@ -198,7 +198,7 @@ public class DependencyEndpoint {
     public void printDependencyEntries(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
-            @RequestParam(name = "sign", required = true) String sign,
+            @RequestParam(name = "sign", required = false) String sign,
             @ApiParam(name = "all", value = "是否深度搜索所有文件,默认为 True")
             @RequestParam(value = "all", required = false) Boolean all,
             HttpServletResponse response) throws IOException {
