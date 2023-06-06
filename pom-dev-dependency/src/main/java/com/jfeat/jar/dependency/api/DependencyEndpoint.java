@@ -142,7 +142,7 @@ public class DependencyEndpoint {
 
         // 默认没有配置需要签名保护
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
                 throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
             }
         }
@@ -202,7 +202,7 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
                 throw new BusinessException(BusinessCode.NoPermission, "sign invalid!");
             }
         }
@@ -272,7 +272,7 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
                 throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
             }
         }
@@ -332,11 +332,11 @@ public class DependencyEndpoint {
     @GetMapping("/build-info")
     public Tip buildInfo() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("artifact", buildProperties.getName());
         jsonObject.put("version", buildProperties.getVersion());
-        jsonObject.put("buildAt", buildProperties.getTime());
-        jsonObject.put("artifactId:", buildProperties.getArtifact());
-        jsonObject.put("groupId:", buildProperties.getGroup());
+        jsonObject.put("name", buildProperties.getName());
+        jsonObject.put("group:", buildProperties.getGroup());
+        jsonObject.put("artifact:", buildProperties.getArtifact());
+        jsonObject.put("time", buildProperties.getTime());
         return SuccessTip.create(jsonObject);
     }
 
