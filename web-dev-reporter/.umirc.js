@@ -1,7 +1,7 @@
 
 // ref: https://umijs.org/config/
 export default {
-  title: 'logs-ui',
+  title: ' ',
   hash: true,
   history: {
     type: 'hash',
@@ -27,10 +27,10 @@ export default {
   ignoreMomentLocale: true, // 忽略 moment 的 locale 文件
 
   chainWebpack (memo, { env, webpack, createCSSRule }) {
-    memo.output.set('path', require('path').resolve(__dirname, 'dist/logs-ui'))
+    memo.output.set('path', require('path').resolve(__dirname, 'dist/model-house'))
     memo.output.set('filename', 'bundle.js')
   },
 
-  // outputPath: '/dist/connection-ui',
-  publicPath: process.env.NODE_ENV === 'production' ? './' : './',  //设置 dist/index.html 访问 js和css路径
+  // outputPath: '/dist/dev-logs',
+  publicPath: process.env.NODE_ENV === 'production' ? './model-house/' : '/',  //设置 dist/index.html 访问 js和css路径
 }

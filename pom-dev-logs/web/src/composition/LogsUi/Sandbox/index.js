@@ -19,7 +19,7 @@ export default function index (props) {
       setSign(params.sign)
       getLogList(params.sign)
     }else{
-      setSign('sign 无效')
+      setSign('sign 鏃犳晥')
     }
   }, [params])
 
@@ -38,10 +38,10 @@ export default function index (props) {
           })
           setData(newData)
         } else {
-            setErrorMessage('签名错误或已过期!')
+            setErrorMessage('绛惧悕閿欒鎴栧凡杩囨湡!')
         }
       }).catch(err =>{
-        setErrorMessage('签名错误或已过期!')
+        setErrorMessage('绛惧悕閿欒鎴栧凡杩囨湡!')
       });
     
   }
