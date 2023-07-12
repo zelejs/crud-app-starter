@@ -342,6 +342,22 @@ public class RouteEndpoint {
         return SuccessTip.create();
     }
 
+    @DeleteMapping("/removePage/{pageId}")
+    @ApiOperation("删除页面")
+    public Tip deletePageById(@PathVariable("pageId") Long pageId){
+
+//        JSONObject json = autoPageService.getPageConfigJsonByPageId(pageId);
+//        if (json==null){
+//            return SuccessTip.create("文件不存在");
+//        }
+
+        int success = autoPageService.deletePageById(pageId);
+
+
+        return SuccessTip.create("删除");
+
+    }
+
 
 
 }

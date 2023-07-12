@@ -35,7 +35,7 @@ module.exports = {
     },
     children: [
       {
-        presenter: 'JarItem',
+        xname: 'JarItem',
         indicator:{
           xname:'ClickIndicator',
           binding: {

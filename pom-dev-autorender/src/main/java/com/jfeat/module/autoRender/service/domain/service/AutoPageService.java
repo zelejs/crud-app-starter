@@ -9,4 +9,6 @@ public interface AutoPageService {
     JSONObject updatePageProp(JSONObject json,JSONObject prop);
 
     JSONObject removePageProp(JSONObject json,JSONObject prop);
+
+    int deletePageById(Long pageId);
 }
