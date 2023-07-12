@@ -38,7 +38,8 @@
         <!-- sprintboot  -->
         <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
         <spring-test.version>5.3.9</spring-test.version>
-        <mysql-connector-java.version>8.0.15</mysql-connector-java.version> <!--old version 5.1.43-->
+        <mysql-connector-java.version>8.0.27</mysql-connector-java.version> <!--old version 5.1.43-->
+        <mysql.version>8.0.27</mysql.version>
 
         <!-- common -->
         <hutool-all.version>5.7.2</hutool-all.version>

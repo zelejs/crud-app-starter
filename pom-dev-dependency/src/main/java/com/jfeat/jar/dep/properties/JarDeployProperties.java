@@ -22,18 +22,26 @@ public class JarDeployProperties {
     String rootPath;
 
     /**
+     * 是否加密，用于生产环境
+     */
+    String signatureOpt;
+
+    /**
      * 容器名称/ID
      */
+    @Deprecated
     String container;
 
     /**
      * Docker API endpoint
      */
+    @Deprecated
     String dockerApiEndpoint;
 
     /**
      *  用于初始化数据库的路径
      */
+    @Deprecated
     String flywayPath;
 
     public String getRootPath(){
@@ -42,6 +50,15 @@ public class JarDeployProperties {
     public void setRootPath(String rootPath){
         this.rootPath = rootPath;
     }
+    public String getSignatureOpt(){
+        return this.signatureOpt;
+    }
+    public void setSignatureOpt(String opt){
+        this.signatureOpt = opt;
+    }
+
+
+    @Deprecated
     public String getDockerApiEndpoint(){
         return this.dockerApiEndpoint;
     }

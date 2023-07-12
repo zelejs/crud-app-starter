@@ -4,31 +4,16 @@ server:
 
 ###################  am配置  ###################
 am:
-  swagger-open: true #是否开启swagger (true/false)
-  kaptcha-open: false #是否开启登录时验证码 (true/false)
-  #file-upload-path: d:/tmp  #文件上传目录(不配置的话为java.io.tmpdir目录)
-  #file-host: http://localhost:8080
   worker-id: 0 # id gen service machine id 0~1023
-  # redis-host: 127.0.0.1
-  # redis-port: 6379
-  #fastjson 格式化时间的格式，如不配置，默认用yyyy-MM-dd HH:mm:ss
-  #json-serialize-date-format: MM/dd/yyyy HH:mm:ss
   json-serialize-date-format: yyyy-MM-dd HH:mm:ss
   shiro-cache-redis: false
-  # environment: dev  #[dev,development,production] 开发环境还是生产环增，默认开发环境
-
-###################  logging配置  ###################
-logging:
-  level:
-    org.springframework.security: ERROR
-    com.jfeat: debug
 
 ###################  spring配置  ###################
 spring:
   profiles:
     active: dev
   mvc:
-    static-path-pattern: /**
+    static-path-pattern: /static/**
   resources:
     static-locations: classpath:/META-INF/resources,classpath:/resources,classpath:/static,classpath:/public
   http:
@@ -41,8 +26,6 @@ spring:
       enabled: true
     converters:
       preferred-json-mapper: fastjson
-#  jackson:
-#    date-format: yyyy-MM-dd HH:mm:ss
 
 
 ###################  mybatis-plus配置  ###################
