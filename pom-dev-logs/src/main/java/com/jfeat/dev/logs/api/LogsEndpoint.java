@@ -10,9 +10,13 @@ import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 //import com.jfeat.dev.connection.util.DataSourceUtil;
 import com.jfeat.dev.logs.service.DevLogsService;
+import com.jfeat.dev.logs.service.properties.LogsProperties;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +41,9 @@ public class LogsEndpoint {
 
     private static final Long ttl = 14400000L;
     private static final String key = "514528";
+
+    @Autowired
+    private LogsProperties logsProperties;
 
 
     @Resource
@@ -139,11 +146,14 @@ public class LogsEndpoint {
     @GetMapping()
     private void getLogContext(@RequestParam(name = "pattern", required = false) String pattern,
                                @RequestParam(name = "filter", required = false) String filter,
-                               @RequestParam(name = "sign", required = true) String sign,
+                               @RequestParam(name = "sign", required = false) String sign,
                                @RequestParam(name = "n", defaultValue = "0") int n,
                                HttpServletResponse response) throws IOException {
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+
+        if(StringUtils.isBlank(logsProperties.getSignatureOpt()) || "enable".equals(logsProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign错误");
+            }
         }
 
         response.setContentType("text/plain;charset=utf-8"); //设置响应的内容类型
@@ -295,13 +305,16 @@ public class LogsEndpoint {
     @GetMapping(value = "/json", produces = {"application/json;charset=utf-8"})
     private Tip getLogFileList(@RequestParam(name = "pattern", required = false) String pattern,
                                @RequestParam(name = "filter", required = false) String filter,
-                               @RequestParam(name = "sign", required = true) String sign,
+                               @RequestParam(name = "sign", required = false) String sign,
                                @RequestParam(value = "blank",required = false,defaultValue = "10") Integer blank,
                                @RequestParam(name = "n", defaultValue = "0") int n) throws IOException {
 
-        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
+        if(StringUtils.isBlank(logsProperties.getSignatureOpt()) || "enable".equals(logsProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign错误");
+            }
         }
+
         if (n<0||n>2000){
             throw new BusinessException(BusinessCode.OutOfRange,"0<=n<=2000");
         }
@@ -461,9 +474,13 @@ public class LogsEndpoint {
     @ApiOperation("下载文件")
     public void downLog(@RequestParam("fileName")String fileName,@RequestParam(name = "sign", required = false) String sign,HttpServletResponse response) throws Exception {
 
-//        if (! SignatureKit.parseSignature(sign, key,ttl) ){
-//            throw new BusinessException(BusinessCode.NoPermission,"sign错误");
-//        }
+        if(StringUtils.isBlank(logsProperties.getSignatureOpt()) || "enable".equals(logsProperties.getSignatureOpt())) {
+            if (!SignatureKit.parseSignature(sign, key, ttl)) {
+                throw new BusinessException(BusinessCode.NoPermission, "sign错误");
+            }
+        }
+
+
         response.reset();
         response.setContentType("application/octet-stream;charset=utf-8");
         response.setHeader(
@@ -482,4 +499,27 @@ public class LogsEndpoint {
         }
     }
 
+
+
+
+    @Autowired
+    BuildProperties buildProperties;
+    @GetMapping("/build-info")
+    public Tip buildInfo() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("version", buildProperties.getVersion());
+        jsonObject.put("name", buildProperties.getName());
+        jsonObject.put("group:", buildProperties.getGroup());
+        jsonObject.put("artifact:", buildProperties.getArtifact());
+        jsonObject.put("time", buildProperties.getTime());
+        return SuccessTip.create(jsonObject);
+    }
+
+    @GetMapping("/config-info")
+    public Tip configInfo() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("rootPath", logsProperties.getRootPath());
+        jsonObject.put("signatureOpt", logsProperties.getSignatureOpt());
+        return SuccessTip.create(jsonObject);
+    }
 }

@@ -2,17 +2,14 @@ package com.jfeat.dev.connection.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.jfeat.crud.base.exception.BusinessCode;
 import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.ErrorTip;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
-//import com.jfeat.dev.connection.api.request.ForeignKeyRequest;
 import com.jfeat.crud.core.util.Md5Util;
 import com.jfeat.dev.connection.services.domain.dao.QueryTablesDao;
 import com.jfeat.dev.connection.services.domain.service.TableServer;
-//import com.jfeat.dev.connection.util.DataSourceUtil;
 import com.jfeat.dev.connection.util.ShowAllFileName;
 import com.jfeat.signature.SignatureKit;
 import io.swagger.annotations.Api;
@@ -33,7 +30,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import static com.google.common.net.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
 import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;

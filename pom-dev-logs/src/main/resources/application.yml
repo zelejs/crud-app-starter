@@ -17,10 +17,14 @@ spring:
     converters:
       preferred-json-mapper: fastjson
 
+dev:
+  logs:
+    root-path: ${LOGS_ROOT}
+    signature-opt: ${SIGN_OPT}
+
 ---
 spring:
   profiles: uat
-
 
 logging:
   level: debug
