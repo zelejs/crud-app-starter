@@ -6,7 +6,7 @@
   "scripts": {
     "start": "umi dev",
     "clean": "rimraf lib/",
-    "build": "node init.js && umi build && node gen"
+    "build": "node init.js && NODE_OPTIONS=--openssl-legacy-provider umi build && node gen"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.5",
@@ -26,7 +26,7 @@
     "react-dom": "^16.8.6",
     "react-hook-form": "^7.22.2",
     "zero-element": "^1.0.0",
-    "zero-element-boot": "github:kequandian/zero-element-boot#master"
+    "zero-element-boot": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",
