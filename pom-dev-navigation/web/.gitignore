@@ -5,3 +5,4 @@ src/.umi
 dist
 yarn-error.log
 dist.zip
+.umi-production/

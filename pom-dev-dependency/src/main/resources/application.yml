@@ -12,14 +12,11 @@ server:
 spring:
   # profiles:
   #   active: dev
-  # view:
-  #   prefix: /META-INF/view/
-  #   suffix: .html
   mvc:
     static-path-pattern: /static/**
-  resources:
-    # static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources
-    static-locations: classpath:/META-INF/resources,classpath:/META-INF/resources/dependency-ui
+    view:
+      prefix: /META-INF//
+      suffix: .html
   http:
     encoding:
       force: true
