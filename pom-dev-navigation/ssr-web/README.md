@@ -16,6 +16,16 @@ setEndpoint('http://api.webtools.io')
 ...
 ```
 
+### 新增页面需要同时在 .umirc.ts 文件中新增路由
+```
+...
+routes: [
+    { path: '/', component: '@/pages/index' },
+    { path: '/nav-ui', component: '@/pages/nav-ui' },
+],
+...
+```
+
 
 ### 运行项目, 执行命令会同时生成 dist 文件夹
 ```bash
