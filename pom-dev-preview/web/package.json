@@ -24,9 +24,9 @@
     "lodash": "^4.17.19",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-hook-form": "^7.22.2",
+    "react-hook-form": "7.22.2",
     "zero-element": "^1.0.0",
-    "zero-element-boot": "1.0.7",
+    "zero-element-boot": "latest",
     "zero-element-boot-plugin-theme": "file:../zero-element-boot-plugin-theme",
     "zero-element-boot-presenter": "file:../zero-element-boot-presenter"
   },
