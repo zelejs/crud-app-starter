@@ -12,7 +12,7 @@ const tabsMap = [
   { id: 6, name: 'Cart', type: 'cart'}
 ]
 
-export default function index (props) {
+export default function Index (props) {
 
   const [tabIndex, setTabIndex] = useState(0);
   const [items, setItems] = useState('');
