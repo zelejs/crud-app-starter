@@ -9,8 +9,8 @@ module.exports = {
       },
     },
     binding: {
-      "name": "label",
-      "componentType": "value"
+      "componentType": "label",
+      "items": "value"
     },
     cart: {
       xname: 'Cart',

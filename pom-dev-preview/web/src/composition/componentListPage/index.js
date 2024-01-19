@@ -18,8 +18,6 @@ export default function Index(props) {
     ...rest
   };
 
-  console.log('config = ', config)
-
   const itemClick = (item) =>{
     console.log('item == ', item)
   }
