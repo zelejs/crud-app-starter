@@ -1,0 +1,32 @@
+{
+  "xname": "Gridbox", 
+  "props": {
+      "columns": 8
+  }, 
+  "presenter": {
+      "xname": "CartsItem", 
+      "props": { }
+  }, 
+  "binding": {
+      "moduleName": "label", 
+      "items": "value", 
+      "componentType": "__cart.xname", 
+      "componentProps": "__cart.props"
+  }, 
+  "cart": {
+      "unselector": "", 
+      "indicator": {
+          "xname": "ShadowIndicator", 
+          "props": { }
+      }, 
+      "selector": {
+          "xname": "SelectedCartUpperRightIcon", 
+          "props": {
+              "state": "selected", 
+              "padding": "0"
+          }
+      }
+  }, 
+  "container": "SelectList"
+}
+  

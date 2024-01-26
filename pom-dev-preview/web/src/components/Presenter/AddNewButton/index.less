@@ -1,0 +1,51 @@
+.addDefaultrBtn {
+    width: 42px;
+    height: 42px;
+    background-color: #ffffff;
+    border-width: 1px;
+    border-color: rgb(208, 205, 205);
+    margin: 0 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+
+    .addBtn {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        color: #ccc;
+        border: 2px solid;
+        transition: color .25s;
+        position: relative;
+        overflow: hidden;
+        border-radius: 50%;
+    }
+    
+    .addBtn:hover {
+        color: #34538b;
+    }
+    
+    .addBtn::before,
+    .addBtn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+    
+    .addBtn::before {
+        width: 20px;
+        border-top: 4px solid;
+        margin: -2px 0 0 -10px;
+    }
+    
+    .addBtn::after {
+        height: 20px;
+        border-left: 4px solid;
+        margin: -10px 0 0 -2px;
+    }
+
+
+}
+

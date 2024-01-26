@@ -10,34 +10,20 @@ export default function Index(props) {
     const [isLoading, setLoading] = useState(false);
 
     useEffect(_ => {
-        getLayoutData()
         getData()
     },[])
-
-    function getLayoutData() {
-        
-        let api = '/openapi/lc/module/getAutoLayout/CartsAutolayout'
-        const queryData = {};
-        promiseAjax(api, queryData).then(resp => {
-            if (resp && resp.code === 200) {
-                console.log('layout resp = ', resp)
-            } else {
-                console.error("获取cart数据失败")
-            }
-        });
-    }
 
     function getData() {
         
         setItems([])
-        let api = '/openapi/lc/module?componentOption=cart&pageNum=1&pageSize=100'
+        let api = '/openapi/lc/module?componentOption=indicator&pageNum=1&pageSize=100'
         const queryData = {};
         promiseAjax(api, queryData).then(resp => {
             setLoading(false)
             if (resp && resp.code === 200) {
                 setItems(resp.data.records)
             } else {
-                console.error("获取cart数据失败")
+                console.error("获取indicator数据失败")
             }
         });
     }

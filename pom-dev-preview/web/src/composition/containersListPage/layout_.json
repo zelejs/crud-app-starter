@@ -1,0 +1,35 @@
+{
+  "xname": "Gridbox", 
+  "props": {
+      "columns": 8
+  }, 
+  "binding": {
+      "componentType": "content"
+  }, 
+  "cart": {
+      "xname": "Cart", 
+      "props": {
+          "padding": "30px 10px", 
+          "margin": "1px 0", 
+          "linewidth": "1px", 
+          "corner": "8px", 
+          "fill": "#edf2f7"
+      }, 
+      "indicator": {
+          "xname": "ShadowIndicator", 
+          "props": { }
+      }, 
+      "selector": {
+          "xname": "SelectedCartUpperRightIcon", 
+          "props": {
+              "state": "selected", 
+              "padding": "0"
+          }
+      }
+  }, 
+  "container": "SelectList", 
+  "presenter": {
+      "xname": "Text", 
+      "props": { }
+  }
+}
