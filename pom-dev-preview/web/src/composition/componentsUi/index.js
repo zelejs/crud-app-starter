@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, VStack, Spinner, Switch, FormControl, FormLabel
+    Box, VStack, Spinner, Switch, FormControl, FormLabel, localStorageManager
 } from "@chakra-ui/react";
 // import { useForm } from 'react-hook-form';
+import { history } from 'umi';
 
 import { AutoLayout } from 'zero-element-boot/lib/components';
 import TabsCompox from './compx/tabsComps';
@@ -51,10 +52,10 @@ export default function Index(props) {
         let newNavCateList = []
         return promiseAjax(api, queryData).then(resp => {
             if (resp && resp.code === 200) {
-                console.log('newNavCateList = ', resp.data)
+                // console.log('newNavCateList = ', resp.data)
                 newNavCateList = resp.data && Array.isArray(resp.data) ? resp.data : resp.data.records;
                 newNavCateList = newNavCateList.map(item =>{
-                    return item.componentOption != 'autolayout' &&  {...item, name:item.componentOption}
+                    return item.componentOption === 'autolayout' &&  {...item, name:item.componentOption}
                 })
                 //-1:新增  -2删除
                 // newNavCateList.push({id:'-1'})
@@ -96,20 +97,16 @@ export default function Index(props) {
 
     //列表item点击事件
     const onNavItemClick = (item) => {
-        // const id = item.id;
+        const id = item.id;
+        // console.log('item = ', item)
+        history.push({
+            pathname: '/view',
+            query:{
+                id
+            }
+        })
         
-        const host = getEndpoint || location.host
-        console.log('host = ', host + '/#/presemters')
-        //点击跳转页面
-        // if (item.url && item.url.indexOf('http') != -1) {
-        //   const w = window.open('about:blank');
-        //   w.location.href = item.url
-        // } else {
-        //   const w = window.open('about:blank');
-        //   const host = getEndpoint || location.host
-        //   console.log('host = ', host + '/#/presemters')
-        //   w.location.href = host + '/#/presemters'
-        // }
+
     }
 
     //列表item回调函数

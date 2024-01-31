@@ -19,7 +19,6 @@ module.exports = {
         isHover: false
       },
   
-      // unselector: '', //默认样式
       indicator:
       {
         xname: 'ShadowIndicator',
@@ -53,6 +52,6 @@ module.exports = {
         }
       },
       container: 'PlainList',
-   },
+    },
   };
   

@@ -7,7 +7,7 @@ export default function Index (props) {
   return (
     <ChakraProvider>
       <div style={{padding: '8px'}}>
-        <ModuleListPage />
+        <ModuleListPage {...props} />
       </div>
     </ChakraProvider>
   )

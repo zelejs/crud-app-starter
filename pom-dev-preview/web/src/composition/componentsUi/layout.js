@@ -37,7 +37,7 @@ module.exports = {
     }
   },
   indicator:{
-    xname:'AutolayoutManageMenuIndicator',
+    xname:'ManageMenuIndicator',
     props:{
       action: {
         deleteAPI: '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/(id)'
@@ -83,15 +83,15 @@ module.exports = {
           placeholder: '组件标识'
         }
       },
-      {
-        label: '组件类型',
-        field: 'componentOption',
-        type: 'input',
-        props: {
-          defaultValue: 'autolayout',
-          isReadOnly: true
-        }
-      },
+      // {
+      //   label: '组件类型',
+      //   field: 'componentOption',
+      //   type: 'input',
+      //   props: {
+      //     defaultValue: 'autolayout',
+      //     isReadOnly: true
+      //   }
+      // },
       // {
       //   label: '组件名称',
       //   field: 'componentType',

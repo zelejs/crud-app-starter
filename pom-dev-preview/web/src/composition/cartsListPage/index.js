@@ -6,7 +6,7 @@ import layout from './layout';
 
 export default function Index(props) {
 
-  const { items, ...rest } = props;
+  const { items, onCartItemClick, ...rest } = props;
 
   // console.log('props =',props)
   /**
@@ -19,7 +19,8 @@ export default function Index(props) {
   };
 
   const itemClick = (item) =>{
-    console.log('item == ', item)
+    // console.log('item == ', item)
+    onCartItemClick(item)
   }
 
   return (

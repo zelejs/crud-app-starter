@@ -6,11 +6,11 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 
 //
 import CommonItem from '@/components/Presenter/CommonItem'
-import CartsItem from '@/composition/cartsListPage/cartsItem'
 import IndicatorsItem from '@/composition/indicatorsListPage/indicatorsItem'
 
 //
 import AutolayoutManageMenuIndicator from '@/composition/componentsUi/compx/ManageMenuIndicator'
+import SelectedCartIndicator from '@/components/Indicator/SelectedCartIndicator'
 
 
 // //cart
@@ -31,20 +31,20 @@ import AutolayoutManageMenuIndicator from '@/composition/componentsUi/compx/Mana
 //   Wrap
 // })
 NamedIndicatorSet({
-    AutolayoutManageMenuIndicator
+    AutolayoutManageMenuIndicator,
+    SelectedCartIndicator
 })
 
 NamedPresenterSet({
     CommonItem,
-    CartsItem,
     IndicatorsItem
 })
 
 //开发模式设置endpoint, token
 if(process.env.NODE_ENV == 'development'){
-    // setEndpoint('http://local.components.cn')
+    // setEndpoint('http://local.static.smallsaas.cn')
     setEndpoint('http://local.zero.boot.cn');
-    // setEndpoint('http://localhost:8080')
+    // setEndpoint('http://localhost:8000')
     
     // setToken('eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJvcmdJZCI6MzAsInVzZXJJZCI6MzE4LCJhY2NvdW50IjoiYjQxYTg2OTRhNjM4NDIyNWJmNWMxOTQyZjdmZjIyNTYiLCJkb21haW5Vc2VySWQiOiIiLCJ0eXBlIjoxNDYxLCJpYXQiOjE2NjkxMTMzMTQsImp0aSI6IjMxOCIsInN1YiI6ImI0MWE4Njk0YTYzODQyMjViZjVjMTk0MmY3ZmYyMjU2IiwiZXhwIjoxNjY5MzcyNTE0fQ.HnIuikkC0ugUeZAoqhtVgl4wYiJUgkuL9v8kd46YNIBpdCj-DujDVfHIUgfCqjp0mP23o-3hP697swHrP2qPiQ')
 

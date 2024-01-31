@@ -1,0 +1,161 @@
+.l-SelectedCartUpperRightIcon {
+  display  : flex;
+  flex-flow: row wrap;
+  width    : 100%;
+  align-content: center;
+}
+
+.l-SelectedCartUpperRightIcon {
+  
+  &.start {
+    justify-content: flex-start;
+  }
+
+  &.center {
+    justify-content: center;
+  }
+
+  &.end {
+    justify-content: flex-end;
+  }
+
+  &.around {
+    justify-content: space-around;
+
+    // .i-SelectedCartUpperRightIcon {
+    //   flex: 1;
+    // }
+  }
+
+  &.between {
+    justify-content: space-between;
+
+    // .i-SelectedCartUpperRightIcon {
+    //   flex: 1;
+    // }
+  }
+
+  &.start-with-last-end.row {
+    
+    justify-content: flex-start;
+
+    .i-SelectedCartUpperRightIcon:last-child {
+      // width             : 100%;
+      flex           :  1;
+      display           : flex;
+      justify-content   : flex-end;
+    }
+  }
+
+  &.start-with-last-end.row-reverse {
+    
+    justify-content: flex-start;
+
+    .i-SelectedCartUpperRightIcon:last-child {
+      // width             : 100%;
+      flex           :  1;
+      display           : flex;
+      justify-content   : flex-start;
+    }
+  }
+
+  // &.start-with-last-center  {
+  //   justify-content: flex-start;
+
+  //   .i-SelectedCartUpperRightIcon:last-child {
+  //     // width             : 100%;
+  //     flex           : 1;
+  //     display           : flex;
+  //     justify-content   : center;
+  //   }
+  // }
+
+  &.row {
+    flex-direction: row;
+  }
+
+  &.row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  &.column {
+    flex-direction: column;
+  }
+
+  &.column-reverse {
+    flex-direction: column-reverse;
+  }
+
+}
+
+.i-SelectedCartUpperRightIcon{
+
+  display: flex;
+  cursor: pointer;
+  --hover: #4285F480;
+  
+  &.width-100{
+    width: 100%;
+  }
+
+  &.width-50{
+    width: 50%;
+  }
+
+  &.width-25{
+    width: 25%;
+  }
+
+  &.h-start {
+    justify-content: flex-start;
+  }
+
+  &.h-center {
+    justify-content: center;
+  }
+
+  &.h-end {
+    justify-content: flex-end;
+  }
+
+  &.v-start{
+    align-items: flex-start
+  }
+
+  &.v-center{
+    align-items: center
+  }
+
+  &.v-end{
+    align-items: flex-end
+  }
+
+}
+
+.i-SelectedCartUpperRightIcon:hover{
+  background-color: var(--hover);
+}
+
+.default-bg{
+  background-color: #ffffff;
+}
+
+.active{
+  background-color: #4285F4;
+}
+
+.upperRightIcon{
+  // margin: 10px;
+  // float:right;
+  position:absolute;
+  right:5px;
+  top:5px;
+  // background:#2196F3;
+  width:24px;
+  height: 24px;
+  line-height: 24px;
+  color:white;
+  font-size: 18px;
+  text-align: center;
+  border-radius: 12px;
+}

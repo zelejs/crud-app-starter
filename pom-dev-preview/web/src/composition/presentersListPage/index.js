@@ -7,7 +7,7 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 
 export default function Index(props) {
 
-  const { items, ...rest } = props;
+  const { items, onPresenterItemClick, ...rest } = props;
 
   // console.log('props =',props)
   /**
@@ -20,7 +20,8 @@ export default function Index(props) {
   };
 
   const itemClick = (item) =>{
-    console.log('item == ', item)
+    // console.log('item == ', item)
+    onPresenterItemClick(item)
   }
 
   return (
