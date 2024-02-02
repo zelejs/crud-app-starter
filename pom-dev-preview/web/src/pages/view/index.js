@@ -99,8 +99,18 @@ export default function Index(props) {
             <VStack align='stretch' spacing='-2'>
                 <Box style={{ margin: '5px 10px 15px 5px', paddingLeft: '8px' }}>
                     <FormControl display='flex' alignItems='center'>
-                        <Button colorScheme='teal' size='sm' onClick={() => history.push('/')}>
+                        <Button colorScheme='teal' size='sm' marginRight={'10px'} onClick={() => history.push('/')}>
                             返回
+                        </Button>
+
+                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
+                            presenter
+                        </Button>
+                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
+                            cart
+                        </Button>
+                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
+                            layout
                         </Button>
                     </FormControl>
                 </Box>

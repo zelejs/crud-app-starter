@@ -5,7 +5,7 @@ module.exports = {
   },
   
   presenter: {
-    xname: 'IndicatorsItem',
+    xname: 'Text',
     props: {
     },
     indicator: {
@@ -18,7 +18,7 @@ module.exports = {
     },
   },
   binding: {
-    "moduleName": "label",
+    "moduleName": "content",
     "componentType": "__indicator.xname",
     "componentProps": "__indicator.props"
   },
@@ -27,12 +27,16 @@ module.exports = {
     props: {
       padding: '30px 10px',
       margin: '1px 0',
-      linewidth: 0,
+      linewidth: "1px",
       corner: '8px',
       // fill: '#edf2f7'
       isHover: false
     },
 
+  },
+  container: 'SelectList',
+    // bounding: {marginLeft: '10px', marginTop: '5px', padding: '10px', border: '1px solid #EDEFF6'},
+    
     // unselector: "", //默认样式
     indicator:
     {
@@ -47,6 +51,4 @@ module.exports = {
         padding: '0'
       }
     }
-  },
-  container: 'SelectList'
 };

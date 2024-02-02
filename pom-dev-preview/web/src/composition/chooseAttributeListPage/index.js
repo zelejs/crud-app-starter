@@ -3,9 +3,10 @@ import { Box } from "@chakra-ui/react";
 import { AutoLayout } from 'zero-element-boot';
 import layout from './layout';
 
+
 export default function Index(props) {
 
-  const { items, ...rest } = props;
+  const { items, onIClick, ...rest } = props;
 
   // console.log('props =',props)
   /**
@@ -18,7 +19,8 @@ export default function Index(props) {
   };
 
   const itemClick = (item) =>{
-    console.log('item == ', item)
+    // console.log('item == ', item)
+    onIClick(item)
   }
 
   return (

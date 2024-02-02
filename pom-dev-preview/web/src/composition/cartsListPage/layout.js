@@ -40,32 +40,29 @@ module.exports = {
     },
     cart: {
 
-      bounding: {marginLeft: '50px', marginTop: '5px', padding: '10px'},
-
-      
     },
     container: 'SelectList',
     // bounding: {marginLeft: '10px', marginTop: '5px', padding: '10px', border: '1px solid #37373D'},
     unselector: {
-        xname: "SelectedCartIndicator",
-        props:{
-          padding: '10px',
-          margin: '10px'
-        }
-      }, //默认样式
-      // indicator:
-      // {
-      //   xname: "ShadowIndicator",
-      //   props: {
-      //   }
-      // }, 
-      selector: {
-        xname: "SelectedCartIndicator",
-        props: {
-          state: 'selected',
-          padding: '10px',
-          margin: '10px'
-        }
+      xname: "SelectedCartIndicator",
+      props:{
+        padding: '10px',
+        margin: '10px'
       }
+    }, //默认样式
+      indicator:
+      {
+        xname: "ShadowIndicator",
+        props: {
+        }
+      }, 
+    selector: {
+      xname: "SelectedCartIndicator",
+      props: {
+        state: 'selected',
+        padding: '10px',
+        margin: '10px'
+      }
+    }
   };
   

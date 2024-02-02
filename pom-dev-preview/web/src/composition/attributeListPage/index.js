@@ -3,11 +3,11 @@ import { Box } from "@chakra-ui/react";
 import { AutoLayout } from 'zero-element-boot';
 import layout from './layout';
 
+
 export default function Index(props) {
 
-  const { items, ...rest } = props;
+  const { items, onAttrbuteItem, ...rest } = props;
 
-  // console.log('props =',props)
   /**
    * 页面配置
    */
@@ -18,10 +18,15 @@ export default function Index(props) {
   };
 
   const itemClick = (item) =>{
-    console.log('item == ', item)
+    // console.log('item == ', item)
+  }
+
+  const jump = (data) =>{
+    // console.log('data == ', data)
+    onAttrbuteItem(data)
   }
 
   return (
-    <AutoLayout {...config} onItemClick={itemClick}/>
+    <AutoLayout {...config} onItemClick={itemClick} onItemJump={jump}/>
   )
 }

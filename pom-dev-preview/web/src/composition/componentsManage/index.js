@@ -5,7 +5,7 @@ import {
 // import { useForm } from 'react-hook-form';
 import { history } from 'umi';
 
-import { AutoLayout } from 'zero-element-boot/lib/components';
+import { AutoLayout } from 'zero-element-boot';
 import TabsCompox from './compx/tabsComps';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
@@ -24,12 +24,13 @@ export default function Index(props) {
     const [categoryId, setCategoryId] = useState('')
     const [tabIndex, setTabIndex] = useState(0)
 
-    let navListApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules';
+    let navListApi = '/openapi/lc/module';
     let navApi = '/openapi/lc/module/module-option-classify';
 
     useEffect(() => {
         console.log('首次加载')
         fetchNavCategoryData(navApi, {})
+        // fetchData(navListApi, { componentOption: 'cart'})
     }, []);
 
     let layoutData = '';
@@ -55,13 +56,10 @@ export default function Index(props) {
                 // console.log('newNavCateList = ', resp.data)
                 const originList = resp.data && Array.isArray(resp.data) ? resp.data : resp.data.records;
                 originList.map(item =>{
-                    if(item.componentOption === 'autolayout'){
+                    if(item.componentOption && item.componentOption != 'autolayout') {
                         newNavCateList.push({...item, name:item.componentOption})
-                    }
+                    } 
                 })
-                //-1:新增  -2删除
-                // newNavCateList.push({id:'-1'})
-                // newNavCateList.push({id:'-2'})
                 setNavCateListData(newNavCateList);
             } else {
                 console.error('获取列表数据失败 ==', resp)
@@ -85,7 +83,7 @@ export default function Index(props) {
         }
         return promiseAjax(api, query).then(resp => {
             if (resp && resp.code === 200) {
-                const list = resp.data && Array.isArray(resp.data) ? resp.data : resp.data.records;;
+                const list = resp.data && Array.isArray(resp.data) ? resp.data : resp.data.records;
                 setListData(list);
             } else {
                 console.error('获取列表数据失败 ==', resp)
@@ -98,15 +96,14 @@ export default function Index(props) {
     //列表item点击事件
     const onNavItemClick = (item) => {
         const id = item.id;
-        // console.log('item = ', item)
+        console.log('item = ', item)
         history.push({
-            pathname: '/view',
+            pathname: '/attributes',
             query:{
                 id
             }
         })
         
-
     }
 
     //列表item回调函数
@@ -138,6 +135,7 @@ export default function Index(props) {
             setNavCateListData([])
             setListData([])
             fetchNavCategoryData(navApi, {})
+            // fetchData(navListApi, { componentOption: 'cart'})
         }
     }
 
@@ -190,17 +188,17 @@ export default function Index(props) {
 
     return (
         <VStack align='stretch' spacing='-2'>
-            <Box style={{ margin: '5px 10px 30px 5px', paddingLeft: '8px' }}>
-                <FormControl display='flex' alignItems='center'>
+            <Box style={{ margin: '5px 10px 10px 5px', paddingLeft: '8px' }}>
+                {/* <FormControl display='flex' alignItems='center'>
                     <FormLabel htmlFor='email-alerts' mb='0'>
                         编辑开关：
                     </FormLabel>
                     <Switch isFocusable size='lg' onChange={() => handleChange()} isChecked={switchStatus} />
-                </FormControl>
+                </FormControl> */}
 
             </Box>
 
-            <Box>
+            <Box style={{ margin: '0px 10px' }}>
                 {/* {navCateListData && navCateListData.length > 0 ? (
                     <Tabs variant='enclosed' style={{ width: '900px' }} defaultIndex={tabIndex}>
                         <TabList>
@@ -250,7 +248,7 @@ export default function Index(props) {
                             )}
                         </div>
                     </>
-                ) : null}
+                 ) : null} 
 
             </Box>
 

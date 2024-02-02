@@ -6,7 +6,6 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 
 //
 import CommonItem from '@/components/Presenter/CommonItem'
-import IndicatorsItem from '@/composition/indicatorsListPage/indicatorsItem'
 
 //
 import AutolayoutManageMenuIndicator from '@/composition/componentsUi/compx/ManageMenuIndicator'
@@ -37,7 +36,6 @@ NamedIndicatorSet({
 
 NamedPresenterSet({
     CommonItem,
-    IndicatorsItem
 })
 
 //开发模式设置endpoint, token
