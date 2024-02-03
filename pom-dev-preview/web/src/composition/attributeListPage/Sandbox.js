@@ -31,7 +31,7 @@ export default function Index(props) {
     }
 
     //返回详情页
-    function goViewPage(){
+    function goBack(){
         history.push({
             pathname:'/',
             query:{
@@ -53,7 +53,7 @@ export default function Index(props) {
     return (
         <VStack align='stretch' spacing='-2'>
             <Box style={{ margin: '5px 10px 15px 5px', paddingLeft: '8px' }}>
-                <Button colorScheme='teal' size='sm' marginRight={'8px'} onClick={() => goViewPage()}>
+                <Button colorScheme='teal' size='sm' marginRight={'8px'} onClick={() => goBack()}>
                     返回
                 </Button>
             </Box>

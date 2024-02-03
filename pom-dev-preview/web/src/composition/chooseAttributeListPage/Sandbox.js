@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AutoLayout from './index';
-import { Box } from '@chakra-ui/layout';
+import { Box, VStack, Button, Spinner } from '@chakra-ui/layout';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 const testData = [
@@ -31,6 +31,7 @@ export default function Index(props) {
     
     
     const [items, setItems] = useState(testData)
+    const [isLoading, setLoading] = useState(false);
 
     useEffect(_ => {
         // getData()
@@ -68,9 +69,32 @@ export default function Index(props) {
         saveData(item)
     }
 
+    function goBack(){
+        history.push({
+            pathname:'/attributes',
+            query:{
+                id: moduleId
+            }
+        })
+    }
+
     return (
-        <Box width={600}>
-            <AutoLayout items={items} onIClick={onIClick} />
-        </Box>
+        
+        <VStack align='stretch' spacing='-2'>
+            <Box style={{ margin: '5px 10px 15px 5px', paddingLeft: '8px' }}>
+                <Button colorScheme='teal' size='sm' marginRight={'8px'} onClick={() => goBack()}>
+                    返回
+                </Button>
+            </Box>
+
+            <Box w={600}>
+                {
+                    isLoading
+                    ? <Spinner/>
+                    : items && items.length > 0 && <AutoLayout items={items} onIClick={onIClick} />
+                }
+            </Box>
+
+        </VStack>
     )
 }

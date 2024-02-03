@@ -64,6 +64,17 @@ export default function Index(props) {
         })
     }
 
+    function clickBtnToComponent(name) {
+        const path = routeMap[name]
+        history.push({
+            pathname: path,
+            query: {
+                id,
+                status:'edit'
+            }
+        })
+    }
+
     const config = {
         items: [{id:1}],
         layout: layoutConfig,
@@ -102,16 +113,25 @@ export default function Index(props) {
                         <Button colorScheme='teal' size='sm' marginRight={'10px'} onClick={() => history.push('/')}>
                             返回
                         </Button>
-
-                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
-                            presenter
-                        </Button>
-                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
-                            cart
-                        </Button>
-                        <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => history.push('/')}>
-                            layout
-                        </Button>
+                        { 
+                            layoutConfig && JSON.stringify(layoutConfig) !== '{}' ? (
+                                <>
+                                    <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() =>clickBtnToComponent('presenter')}>
+                                        presenter
+                                    </Button>
+                                    <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => clickBtnToComponent('cart')}>
+                                        cart
+                                    </Button>
+                                    <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => clickBtnToComponent('layout')}>
+                                        layout
+                                    </Button>
+                                    <Button colorScheme='teal' size='sm' marginRight={'5px'}  onClick={() => clickBtnToComponent('container')}>
+                                        container
+                                    </Button>
+                                </>
+                            ):<></>
+                        }
+                        
                     </FormControl>
                 </Box>
 

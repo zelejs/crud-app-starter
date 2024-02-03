@@ -10,7 +10,7 @@ export default function index (props) {
   return (
     <ChakraProvider>
       {/* <PreviewAutoLayout {...props} /> */}
-      <ComponentsManage {...props}/>
+      <ComponentsUi {...props}/>
     </ChakraProvider>
   )
 

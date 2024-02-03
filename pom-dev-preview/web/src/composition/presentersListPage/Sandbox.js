@@ -12,7 +12,7 @@ const routeMap = {
 }
 export default function Index(props) {
 
-    const { id } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
+    const { id, status } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
     const toast = useToast()
     const [items, setItems] = useState('');
     const [isLoading, setLoading] = useState(false);
@@ -54,10 +54,32 @@ export default function Index(props) {
         });
     }
 
+    //更换
+    function editData(itemData) {
+        let api = '/openapi/lc/module/build-auto-layout/' + id
+        const queryData = {
+            //
+        };
+        promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
+            if (resp && resp.code === 200) {
+                toPage(resp.data.nextComponent)
+            } else {
+                console.error("更换presenter失败 = ", resp)
+                toastTips(resp.message)
+            }
+        }).finally(_=>{
+            setLoading(false)
+        });
+    }
+
     const itemClick = (itemData) => {
         // console.log('itemData == ', itemData)
         if(itemData.isSelected){
-            saveData(itemData)
+            if(status === 'edit'){
+                editData(itemData)
+            }else{
+                saveData(itemData)
+            }
         }
     }
 
