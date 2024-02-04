@@ -8,7 +8,6 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 import CommonItem from '@/components/Presenter/CommonItem'
 
 //
-import AutolayoutManageMenuIndicator from '@/composition/componentsUi/compx/ManageMenuIndicator'
 import SelectedCartIndicator from '@/components/Indicator/SelectedCartIndicator'
 
 
@@ -30,7 +29,6 @@ import SelectedCartIndicator from '@/components/Indicator/SelectedCartIndicator'
 //   Wrap
 // })
 NamedIndicatorSet({
-    AutolayoutManageMenuIndicator,
     SelectedCartIndicator
 })
 

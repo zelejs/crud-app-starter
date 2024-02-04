@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, VStack, Spinner, Switch, FormControl, FormLabel, localStorageManager
+    Box, VStack, Spinner, Switch, FormControl, FormLabel, localStorageManager, useToast
 } from "@chakra-ui/react";
 // import { useForm } from 'react-hook-form';
 import { history } from 'umi';
@@ -13,10 +13,20 @@ import layout from './layout';
 
 require('./index.less')
 
+const unClickObj = [
+    "129",
+    "130",
+    "153",
+    "160",
+    "161",
+    "163",
+]
+
 export default function Index(props) {
 
     const { } = props;
 
+    const toast = useToast()
     const [navCateListData, setNavCateListData] = useState([])
     const [listData, setListData] = useState([])
     const [isLoading, setLoading] = useState(false)
@@ -97,8 +107,12 @@ export default function Index(props) {
 
     //列表item点击事件
     const onNavItemClick = (item) => {
+        console.log('item = ', item)
         const id = item.id;
-        // console.log('item = ', item)
+        if(unClickObj.includes(id)){
+            toastTips(`${item.content} 暂不提供修改`)
+            return
+        }
         history.push({
             pathname: '/view',
             query:{
@@ -186,6 +200,18 @@ export default function Index(props) {
 
     function indicatedAction (data) {
         console.log('indicated action = ', data)
+    }
+
+    // tips
+    function toastTips(text, status = 'success') {
+        toast({
+            title: text,
+            description: "",
+            status: status,
+            duration: 3000,
+            isClosable: true,
+            position: 'top'
+        })
     }
 
     return (

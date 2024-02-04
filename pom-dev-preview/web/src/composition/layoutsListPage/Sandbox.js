@@ -14,6 +14,7 @@ const testItems = [
     {id: 6, name: 'test6'},
     {id: 7, name: 'test7'},
     {id: 8, name: 'test8'},
+    {id: 9, name: 'test8'},
 ]
 
 const routeMap = {
@@ -25,7 +26,7 @@ const routeMap = {
 
 export default function Index(props) {
     
-    const { id } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
+    const { id, status } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
     const toast = useToast()
     const [items, setItems] = useState('');
     const [isLoading, setLoading] = useState(false);
@@ -72,6 +73,24 @@ export default function Index(props) {
         });
     }
 
+    //更换
+    function editData(itemData) {
+        let api = '/openapi/lc/module/AutoLayout/replaceModule/' + id
+        const queryData = {
+            replaceModuleId:itemData.id
+        };
+        promiseAjax(api, queryData, { method: 'PUT' }).then(resp => {
+        if (resp && resp.code === 200) {
+            goViewPage()
+        } else {
+            console.error("更换layout失败 = ", resp)
+            toastTips(resp.message)
+        }
+        }).finally(_ => {
+        // setLoading(false)
+        });
+    }
+
     //返回详情页
     function goViewPage(){
         history.push({
@@ -104,10 +123,16 @@ export default function Index(props) {
         });
     }
 
-    const itemClick = (itemData) => {
+    const itemClick = (item) => {
         // console.log('itemData == ', itemData)
         // toPage("container")
-        saveData(itemData)
+        if (item.isSelected) {
+            if(status === 'edit'){
+                editData(item)
+            }else{
+                saveData(item)
+            }
+        }
     }
 
     const toPage = (nextComponent) => {
@@ -144,9 +169,12 @@ export default function Index(props) {
                     <Button colorScheme='teal' size='sm' marginRight={'8px'} onClick={() => goViewPage()}>
                         返回
                     </Button>
-                    <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
-                        跳过
-                    </Button>
+                    { status != 'edit' && (
+                        <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
+                            跳过
+                        </Button>
+                    ) }
+                    
                 </FormControl>
             </Box>
 

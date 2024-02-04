@@ -4,7 +4,9 @@
       "columns": 8
   }, 
   "binding": {
-      "componentType": "content"
+      "moduleName": "content", 
+      "componentType": "__layout.xname", 
+      "componentProps": "__layout.props"
   }, 
   "cart": {
       "xname": "Cart", 
@@ -13,7 +15,7 @@
           "margin": "1px 0", 
           "linewidth": "1px", 
           "corner": "8px", 
-          "fill": "#edf2f7"
+          "isHover": false
       }, 
       "indicator": {
           "xname": "ShadowIndicator", 
@@ -29,7 +31,17 @@
   }, 
   "container": "SelectList", 
   "presenter": {
-      "xname": "Text", 
-      "props": { }
+      "presenter": {
+          "xname": "Rectangle", 
+          "props": {
+              "width": "40px", 
+              "height": "25px", 
+              "fill": "", 
+              "margin": "0 8px 8px 0", 
+              "corner": "8px", 
+              "border": "1px solid #d1d1d1"
+          }
+      }, 
+      "container": "PlainList"
   }
 }

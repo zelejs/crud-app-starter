@@ -2,13 +2,20 @@ import React from 'react';
 import { ChakraProvider, VStack, Box, Button  } from '@chakra-ui/react';
 import { history } from 'umi';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
-const promiseAjax = require('zero-element-boot/lib/components/utils/request');
+
+const routeMap = {
+  presenter: '/presenters',
+  cart: '/carts',
+  layout: '/layouts',
+  container: '/containers',
+}
 
 export default function Index (props) {
 
-  const { id, status } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
-  const api = '/openapi/lc/module?componentOption=container'
-  const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/130'
+  const { id } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
+  const api = '/openapi/lc/module?componentOption=selector'
+  const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/163'
+
 
   //保存数据
   function saveData(itemData) {
@@ -17,7 +24,7 @@ export default function Index (props) {
         addModuleId:itemData.id,
     };
     promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
-        // setLoading(false)
+        setLoading(false)
         if (resp && resp.code === 200) {
             goViewPage()
         } else {
@@ -27,23 +34,6 @@ export default function Index (props) {
     });
   }
 
-  //更换
-  function editData(itemData) {
-    let api = '/openapi/lc/module/AutoLayout/replaceModule/' + id
-    const queryData = {
-      replaceModuleId:itemData.id
-    };
-    promiseAjax(api, queryData, { method: 'PUT' }).then(resp => {
-      if (resp && resp.code === 200) {
-        goViewPage()
-      } else {
-        console.error("更换container失败 = ", resp)
-        toastTips(resp.message)
-      }
-    }).finally(_ => {
-      // setLoading(false)
-    });
-  }
 
   //返回详情页
   function goViewPage(){
@@ -56,12 +46,8 @@ export default function Index (props) {
   }
 
   const onComponentItemClick = (item) => {
-    if (item.isSelected) {
-      if(status === 'edit'){
-        editData(item)
-      }else{
-        saveData(item)
-      }
+    if(itemData.isSelected){
+      saveData(itemData)
     }
   }
 
