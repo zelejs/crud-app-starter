@@ -1,0 +1,22 @@
+{
+    "xname": "Flexbox",
+    "props": {
+        "align":"start",
+        "direction":"row"
+    },
+    "presenter": {
+    },
+    "cart": {
+      "xname": "Cart",
+      "props": {
+        "padding": "10px",
+        "margin": "1px 0",
+        "linewidth": "0",
+        "corner": "8px"
+      }
+    },
+    "bounding": { "margin":"0px 10px 0px 1px"},
+    "container": "PlainList",
+    "indicator": {
+    }
+}

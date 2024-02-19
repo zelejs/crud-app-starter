@@ -1,0 +1,37 @@
+{
+    "container": {
+        "xname": "PlainList"
+    },
+    "presenter": {
+        "xname": "Subtitle"
+    },
+    "mock": [
+        {
+            "userPhone": "12345678901",
+            "userType": "common",
+            "userName": "userOne",
+            "content": "张三"
+        },
+        {
+            "userPhone": "12345678901",
+            "userType": "common",
+            "userName": "userOne",
+            "content": "李四"
+        }
+    ],
+    "xname": "Flexbox",
+    "cart": {
+        "xname": "Cart",
+        "props": {
+            "padding": "10px 30px",
+            "margin": "0",
+            "corner": "8px",
+            "fill": "#edf2f7",
+            "linewidth": "1px"
+        }
+    },
+    "props": {
+        "align": "start",
+        "direction": "row"
+    }
+}

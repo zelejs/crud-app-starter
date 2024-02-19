@@ -2,7 +2,6 @@ import React from 'react';
 import { ChakraProvider, VStack, Box, Button  } from '@chakra-ui/react';
 import { history } from 'umi';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
-const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 const routeMap = {
   presenter: '/presenters',
@@ -14,15 +13,15 @@ const routeMap = {
 export default function Index (props) {
 
   const { id } = props.location && (props.location.query ||  qs.parse(props.location.search.split('?')[1])) 
-  const api = '/openapi/lc/module?componentOption=selector'
-  const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/163'
+  const api = '/openapi/lc/module?componentOption=indicator'
+  const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/161'
 
 
   //保存数据
-  function saveData(item) {
+  function saveData(itemData) {
     let api = '/openapi/lc/module/build-auto-layout/'+id
     const queryData = {
-        addModuleId:item.id,
+        addModuleId:itemData.id,
     };
     promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
         setLoading(false)
@@ -47,8 +46,8 @@ export default function Index (props) {
   }
 
   const onComponentItemClick = (item) => {
-    if(item.isSelected){
-      // saveData(item)
+    if(itemData.isSelected){
+      saveData(itemData)
     }
   }
 
