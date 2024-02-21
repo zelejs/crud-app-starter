@@ -4,13 +4,15 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { history } from 'umi';
 import AutolayoutUI from '@/composition/autolayoutUI';
 import ComponentsManage from '@/composition/componentsManage'
+import PageComponentsManage from '@/composition/pageComponentsManage'
 
 export default function index (props) {
 
   return (
     <ChakraProvider>
       {/* <PreviewAutoLayout {...props} /> */}
-      <AutolayoutUI {...props}/>
+      {/* <AutolayoutUI {...props}/> */}
+      <PageComponentsManage {...props}/>
     </ChakraProvider>
   )
 

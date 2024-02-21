@@ -12,7 +12,6 @@ export default function Index(props) {
     layout: configLayout
   };
 
-  console.log('config ', config);
   const itemClick = (item) =>{
     console.log('item == ', item)
   }
