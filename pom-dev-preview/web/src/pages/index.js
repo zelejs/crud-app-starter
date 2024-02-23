@@ -5,6 +5,7 @@ import { history } from 'umi';
 import AutolayoutUI from '@/composition/autolayoutUI';
 import ComponentsManage from '@/composition/componentsManage'
 import PageComponentsManage from '@/composition/pageComponentsManage'
+import LayoutPreview from '@/composition/localPreview';
 
 export default function index (props) {
 
@@ -13,6 +14,7 @@ export default function index (props) {
       {/* <PreviewAutoLayout {...props} /> */}
       {/* <AutolayoutUI {...props}/> */}
       <PageComponentsManage {...props}/>
+      {/* <LayoutPreview/> */}
     </ChakraProvider>
   )
 

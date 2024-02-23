@@ -5,15 +5,15 @@ const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 import Indicators from '@/composition/indicators';
 import Selectors from '@/composition/selectors';
+import Carts from '@/composition/carts';
 
-import { IndicatorIcon, SelectorIcon } from './svg'
+import { IndicatorIcon, SelectorIcon, CartIcon } from './svg'
 
 const _menuList = [
   { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: true },
   { id: 2, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
+  { id: 3, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
 ]
-
-
 
 
 export default function Index(props) {
@@ -21,6 +21,7 @@ export default function Index(props) {
   const _ComponentPagesMap = {
     indicators: <Indicators {...props}/>,
     selectors: <Selectors {...props}/>,
+    carts: <Carts {...props}/>
   }
 
   const [ menuList, setMenuList ] = useState(_menuList)
@@ -55,6 +56,8 @@ export default function Index(props) {
       console.log('clickItem = ', clickItem)
     }
   }
+
+  console.log('componentName = ', componentName)
 
   return (
     <HStack spacing='0'>

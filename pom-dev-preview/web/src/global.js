@@ -7,8 +7,6 @@ import { set as NamedPresenterSet } from 'zero-element-boot/lib/components/confi
 //
 import CommonItem from '@/components/Presenter/CommonItem'
 
-//
-import SelectedCartIndicator from '@/components/Indicator/SelectedCartIndicator'
 
 
 // //cart
@@ -29,7 +27,6 @@ import SelectedCartIndicator from '@/components/Indicator/SelectedCartIndicator'
 //   Wrap
 // })
 NamedIndicatorSet({
-    SelectedCartIndicator
 })
 
 NamedPresenterSet({

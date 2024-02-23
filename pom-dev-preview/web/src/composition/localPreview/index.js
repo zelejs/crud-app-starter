@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { AutoLayout } from 'zero-element-boot';
+import layout from './layout.js'
 
 export default function Index(props) {
 
-  const { configLayout, items, ...rest } = props;
+  const { previewData={}, ...rest } = props;
+
   /**
    * 页面配置
    */
   const config = {
-    items: items,
-    layout: configLayout
+    layout: layout
   };
 
   const itemClick = (item) =>{
-    console.log('item == ', item)
+    // console.log('item == ', item)
   }
 
   return (
-    <AutoLayout {...config} onItemClick={itemClick}/>
+    <AutoLayout {...previewData} {...config} onItemClick={itemClick}/>
   )
 }
