@@ -14,7 +14,7 @@ const routeMap = {
 
 export default function Index(props) {
 
-  const { id } = props.location && (props.location.query || qs.parse(props.location.search.split('?')[1]))
+  const { id } = props
   const api = '/openapi/lc/module?componentOption=selector'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/163'
 
@@ -49,13 +49,14 @@ export default function Index(props) {
   }
 
   const onComponentItemClick = (item) => {
+
     if (item.isSelected) {
-      setPreviewData({
-        __selector2:{
-          xname: item.componentType,
-          props: item.componentProps
-        }
-      })
+        setPreviewData({
+          __selector2:{
+            xname: item.componentType,
+            props: item.componentProps
+          }
+        })
     }
   }
 
@@ -70,7 +71,7 @@ export default function Index(props) {
 
         <HStack spacing={'0'}>
           <Box style={{ height: '100vh', padding: '8px', background: '#fff'}}>
-            <PreviewAutoLayout layoutApi={layoutApi} api={api} onPreviewItemClick={onComponentItemClick} />
+            <PreviewAutoLayout layoutApi={layoutApi} api={api} onItemClick={onComponentItemClick} />
           </Box>
 
           <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#EDECF1'}>

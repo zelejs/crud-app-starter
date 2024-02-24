@@ -6,7 +6,7 @@ import LocalPreview from '@/composition/localPreview';
 
 export default function Index(props) {
 
-  const { id } = props.location && (props.location.query || qs.parse(props.location.search.split('?')[1]))
+  const { id } = props
   const api = '/openapi/lc/module?componentOption=indicator'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/161'
 
@@ -38,7 +38,7 @@ export default function Index(props) {
     <VStack align='stretch' spacing='-2'>
       <HStack spacing={'0'}>
         <Box style={{ height: '100vh', padding: '8px', background: '#fff' }}>
-          <PreviewAutoLayout layoutApi={layoutApi} api={api} onPreviewItemClick={onComponentItemClick} />
+          <PreviewAutoLayout layoutApi={layoutApi} api={api} onItemClick={onComponentItemClick} />
         </Box>
 
         <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#EDECF1'}>
