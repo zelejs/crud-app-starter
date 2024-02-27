@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { VStack, Box, Button, useToast  } from '@chakra-ui/react';
+import { VStack, Box, Button, useToast, HStack, Text  } from '@chakra-ui/react';
 import { history } from 'umi';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
@@ -20,8 +20,8 @@ const apiParamsMap = {
 
 const apiIdMap = {
     cart: '129',
-    indicator: '161',
-    selector: '163',
+    indicator: '179',
+    selector: '180',
 }
 
 export default function Index (props) {
@@ -34,6 +34,7 @@ export default function Index (props) {
   const [ currentApi, setCurrentApi ] = useState('')
   const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
   const [ currentPage, setCurrentPage ] = useState('cart')
+  const [ currentCartId, setCurrentCartId ] = useState('')
   const toast = useToast()
 
   useEffect(() => {
@@ -43,18 +44,15 @@ export default function Index (props) {
       setCurrentLayoutApi(cLayoutApi)
   },[currentPage])
 
-  console.log('currentApi', currentPage, currentApi, currentLayoutApi)
-
   //保存数据
-  function saveData(itemData) {
-    let api = '/openapi/lc/module/build-auto-layout/'+id
+  function createCart(item) {
+    let api = '/openapi/lc/module/clone-module/'+item.id
     const queryData = {
-        addModuleId:itemData.id,
     };
-    promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
-        // setLoading(false)
+    promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
         if (resp && resp.code === 200) {
-            toPage(resp.data.nextComponent)
+          setCurrentCartId(resp.data.id)
+          getNextComponent(resp.data.id)
         } else {
             console.error("添加cart失败 = ", resp)
             toastTips("添加失败")
@@ -62,62 +60,86 @@ export default function Index (props) {
     });
   }
 
-  //更换
-  function editData(itemData) {
-    let api = '/openapi/lc/module/AutoLayout/replaceModule/' + id
-    const queryData = {
-      replaceModuleId:itemData.id
-    };
-    promiseAjax(api, queryData, { method: 'PUT' }).then(resp => {
-      if (resp && resp.code === 200) {
-        goViewPage()
-      } else {
-        console.error("更换cart失败 = ", resp)
-        toastTips(resp.message)
-      }
-    }).finally(_ => {
-      // setLoading(false)
-    });
-  }
 
-  //获取应该跳转到哪一页
-  function getNextDataToPage(itemData) {
-    let api = '/openapi/lc/module/build-auto-layout/'+id
+
+  //获取下一步信息
+  function getNextComponent(id) {
+    setCurrentApi()
+    setCurrentLayoutApi()
+    let api = '/openapi/lc/module/cart/build-cart/'+id
     const queryData = {
-        skipComponentOptionList: ["cart"]
     };
     promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
         // setLoading(false)
         if (resp && resp.code === 200) {
-            const skipList = ["cart"]
-            skipList.push(resp.data.nextComponent)
+          setCurrentPage(resp.data.nextComponent)
+        } else {
+            console.error("获取下一步信息失败 = ", resp)
+            toastTips("获取信息异常")
+        }
+    });
+  }
+
+  //
+  function editData(itemData) {
+    let api = '/openapi/lc/module/cart/build-cart/' + currentCartId
+    const queryData = {
+      addModuleId:itemData.id
+    };
+    promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
+      if (resp && resp.code === 200) {
+        if(resp.data.nextComponent === 'finish'){
+          cb('success')
+          toastTips('新增成功')
+        }else{
+          setCurrentPage(resp.data.nextComponent)
+        }
+      } else {
+        console.error("编辑cart失败 = ", resp)
+        toastTips(resp.message)
+      }
+    }).finally(_ => {
+    });
+  }
+
+  //获取应该跳转到哪一页
+  function getNextDataToPage() {
+    let api = '/openapi/lc/module/cart/build-cart/'+currentCartId
+    const lsSkip = localStorage.getItem('skipComponentOptionList') ? JSON.parse(localStorage.getItem('skipComponentOptionList')) : []
+    if(lsSkip && lsSkip.length > 0){
+      lsSkip.push(currentPage)
+    }
+    const skipComponentOptionList = lsSkip && lsSkip.length > 0 ? lsSkip : [currentPage]
+    
+    const queryData = {
+      skipComponentOptionList
+    };
+    promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
+      
+        if (resp && resp.code === 200) {
+          if(resp.data.nextComponent === 'finish'){
+            cb('success')
+            toastTips('新增成功')
+          }else{
+            let skipList = []
+            if(localStorage.getItem('skipComponentOptionList')){
+              skipList = JSON.parse(localStorage.getItem('skipComponentOptionList'))
+              skipList.push(resp.data.nextComponent)
+            } else {
+              skipList = [currentPage]
+            }
             localStorage.setItem('skipComponentOptionList', JSON.stringify(skipList))
-            toPage(resp.data.nextComponent)
+            setCurrentApi('')
+            setCurrentLayoutApi('')
+            setTimeout(() => {
+              setCurrentPage(resp.data.nextComponent)
+            }, 100)
+          }
         } else {
             console.error("跳过失败 = ", resp)
             toastTips("跳过失败")
         }
     });
-  }
-
-  //返回详情页
-  function goViewPage(){
-    history.push({
-        pathname:'/view',
-        query:{
-            id
-        }
-    })
-  }
-
-  const toPage = (nextComponent) => {
-    const path = routeMap[nextComponent]
-    history.push({
-        pathname: path,
-        query: {
-            id
-        }
-    })
   }
 
   //跳过单前页, 进入下一步
@@ -130,20 +152,12 @@ export default function Index (props) {
     setCurrentLayoutApi('')
     if (item.isSelected) {
         if(currentPage === 'cart'){
-            setCurrentPage('indicator')
+          createCart(item)
         }else if(currentPage === 'indicator'){
-            setCurrentPage('selector')
-        }else{
-            // setCurrentPage('cart')
-            cb('success')
-            toastTips('新增成功')
-
+          editData(item)
+        }else if(currentPage === 'selector') {
+          editData(item)
         }
-    //   if(status === 'edit'){
-    //     editData(item)
-    //   }else{
-    //     saveData(item)
-    //   }
     }
   }
 
@@ -162,18 +176,14 @@ export default function Index (props) {
   return (
 
     <VStack align='stretch' spacing='-2'>
-        {/* <Box style={{ margin: '5px 10px 15px 5px', paddingLeft: '8px' }}>
-                <Button colorScheme='teal' size='sm' marginRight={'8px'} onClick={() => goViewPage()}>
-                    返回
-                </Button>
-                { status != 'edit' && (
-                <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
-                    跳过
-                </Button>
-                ) }
-                
-        </Box> */}
-        <Box style={{ margin: '5px 5px 5px 5px', paddingLeft: '8px' }} >
+        <HStack spacing={5} w={'100%'} justifyContent={'space-between'}>
+          <div></div>
+          <Text fontSize={'16px'} fontWeight={'bold'}>新增组件</Text>
+          <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
+            跳过
+          </Button>
+        </HStack>
+        <Box style={{ margin: '20px 5px 5px 5px', paddingLeft: '8px' }} >
             { currentApi && currentLayoutApi ? (
                 <PreviewAutoLayout  layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} />
             ):<></>}
