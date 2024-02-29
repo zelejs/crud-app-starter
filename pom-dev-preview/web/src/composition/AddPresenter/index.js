@@ -33,10 +33,12 @@ export default function Index(props) {
   const api = '/openapi/lc/module?pageNum=1&pageSize=100'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
 
-  const [currentApi, setCurrentApi] = useState('')
-  const [currentLayoutApi, setCurrentLayoutApi] = useState('')
-  const [currentPage, setCurrentPage] = useState('presenter')
-  const [currentCartId, setCurrentCartId] = useState('')
+  const [ currentApi, setCurrentApi ] = useState('')
+  const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
+  const [ currentPage, setCurrentPage ] = useState('presenter')
+  const [ currentAddModuleIdList, setCurrentAddModuleIdList ] = useState([])
+  const [ currentComponentId, setCurrentComponentId ] = useState('') // mainModuleId
+  const [ currentSkipComponentOptionList, setCurrentSkipComponentOptionList] = useState([])
   const toast = useToast()
 
   useEffect(() => {
@@ -49,135 +51,82 @@ export default function Index(props) {
     }
   }, [currentPage])
 
-  //保存数据
-  function createCart(item) {
-    let api = '/openapi/lc/module/clone-module/' + item.id
+  //处理数据
+  function getPostSkipComponent(item, skipData) {
+    let api = '/openapi/lc/module/presenter/build-presenter'
     const queryData = {
     };
-    promiseAjax(api, queryData, { method: 'POST' }).then(resp => {
-      if (resp && resp.code === 200) {
-        setCurrentCartId(resp.data.id)
-        getNextComponent(resp.data.id)
-      } else {
-        console.error("添加cart失败 = ", resp)
-        toastTips("添加失败")
+    if(!currentComponentId){
+      if(currentAddModuleIdList && currentAddModuleIdList.length > 0){
+        queryData.addModuleIdList = currentAddModuleIdList
+      }else{
+        toastTips('请先选择组件')
+        return
       }
-    });
-  }
-
-
-
-  //获取下一步信息
-  function getNextComponent(id) {
-    setCurrentApi()
-    setCurrentLayoutApi()
-    let api = '/openapi/lc/module/cart/build-cart/' + id
-    const queryData = {
-    };
-    promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
-      // setLoading(false)
-      if (resp && resp.code === 200) {
-        setCurrentPage(resp.data.nextComponent)
-      } else {
-        console.error("获取下一步信息失败 = ", resp)
-        toastTips("获取信息异常")
+    }
+    
+    if(currentComponentId){
+      queryData.mainModuleId = currentComponentId
+    }
+    if(item &&  item.id){
+      queryData.addModuleId = item.id
+    }
+    if(currentSkipComponentOptionList && currentSkipComponentOptionList.length > 0){
+      const newSkipList = currentSkipComponentOptionList
+      if(skipData){
+        newSkipList.push(skipData)
       }
-    });
-  }
+      queryData.skipComponentOptionList = newSkipList
+    } else if(skipData) {
+      queryData.skipComponentOptionList = [skipData]
+    }
 
-  //
-  function editData(itemData) {
-    let api = '/openapi/lc/module/cart/build-cart/' + currentCartId
-    const queryData = {
-      addModuleId: itemData.id
-    };
-    promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
-      if (resp && resp.code === 200) {
-        if (resp.data.nextComponent === 'finish') {
-          cb('success')
-          toastTips('新增成功')
-        } else {
-          setCurrentPage(resp.data.nextComponent)
+    promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
+        if (resp && resp.code === 200) {
+          if(!currentComponentId && resp.data.mainModuleId){
+            setCurrentComponentId(resp.data.mainModuleId)
+          }
+          if(resp.data.nextComponent === 'finish'){
+            cb('success')
+            toastTips('新增成功')
+          }else{
+            setCurrentApi()
+            setCurrentLayoutApi()
+            setTimeout(() => {
+              setCurrentPage(resp.data.nextComponent)
+            }, 100)
+          }
+          if(resp.data.skipComponentOptionList && resp.data.skipComponentOptionList.length > 0){
+            setCurrentSkipComponentOptionList(resp.data.skipComponentOptionList)
+          }
+        } else if ( resp.code === 4000 ) {
+          cb('error')
+          toastTips(resp.message)
+        }  else {
+            console.error("getPostComponent = ", resp)
+            toastTips(resp.message)
         }
-      } else {
-        console.error("编辑cart失败 = ", resp)
-        toastTips(resp.message)
-      }
     }).finally(_ => {
     });
   }
 
-  //获取应该跳转到哪一页
-  function getNextDataToPage() {
-    let api = '/openapi/lc/module/cart/build-cart/' + currentCartId
-    const lsSkip = localStorage.getItem('skipComponentOptionList') ? JSON.parse(localStorage.getItem('skipComponentOptionList')) : []
-    if (lsSkip && lsSkip.length > 0) {
-      lsSkip.push(currentPage)
-    }
-    const skipComponentOptionList = lsSkip && lsSkip.length > 0 ? lsSkip : [currentPage]
-
-    const queryData = {
-      skipComponentOptionList
-    };
-    promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
-
-      if (resp && resp.code === 200) {
-        if (resp.data.nextComponent === 'finish') {
-          cb('success')
-          toastTips('新增成功')
-        } else {
-          let skipList = []
-          if (localStorage.getItem('skipComponentOptionList')) {
-            skipList = JSON.parse(localStorage.getItem('skipComponentOptionList'))
-            skipList.push(resp.data.nextComponent)
-          } else {
-            skipList = [currentPage]
-          }
-          localStorage.setItem('skipComponentOptionList', JSON.stringify(skipList))
-          setCurrentApi('')
-          setCurrentLayoutApi('')
-          setTimeout(() => {
-            setCurrentPage(resp.data.nextComponent)
-          }, 100)
-        }
-      } else {
-        console.error("跳过失败 = ", resp)
-        toastTips("跳过失败")
-      }
-    });
-  }
-
-  //跳过单前页, 进入下一步
-  const nextPage = () => {
-    getNextDataToPage()
-  }
-
   //保存presenter
-  const savePresenters = (presenters) => {
-    setCurrentApi('')
-    setCurrentLayoutApi('')
-    setTimeout(() => {
-      setCurrentPage('cart')
-    }, 100)
+  const savePresenters = () => {
+    cb('success')
+    // getPostSkipComponent()
   }
 
   const onComponentItemClick = (data) => {
-    console.log("current page = ", currentPage)
     if (data.isSelected) {
       setCurrentApi('')
       setCurrentLayoutApi('')
-      if(currentPage === 'cart'){
-        setCurrentPage('layout')
-      //   createCart(item)
-      }else if(currentPage === 'layout'){
-        setCurrentPage('container')
-      //   editData(item)
-      }else if(currentPage === 'container'){
-        cb('success')
-        toastTips('新增成功')
-      }
+      getPostSkipComponent(item)
     } else if(data && Array.isArray(data) && data.length > 0){
-      console.log('多选 = ', data)
+      const ids = []
+      data.map(item=>{
+        ids.push(item.id)
+      })
+      setCurrentAddModuleIdList(ids)
     }
     
   }
@@ -202,7 +151,7 @@ export default function Index(props) {
         <Text fontSize={'16px'} fontWeight={'bold'}>新增组件</Text>
         {
           currentPage != 'presenter' ? (
-            <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
+            <Button colorScheme='teal' size='sm' onClick={() => getPostSkipComponent("", currentPage)}>
               跳过
             </Button>
           ) : (

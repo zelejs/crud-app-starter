@@ -12,10 +12,10 @@ import Layouts from '@/composition/Layouts';
 import { IndicatorIcon, SelectorIcon, CartIcon, PresenterIcon } from './svg'
 
 const _menuList = [
-  { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: true },
+  { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
   { id: 2, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
   { id: 3, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
-  { id: 4, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
+  { id: 4, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
   // { id: 5, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
 ]
 
@@ -35,7 +35,7 @@ export default function Index(props) {
   const [menuList, setMenuList] = useState(_menuList)
   const [onHover, setOnHover] = useState(false);
   const [currentHoverMenuId, setCurrentHoverMenuId] = useState(0);
-  const [componentName, setComponentName] = useState('indicators');
+  const [componentName, setComponentName] = useState('presenters');
   const [isSwitch, setIsSwitch] = useState(false)
 
   const toggleHoverEntered = (menuId) => {

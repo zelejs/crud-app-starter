@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { VStack, Box, HStack, Button, useToast } from '@chakra-ui/react';
+import { VStack, Box, HStack, Button } from '@chakra-ui/react';
 import { history } from 'umi';
 import { AutoLayout } from 'zero-element-boot'
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 import LocalPreview from '@/composition/localPreview';
 import categoryListLayout from '@/composition/presenters/CategoryList/layout';
 import AddPresenter from '@/composition/AddPresenter';
-import { useForceUpdate } from 'zero-element-boot/lib/components/hooks/lifeCycle';
-import _ from 'lodash';
+const promiseAjax = require('zero-element-boot/lib/components/utils/request');
+
+const routeMap = {
+    presenter: '/presenters',
+    cart: '/carts',
+    layout: '/layouts',
+    container: '/containers',
+    finish: '/view'
+}
+
+const apiParamsMap = {
+    presenter: 'presenter',
+    cart: 'cart',
+    layout: 'layout',
+    container: 'container',
+}
+
+const apiIdMap = {
+    presenter: '160',
+    cart: '',
+    layout: '',
+    container: '',
+}
 
 export default function Index(props) {
 
@@ -19,17 +40,71 @@ export default function Index(props) {
     const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
     const [previewData, setPreviewData] = useState('')
     const [isAddClick, setIsAddClick] = useState(false)
-    const [currentCategoryName, setCurrentCategoryName] = useState('element')
-    const toast = useToast()
+    const [currentAddType, setCurrentAddType] = useState('element')
 
     useEffect(() => {
-        if(currentCategoryName){
-            const cApi = `${api}?componentOption=presenter&combinationOption=${currentCategoryName}`
-            const cLayoutApi = `${layoutApi}/160`
-            setCurrentApi(cApi)
-            setCurrentLayoutApi(cLayoutApi)
-        }
-    }, [currentCategoryName])
+      const cApi = `${api}?componentOption=presenter&combinationOption=${currentAddType}`
+      const cLayoutApi = `${layoutApi}/160`
+      setCurrentApi(cApi)
+      setCurrentLayoutApi(cLayoutApi)
+    }, [currentAddType])
+
+
+    //保存数据
+    function saveData(itemData) {
+        let api = '/openapi/lc/module/build-auto-layout/' + id
+        const queryData = {
+            addModuleId: itemData.id
+        };
+        promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
+            if (resp && resp.code === 200) {
+                toPage(resp.data.nextComponent)
+            } else {
+                console.error("添加presenter失败 = ", resp)
+                toastTips(resp.message)
+            }
+        }).finally(_ => {
+            // setLoading(false)
+        });
+    }
+
+    //更换
+    function editData(itemData) {
+        let api = '/openapi/lc/module/AutoLayout/replaceModule/' + id
+        const queryData = {
+            replaceModuleId: itemData.id
+        };
+        promiseAjax(api, queryData, { method: 'PUT' }).then(resp => {
+            if (resp && resp.code === 200) {
+                goViewPage()
+            } else {
+                console.error("更换presenter失败 = ", resp)
+                toastTips(resp.message)
+            }
+        }).finally(_ => {
+            // setLoading(false)
+        });
+    }
+
+    const toPage = (nextComponent) => {
+        const path = routeMap[nextComponent]
+        history.push({
+            pathname: path,
+            query: {
+                id
+            }
+        })
+    }
+
+    //返回详情页
+    function goViewPage() {
+        history.push({
+            pathname: '/view',
+            query: {
+                id
+            }
+        })
+    }
 
     const onComponentItemClick = (item) => {
         // console.log('item = ', item)
@@ -46,51 +121,33 @@ export default function Index(props) {
     }
 
     const onCateItemClick = (item) => {
+        console.log(' item = ', item)
         setCurrentApi('')
         setCurrentLayoutApi('')
-        setCurrentCategoryName(item.name)
+        setCurrentAddType(item.name)
         setIsAddClick(false)
         setPreviewData()
     }
 
     //新增
     const addNewClick = () => {
-        if(currentCategoryName){
-            setIsAddClick(true)
-            setPreviewData()
-        }else{
-            toastTips('请选择分类')
-        }
+        console.log(' presenter add click')
+        setIsAddClick(true)
+        setPreviewData()
     }
 
     //新增回调事件
     const cb = (status) => {
         if (status === 'success') {
-            const nApi = _.cloneDeepWith(currentApi)
-            const nLayoutApi = _.cloneDeepWith(currentLayoutApi)
+            console.log('新增成功')
             setCurrentApi()
             setCurrentLayoutApi()
             setIsAddClick(false)
             setTimeout(() => {
-                setCurrentApi(nApi)
-                setCurrentLayoutApi(nLayoutApi)
+                setCurrentApi(api)
+                setCurrentLayoutApi(layoutApi)
             },100)
-            useForceUpdate()
-        }else if (status === 'error'){
-            setIsAddClick(false)
-          }
-    }
-
-    // tips
-    function toastTips(text, status = 'success') {
-        toast({
-            title: text,
-            description: "",
-            status: status,
-            duration: 3000,
-            isClosable: true,
-            position: 'top'
-        })
+        }
     }
 
     return (
@@ -101,9 +158,9 @@ export default function Index(props) {
                 </Box>
                 <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
                 <Box style={{ height: '100vh', padding: '8px', background: '#fff' }}>
-                    { isSwitch && (<Button onClick={addNewClick}>新增</Button>)}
+                    <Button onClick={addNewClick}>新增</Button>
                     {
-                        currentApi && currentLayoutApi && <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={false} />
+                        currentApi && currentLayoutApi && <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={isSwitch} />
                     }
                 </Box>
                 <Box style={{ width: '100%', height: '100vh' }} background={'#EDECF1'}>
