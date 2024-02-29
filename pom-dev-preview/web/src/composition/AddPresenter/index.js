@@ -30,7 +30,7 @@ export default function Index(props) {
 
   const { id, status, cb } = props
   //   const api = '/openapi/lc/module?componentOption=cart'
-  const api = '/openapi/lc/module'
+  const api = '/openapi/lc/module?pageNum=1&pageSize=100'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
 
   const [currentApi, setCurrentApi] = useState('')
@@ -42,7 +42,7 @@ export default function Index(props) {
   useEffect(() => {
     
     if(currentPage){
-      const cApi = `${api}?componentOption=${apiParamsMap[currentPage]}`
+      const cApi = `${api}&componentOption=${apiParamsMap[currentPage]}`
       const cLayoutApi = `${layoutApi}/${apiIdMap[currentPage]}`
       setCurrentApi(cApi)
       setCurrentLayoutApi(cLayoutApi)

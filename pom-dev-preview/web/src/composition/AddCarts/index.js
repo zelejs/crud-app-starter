@@ -33,11 +33,17 @@ export default function Index (props) {
   
   const [ currentApi, setCurrentApi ] = useState('')
   const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
-  const [ currentPage, setCurrentPage ] = useState('cart')
-  const [ currentCartId, setCurrentCartId ] = useState('')
+  const [ currentPage, setCurrentPage ] = useState('')
+  const [ currentComponentId, setCurrentComponentId ] = useState('') // mainModuleId
+  const [ currentSkipComponentOptionList, setCurrentSkipComponentOptionList] = useState([])
   const toast = useToast()
 
   useEffect(() => {
+    getPostSkipComponent()
+  },[])
+
+  useEffect(() => {
+    if(currentPage){
       let cApi = `${api}?componentOption=${apiParamsMap[currentPage]}`
       if(currentPage === 'cart'){
         cApi += '&combinationOption=native'
@@ -45,122 +51,61 @@ export default function Index (props) {
       const cLayoutApi = `${layoutApi}/${apiIdMap[currentPage]}`
       setCurrentApi(cApi)
       setCurrentLayoutApi(cLayoutApi)
+    }
   },[currentPage])
 
-  //保存数据
-  function createCart(item) {
-    let api = '/openapi/lc/module/clone-module/'+item.id
-    const queryData = {
-    };
-    promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
-        if (resp && resp.code === 200) {
-          setCurrentCartId(resp.data.id)
-          getNextComponent(resp.data.id)
-        } else {
-            console.error("添加cart失败 = ", resp)
-            toastTips("添加失败")
-        }
-    });
-  }
-
-
-
-  //跳过
-  function getNextComponent(id) {
+  //处理数据
+  function getPostSkipComponent(item, skipData) {
     setCurrentApi()
     setCurrentLayoutApi()
-    let api = '/openapi/lc/module/cart/build-cart/'+id
+    let api = '/openapi/lc/module/cart/build-cart'
     const queryData = {
     };
-    promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
-        // setLoading(false)
-        if (resp && resp.code === 200) {
-          setCurrentPage(resp.data.nextComponent)
-        } else {
-            console.error("获取下一步信息失败 = ", resp)
-            toastTips("获取信息异常")
-        }
-    });
-  }
-
-  //
-  function editData(itemData) {
-    let api = '/openapi/lc/module/cart/build-cart/' + currentCartId
-    const queryData = {
-      addModuleId:itemData.id
-    };
-    promiseAjax(api, queryData, { method: 'PATCH' }).then(resp => {
-      if (resp && resp.code === 200) {
-        if(resp.data.nextComponent === 'finish'){
-          cb('success')
-          toastTips('新增成功')
-        }else{
-          setCurrentPage(resp.data.nextComponent)
-        }
-      } else {
-        console.error("编辑cart失败 = ", resp)
-        toastTips(resp.message)
-      }
-    }).finally(_ => {
-    });
-  }
-
-  //获取应该跳转到哪一页
-  function getNextDataToPage() {
-    let api = '/openapi/lc/module/cart/build-cart/'+currentCartId
-    const lsSkip = localStorage.getItem('skipComponentOptionList') ? JSON.parse(localStorage.getItem('skipComponentOptionList')) : []
-    if(lsSkip && lsSkip.length > 0){
-      lsSkip.push(currentPage)
+    if(currentComponentId){
+      queryData.mainModuleId = currentComponentId
     }
-    const skipComponentOptionList = lsSkip && lsSkip.length > 0 ? lsSkip : [currentPage]
-    
-    const queryData = {
-      skipComponentOptionList
-    };
-    promiseAjax(api, queryData, {method: 'PATCH'}).then(resp => {
-      
+    if(item &&  item.id){
+      queryData.addModuleId = item.id
+    }
+    if(currentSkipComponentOptionList && currentSkipComponentOptionList.length > 0){
+      const newSkipList = currentSkipComponentOptionList
+      if(skipData){
+        newSkipList.push(skipData)
+      }
+      queryData.skipComponentOptionList = newSkipList
+    } else if(skipData) {
+      queryData.skipComponentOptionList = [skipData]
+    }
+
+    promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
         if (resp && resp.code === 200) {
+          if(!currentComponentId && resp.data.mainModuleId){
+            setCurrentComponentId(resp.data.mainModuleId)
+          }
           if(resp.data.nextComponent === 'finish'){
             cb('success')
             toastTips('新增成功')
           }else{
-            let skipList = []
-            if(localStorage.getItem('skipComponentOptionList')){
-              skipList = JSON.parse(localStorage.getItem('skipComponentOptionList'))
-              skipList.push(resp.data.nextComponent)
-            } else {
-              skipList = [currentPage]
-            }
-            localStorage.setItem('skipComponentOptionList', JSON.stringify(skipList))
-            setCurrentApi('')
-            setCurrentLayoutApi('')
-            setTimeout(() => {
-              setCurrentPage(resp.data.nextComponent)
-            }, 100)
+            setCurrentPage(resp.data.nextComponent)
           }
-        } else {
-            console.error("跳过失败 = ", resp)
-            toastTips("跳过失败")
+          if(resp.data.skipComponentOptionList && resp.data.skipComponentOptionList.length > 0){
+            setCurrentSkipComponentOptionList(resp.data.skipComponentOptionList)
+          }
+        } else if ( resp.code === 4000 ) {
+          cb('error')
+          toastTips(resp.message)
+        }  else {
+            console.error("getPostComponent = ", resp)
+            toastTips(resp.message)
         }
     });
-  }
-
-  //跳过单前页, 进入下一步
-  const nextPage = () => {
-    getNextDataToPage()
   }
 
   const onComponentItemClick = (item) => {
     setCurrentApi('')
     setCurrentLayoutApi('')
     if (item.isSelected) {
-        if(currentPage === 'cart'){
-          createCart(item)
-        }else if(currentPage === 'indicator'){
-          editData(item)
-        }else if(currentPage === 'selector') {
-          editData(item)
-        }
+      getPostSkipComponent(item)
     }
   }
 
@@ -182,7 +127,7 @@ export default function Index (props) {
         <HStack spacing={5} w={'100%'} justifyContent={'space-between'}>
           <div></div>
           <Text fontSize={'16px'} fontWeight={'bold'}>新增组件</Text>
-          <Button colorScheme='teal' size='sm' onClick={() => nextPage()}>
+          <Button colorScheme='teal' size='sm' onClick={() => getPostSkipComponent("", currentPage)}>
             跳过
           </Button>
         </HStack>

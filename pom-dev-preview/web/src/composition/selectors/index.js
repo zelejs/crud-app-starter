@@ -70,11 +70,11 @@ export default function Index(props) {
         </Box> */}
 
         <HStack spacing={'0'}>
-          <Box style={{ height: '100vh', padding: '8px', background: '#fff'}}>
+          <Box style={{ height: window.innerHeight, padding: '8px', background: '#fff'}}>
             <PreviewAutoLayout layoutApi={layoutApi} api={api} onItemClick={onComponentItemClick} />
           </Box>
 
-          <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#EDECF1'}>
+          <Box style={{ width: '100%', height: window.innerHeight, padding: '8px' }} background={'#EDECF1'}>
             {
               previewData ? (
                 <LocalPreview previewData={previewData} />

@@ -12,10 +12,10 @@ import Layouts from '@/composition/Layouts';
 import { IndicatorIcon, SelectorIcon, CartIcon, PresenterIcon } from './svg'
 
 const _menuList = [
-  { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
+  { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: true },
   { id: 2, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
   { id: 3, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
-  { id: 4, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
+  { id: 4, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
   // { id: 5, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
 ]
 
@@ -35,7 +35,7 @@ export default function Index(props) {
   const [menuList, setMenuList] = useState(_menuList)
   const [onHover, setOnHover] = useState(false);
   const [currentHoverMenuId, setCurrentHoverMenuId] = useState(0);
-  const [componentName, setComponentName] = useState('presenters');
+  const [componentName, setComponentName] = useState('indicators');
   const [isSwitch, setIsSwitch] = useState(false)
 
   const toggleHoverEntered = (menuId) => {
@@ -75,8 +75,8 @@ export default function Index(props) {
   }
 
   return (
-    <HStack spacing='0'>
-      <Box style={{ width: '100px', height: '100vh', background: '#1F2229', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <HStack spacing='0' overflowY={'hidden'}>
+      <Box style={{ width: '100px', height: window.innerHeight, background: '#1F2229', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <VStack spacing={5}>
           {menuList.map((item, index) => (
             <Box key={`menu_${index}`} cursor={'pointer'}
@@ -114,7 +114,7 @@ export default function Index(props) {
         </VStack>
       </Box>
 
-      <Box style={{ width: '100%', height: '100vh', background: '#15171C' }}>
+      <Box style={{ width: '100%', height: window.innerHeight, background: '#15171C' }}>
         {componentName ? matchComponentPage()  : <></>}
       </Box>
 

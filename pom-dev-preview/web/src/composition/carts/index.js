@@ -32,7 +32,6 @@ export default function Index(props) {
 
   //新增cart按钮
   const addNewClick = () => {
-    localStorage.setItem('skipComponentOptionList', '')
     setIsAddClick(!isAddClick)
   }
   //新增cart回调事件
@@ -45,6 +44,8 @@ export default function Index(props) {
         setApi(api1)
         setLayoutApi(layoutApi1)
       },100)
+    }else if (status === 'error'){
+      setIsAddClick(false)
     }
   }
 
@@ -53,7 +54,7 @@ export default function Index(props) {
       <VStack align='stretch' spacing='-2'>
 
         <HStack spacing={'0'}>
-          <Box style={{ height: '100vh', padding: '8px', background: '#fff' }}>
+          <Box style={{ height: window.innerHeight, padding: '8px', background: '#fff' }}>
             {
               api && layoutApi ? (
                 <PreviewAutoLayout layoutApi={layoutApi} api={api} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={isSwitch} />
@@ -64,13 +65,13 @@ export default function Index(props) {
           {
             isSwitch && isAddClick ? (
               <>
-                <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
-                <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#fff'}>
+                <Box style={{ width: '6px', height: window.innerHeight }} background={'#EDECF1'}></Box>
+                <Box style={{ width: '100%', height: window.innerHeight, padding: '8px' }} background={'#fff'}>
                   <AddCarts cb={cb} />
                 </Box>
               </>
             ) : (
-              <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#EDECF1'}>
+              <Box style={{ width: '100%', height: window.innerHeight, padding: '8px' }} background={'#EDECF1'}>
                 {
                   previewData ? (
                     <LocalPreview previewData={previewData} type='cart' />
