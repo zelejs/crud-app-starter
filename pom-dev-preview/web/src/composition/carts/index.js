@@ -64,7 +64,7 @@ export default function Index(props) {
           {
             isSwitch && isAddClick ? (
               <>
-                <Box style={{ width: '8px', height: '100vh' }} background={'#EDECF1'}></Box>
+                <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
                 <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#fff'}>
                   <AddCarts cb={cb} />
                 </Box>

@@ -38,7 +38,10 @@ export default function Index (props) {
   const toast = useToast()
 
   useEffect(() => {
-      const cApi = `${api}?componentOption=${apiParamsMap[currentPage]}`
+      let cApi = `${api}?componentOption=${apiParamsMap[currentPage]}`
+      if(currentPage === 'cart'){
+        cApi += '&combinationOption=native'
+      }
       const cLayoutApi = `${layoutApi}/${apiIdMap[currentPage]}`
       setCurrentApi(cApi)
       setCurrentLayoutApi(cLayoutApi)
@@ -62,7 +65,7 @@ export default function Index (props) {
 
 
 
-  //获取下一步信息
+  //跳过
   function getNextComponent(id) {
     setCurrentApi()
     setCurrentLayoutApi()
