@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { HStack, VStack, Box, Button, Text, Switch } from '@chakra-ui/react';
-import { history } from 'umi';
-const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 import Indicators from '@/composition/indicators';
 import Selectors from '@/composition/selectors';
@@ -64,7 +62,7 @@ export default function Index(props) {
     setMenuList(menuList)
     setIsSwitch(false)
     if (clickItem) {
-      console.log('menu item click = ', clickItem)
+      // console.log('menu item click = ', clickItem)
     }
   }
 

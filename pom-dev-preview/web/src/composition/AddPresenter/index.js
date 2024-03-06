@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { VStack, Box, Button, useToast, HStack, Text } from '@chakra-ui/react';
-import { history } from 'umi';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
-
-const routeMap = {
-  presenter: '/presenters',
-  cart: '/carts',
-  layout: '/layouts',
-  container: '/containers',
-  finish: '/view'
-}
 
 const apiParamsMap = {
   presenter: 'presenter',
@@ -28,7 +19,7 @@ const apiIdMap = {
 
 export default function Index(props) {
 
-  const { id, status, cb } = props
+  const { id, status, cb, combinationOption } = props
   //   const api = '/openapi/lc/module?componentOption=cart'
   const api = '/openapi/lc/module?pageNum=1&pageSize=100'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
@@ -37,7 +28,7 @@ export default function Index(props) {
   const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
   const [ currentPage, setCurrentPage ] = useState('presenter')
   const [ currentAddModuleIdList, setCurrentAddModuleIdList ] = useState([])
-  const [ currentComponentId, setCurrentComponentId ] = useState('') // mainModuleId
+  const [ newComponentId, seNewComponentId ] = useState('') // mainModuleId
   const [ currentSkipComponentOptionList, setCurrentSkipComponentOptionList] = useState([])
   const toast = useToast()
 
@@ -52,24 +43,26 @@ export default function Index(props) {
   }, [currentPage])
 
   //处理数据
-  function getPostSkipComponent(item, skipData) {
+  function getPostSkipComponent(data, skipData) {
     let api = '/openapi/lc/module/presenter/build-presenter'
     const queryData = {
     };
-    if(!currentComponentId){
-      if(currentAddModuleIdList && currentAddModuleIdList.length > 0){
-        queryData.addModuleIdList = currentAddModuleIdList
+    //
+    if(!newComponentId){
+      if( ( Array.isArray(data) && data.length > 0) || ( currentAddModuleIdList && currentAddModuleIdList.length > 0 )){
+        queryData.mainModuleCombinationOption = combinationOption
+        queryData.addModuleIdList = data || currentAddModuleIdList
       }else{
         toastTips('请先选择组件')
         return
       }
     }
     
-    if(currentComponentId){
-      queryData.mainModuleId = currentComponentId
+    if(newComponentId){
+      queryData.mainModuleId = newComponentId
     }
-    if(item &&  item.id){
-      queryData.addModuleId = item.id
+    if(data &&  data.id){
+      queryData.addModuleId = data.id
     }
     if(currentSkipComponentOptionList && currentSkipComponentOptionList.length > 0){
       const newSkipList = currentSkipComponentOptionList
@@ -83,8 +76,8 @@ export default function Index(props) {
 
     promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
         if (resp && resp.code === 200) {
-          if(!currentComponentId && resp.data.mainModuleId){
-            setCurrentComponentId(resp.data.mainModuleId)
+          if(!newComponentId && resp.data.mainModuleId){
+            seNewComponentId(resp.data.mainModuleId)
           }
           if(resp.data.nextComponent === 'finish'){
             cb('success')
@@ -112,22 +105,16 @@ export default function Index(props) {
 
   //保存presenter
   const savePresenters = () => {
-    cb('success')
-    // getPostSkipComponent()
+    // cb('success')
+    getPostSkipComponent()
   }
 
   const onComponentItemClick = (data) => {
     if (data.isSelected) {
       setCurrentApi('')
       setCurrentLayoutApi('')
-      getPostSkipComponent(item)
-    } else if(data && Array.isArray(data) && data.length > 0){
-      const ids = []
-      data.map(item=>{
-        ids.push(item.id)
-      })
-      setCurrentAddModuleIdList(ids)
-    }
+      getPostSkipComponent(data)
+    } 
     
   }
 
@@ -143,6 +130,20 @@ export default function Index(props) {
     })
   }
 
+  const onComponentsOkClick =(data)=>{
+    console.log('on click = ', data)
+    if(data && Array.isArray(data) && data.length > 0){
+      const ids = []
+      data.map(item=>{
+        ids.push(item.id)
+      })
+      // setCurrentAddModuleIdList(ids)
+      setCurrentApi('')
+      setCurrentLayoutApi('')
+      getPostSkipComponent(ids)
+    }
+  }
+
   return (
 
     <VStack align='stretch' spacing='-2'>
@@ -155,15 +156,16 @@ export default function Index(props) {
               跳过
             </Button>
           ) : (
-            <Button colorScheme='teal' size='sm' onClick={() => savePresenters()}>
-              确认
-            </Button>
+            // <Button colorScheme='teal' size='sm' onClick={() => savePresenters()}>
+            //   确认
+            // </Button>
+            <div></div>
           )
         }
       </HStack>
       <Box style={{ margin: '20px 5px 5px 5px', paddingLeft: '8px' }} >
         {currentApi && currentLayoutApi ? (
-          <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} />
+          <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onOkClick={onComponentsOkClick} onItemClick={onComponentItemClick} />
         ) : <></>}
       </Box>
 

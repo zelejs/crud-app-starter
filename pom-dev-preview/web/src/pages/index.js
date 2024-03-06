@@ -2,10 +2,10 @@ import React from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 // import PreviewAutoLayout from '@/composition/PreviewAutoLayout/Sandbox'
 import { history } from 'umi';
-import AutolayoutUI from '@/composition/autolayoutUI';
-import ComponentsManage from '@/composition/componentsManage'
+// import AutolayoutUI from '@/composition/autolayoutUI';
+// import ComponentsManage from '@/composition/componentsManage'
 import PageComponentsManage from '@/composition/pageComponentsManage'
-import LayoutPreview from '@/composition/localPreview';
+// import LayoutPreview from '@/composition/localPreview';
 
 export default function index (props) {
 
