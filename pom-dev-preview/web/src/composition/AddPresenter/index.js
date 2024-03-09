@@ -7,6 +7,7 @@ const apiParamsMap = {
   presenter: 'presenter',
   cart: 'cart',
   layout: 'layout',
+  indicator: 'indicator',
   container: 'container',
 }
 
@@ -14,6 +15,7 @@ const apiIdMap = {
   presenter: '197',
   cart: '129',
   layout: '196',
+  indicator: '179',
   container: '198',
 }
 

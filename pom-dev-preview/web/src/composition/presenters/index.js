@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { VStack, Box, HStack, Button, useToast, createIcon } from '@chakra-ui/react';
 import { AutoLayout } from 'zero-element-boot'
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
-import LocalPreview from '@/composition/localPreview';
-import PreviewFetch from '@/composition/localPreview/indeFetch';
+// import LocalPreview from '@/composition/localPreview';
+// import PreviewFetch from '@/composition/localPreview/indeFetch';
+import PreviewFetch2 from '@/composition/localPreview/indexManage';
 import categoryListLayout from '@/composition/presenters/CategoryList/layout';
 import AddPresenter from '@/composition/AddPresenter';
 import { useForceUpdate } from 'zero-element-boot/lib/components/hooks/lifeCycle';
@@ -19,9 +20,10 @@ export default function Index(props) {
     const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
     // const [previewData, setPreviewData] = useState('')
 
-    const [ previewComponentName, setPreviewComponentName ] = useState('')
+    const [ previewAutoLayoutId, setPreviewAutoLayoutId ] = useState('')
     const [isAddClick, setIsAddClick] = useState(false)
     const [currentCategoryName, setCurrentCategoryName] = useState('element')
+    const [moduleName, setModuleName] = useState('')
     const toast = useToast()
 
     useEffect(() => {
@@ -36,7 +38,7 @@ export default function Index(props) {
     const onComponentItemClick = (item) => {
         // console.log('item = ', item)
         setIsAddClick(false)
-        setPreviewComponentName()
+        setPreviewAutoLayoutId()
         if (item.isSelected) {
         //     setPreviewData({
         //         ___presenter2: {
@@ -44,7 +46,11 @@ export default function Index(props) {
         //             props: item.componentProps
         //         }
         //     })
-        setPreviewComponentName(item.previewComponentName)
+        setTimeout(_=>{
+            setModuleName(item.moduleName)
+            setPreviewAutoLayoutId(item.id)
+        },100)
+            
         }
     }
 
@@ -53,14 +59,14 @@ export default function Index(props) {
         setCurrentLayoutApi('')
         setCurrentCategoryName(item.name)
         setIsAddClick(false)
-        setPreviewComponentName()
+        setPreviewAutoLayoutId()
     }
 
     //新增
     const addNewClick = () => {
         if(currentCategoryName){
             setIsAddClick(true)
-            setPreviewComponentName()
+            setPreviewAutoLayoutId()
         }else{
             toastTips('请选择分类')
         }
@@ -99,16 +105,16 @@ export default function Index(props) {
     return (
         <VStack align='stretch' spacing='0'>
             <HStack spacing={'0'}>
-                <Box style={{ width: '200px', height: '100vh', padding: '0 20px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <AutoLayout layout={categoryListLayout} onItemClick={onCateItemClick} />
+                <Box style={{ width: '200px', height: '100vh', padding: '10px 20px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <AutoLayout layout={categoryListLayout} isScroll={false} onItemClick={onCateItemClick} />
                 </Box>
                 <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
-                <Box style={{ width: '600px', height: '100vh', padding: '0px 8px 0px 8px', background: '#fff' }}>
+                <Box style={{ width: '800px', height: '100vh', display: 'flex', flexDirection:'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '0px 8px 0px 8px', background: '#fff' }}>
                     { isSwitch && (
-                        <Button style={{marginTop: '8px'}} onClick={addNewClick}>新增</Button>
+                        <Button style={{marginTop: '8px', padding: '8px'}} onClick={addNewClick}>新增</Button>
                     )}
                     {
-                        currentApi && currentLayoutApi && <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={false} isScroll={false} />
+                        currentApi && currentLayoutApi && <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={false}/>
                     }
                 </Box>
                 <Box style={{ width: '100%', height: '100vh' }} background={'#EDECF1'}>
@@ -118,10 +124,11 @@ export default function Index(props) {
                                 <AddPresenter cb={cb} combinationOption={currentCategoryName} />
                             </Box>
                         ):(
-                            previewComponentName ? (
-                            <Box style={{ width: '100%', height: '100vh', padding: '8px' }} background={'#EDECF1'}>
+                            previewAutoLayoutId ? (
+                            <Box style={{ width: '100%', height: '100vh', padding: '8px', display: 'flex', justifyContent: 'flex-start' }} background={'#EDECF1'}>
                                 {/* <LocalPreview previewData={previewData} type='presenter' /> */}
-                                <PreviewFetch previewComponentName={previewComponentName}/>
+                                {/* <PreviewFetch previewAutoLayoutId={previewAutoLayoutId}/> */}
+                                <PreviewFetch2  previewAutoLayoutId={previewAutoLayoutId} moduleName={moduleName}/>
                             </Box>
                             ) : <></>
                         )

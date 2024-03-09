@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HStack, VStack, Box, Button, Text, Switch } from '@chakra-ui/react';
 
 import Indicators from '@/composition/indicators';
@@ -74,7 +74,7 @@ export default function Index(props) {
 
   return (
     <HStack spacing='0' overflowY={'hidden'}>
-      <Box style={{ width: '100px', height: window.innerHeight, background: '#1F2229', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box style={{ width: '100px', height: '100vh', background: '#1F2229', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <VStack spacing={5}>
           {menuList.map((item, index) => (
             <Box key={`menu_${index}`} cursor={'pointer'}
