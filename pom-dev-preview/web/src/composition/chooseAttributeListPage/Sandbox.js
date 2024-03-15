@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AutoLayout from './index';
-import { Box, VStack, Button, Spinner } from '@chakra-ui/layout';
+import { Box, VStack, Button, Spinner } from '@chakra-ui/react';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 const testData = [

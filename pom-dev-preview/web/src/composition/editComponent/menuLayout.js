@@ -5,10 +5,14 @@ module.exports = {
     },
     mock: [
         { id: 1, name: 'presenter' },
-        { id: 2, name: 'cart' },
+        { id: 2, name: 'container' },
         { id: 3, name: 'indicator' },
         { id: 4, name: 'selector' },
-        { id: 5, name: 'container' }
+        { id: 5, name: 'cart' },
+        { id: 6, name: 'layout' },,
+        { id: 7, name: 'attribute' },
+        { id: 8, name: 'props' },
+
     ],
     presenter: 'Text',
     binding: {

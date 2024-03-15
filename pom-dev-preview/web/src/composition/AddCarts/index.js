@@ -46,7 +46,7 @@ export default function Index (props) {
     if(currentPage){
       let cApi = `${api}?componentOption=${apiParamsMap[currentPage]}`
       if(currentPage === 'cart'){
-        cApi += '&combinationOption=native'
+        cApi += '&moduleType=native'
       }
       const cLayoutApi = `${layoutApi}/${apiIdMap[currentPage]}`
       setCurrentApi(cApi)

@@ -8,7 +8,7 @@ import EditComponent from '../editComponent'
 
 export default function Index(props) {
 
-  const { previewAutoLayoutId={}, moduleName, ...rest } = props;
+  const { previewAutoLayoutId={}, moduleName, cb, ...rest } = props;
 
   const [ layoutId, setLayoutId ] = useState(previewAutoLayoutId);
   const [ menuId, setMenuId ] = useState(0);
@@ -21,6 +21,11 @@ export default function Index(props) {
 
   const itemClick = (id) => {
     setMenuId(id)
+    if(menuId === 4){
+      if(cb){
+        cb(true)
+      }
+    }
   }
 
   return (
@@ -32,7 +37,11 @@ export default function Index(props) {
         ):( 
           menuId === 2 ? (
             <EditComponent componentId={previewAutoLayoutId} moduleName={moduleName} />
-          ) : <></>
+          ) : (
+            menuId === 3 ? (
+              <AutoLayout layout={menuLayoutJson} isScroll={false} onItemClick={menuItemClick} />
+            ):<></>
+          )
         )}
       </Box>
     </VStack>

@@ -10,14 +10,14 @@ import AddPresenter from '@/composition/AddPresenter';
 import { useForceUpdate } from 'zero-element-boot/lib/components/hooks/lifeCycle';
 import _ from 'lodash';
 
-export default function Index(props) {
+export default function AutoLayouts(props) {
 
     const { id, status, isSwitch } = props
-    const api = '/openapi/lc/module'
-    const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
+    const api = '/openapi/lc/module?componentOption=autolayout&pageNum=1&pageSize=100'
+    const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules/160'
 
-    const [ currentApi, setCurrentApi ] = useState('')
-    const [ currentLayoutApi, setCurrentLayoutApi ] = useState('')
+    const [ currentApi, setCurrentApi ] = useState(api)
+    const [ currentLayoutApi, setCurrentLayoutApi ] = useState(layoutApi)
     // const [previewData, setPreviewData] = useState('')
 
     const [ previewAutoLayoutId, setPreviewAutoLayoutId ] = useState('')
@@ -27,14 +27,6 @@ export default function Index(props) {
     const [containerHeight, setContainerHeight] = useState(window.innerHeight)
     const toast = useToast()
 
-    useEffect(() => {
-        if(currentCategoryName){
-            const cApi = `${api}?componentOption=presenter&pageNum=1&pageSize=100&moduleType=${currentCategoryName}`
-            const cLayoutApi = `${layoutApi}/160`
-            setCurrentApi(cApi)
-            setCurrentLayoutApi(cLayoutApi)
-        }
-    }, [currentCategoryName])
 
     useEffect(() => {
         if(isSwitch){
@@ -124,14 +116,10 @@ export default function Index(props) {
     return (
         <VStack align='stretch' spacing='0'>
             <HStack spacing={'0'}>
-                <Box style={{ width: '200px', height: '100vh', padding: '10px 20px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <AutoLayout layout={categoryListLayout} isScroll={false} onItemClick={onCateItemClick} />
-                </Box>
-                <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
                 <Box style={{ width: '500px', height: '100vh', display: 'flex', flexDirection:'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '0px 8px 0px 8px', background: '#fff' }}>
-                    { isSwitch && (
+                    {/* { isSwitch && (
                         <Button style={{marginTop: '8px', padding: '8px'}} onClick={addNewClick}>新增</Button>
-                    )}
+                    )} */}
                     {
                         currentApi && currentLayoutApi && (
                             <PreviewAutoLayout 
@@ -139,7 +127,7 @@ export default function Index(props) {
                                 api={currentApi} 
                                 onItemClick={onComponentItemClick} 
                                 onAddNewClick={addNewClick} 
-                                isSwitch={false}
+                                isSwitch={isSwitch}
                                 containerHeight={containerHeight}
                             />
                         )
@@ -149,7 +137,7 @@ export default function Index(props) {
                     {
                         isAddClick ? (
                             <Box style={{ height: '100vh', padding: '8px', marginLeft: '6px', background: '#fff' }}>
-                                <AddPresenter cb={cb} moduleType={currentCategoryName} />
+                                <AddPresenter cb={cb} moduleType={''} />
                             </Box>
                         ):(
                             previewAutoLayoutId ? (

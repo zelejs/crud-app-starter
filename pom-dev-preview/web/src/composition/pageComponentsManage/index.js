@@ -6,15 +6,19 @@ import Selectors from '@/composition/selectors';
 import Carts from '@/composition/carts';
 import Presenters from '@/composition/presenters';
 import Layouts from '@/composition/Layouts';
+import AutoLayouts from '@/composition/autoLayouts';
 
-import { IndicatorIcon, SelectorIcon, CartIcon, PresenterIcon } from './svg'
+import { IndicatorIcon, SelectorIcon, CartIcon, PresenterIcon, AutoLayoutIcon } from './svg'
+
+require('./index.less');
 
 const _menuList = [
-  { id: 1, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
-  { id: 2, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
-  { id: 3, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
-  { id: 4, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
-  // { id: 5, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
+  // { id: 1, name: 'auto', icon: <AutoLayoutIcon />, hoverIcon: <AutoLayoutIcon fill="#4BDD97" />, selected: false },
+  { id: 2, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
+  { id: 3, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
+  { id: 4, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
+  { id: 5, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
+  // { id: 6, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
 ]
 
 const _showAddBtns = [ 'carts', 'presenters']
@@ -27,7 +31,8 @@ export default function Index(props) {
     selectors: Selectors,
     carts: Carts,
     presenters: Presenters,
-    layouts: Layouts
+    layouts: Layouts,
+    auto: AutoLayouts
   }
 
   const [menuList, setMenuList] = useState(_menuList)
@@ -75,7 +80,7 @@ export default function Index(props) {
   return (
     <HStack spacing='0' overflowY={'hidden'}>
       <Box style={{ width: '100px', height: '100vh', background: '#1F2229', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <VStack spacing={5}>
+        <VStack spacing={5} className='menu-container'>
           {menuList.map((item, index) => (
             <Box key={`menu_${index}`} cursor={'pointer'}
               onMouseEnter={() => toggleHoverEntered(item.id)}

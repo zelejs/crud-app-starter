@@ -21,7 +21,7 @@ const apiIdMap = {
 
 export default function Index(props) {
 
-  const { id, status, cb, combinationOption } = props
+  const { id, status, cb, moduleType } = props
   //   const api = '/openapi/lc/module?componentOption=cart'
   const api = '/openapi/lc/module?pageNum=1&pageSize=100'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
@@ -52,7 +52,7 @@ export default function Index(props) {
     //
     if(!newComponentId){
       if( ( Array.isArray(data) && data.length > 0) || ( currentAddModuleIdList && currentAddModuleIdList.length > 0 )){
-        queryData.mainModuleCombinationOption = combinationOption
+        queryData.mainModuleType = moduleType
         queryData.addModuleIdList = data || currentAddModuleIdList
       }else{
         toastTips('请先选择组件')

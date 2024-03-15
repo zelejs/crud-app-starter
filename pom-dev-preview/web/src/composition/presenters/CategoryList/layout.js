@@ -11,7 +11,7 @@ module.exports = {
         { id: 5, name: 'row' },
         { id: 6, name: 'selector' },
         { id: 7, name: 'tag' },
-        { id: 8, name: 'user' },
+        { id: 8, name: 'user' }
     ],
     presenter: 'Text',
     binding: {

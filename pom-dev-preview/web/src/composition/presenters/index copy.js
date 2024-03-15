@@ -43,7 +43,7 @@ export default function Index(props) {
     const [currentAddType, setCurrentAddType] = useState('element')
 
     useEffect(() => {
-      const cApi = `${api}?componentOption=presenter&combinationOption=${currentAddType}`
+      const cApi = `${api}?componentOption=presenter&moduleType=${currentAddType}`
       const cLayoutApi = `${layoutApi}/160`
       setCurrentApi(cApi)
       setCurrentLayoutApi(cLayoutApi)

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { VStack, Box, HStack, Button, Text } from '@chakra-ui/react';
-import { AutoLayout } from 'zero-element-boot'
+import { AutoLayout } from 'zero-element-boot';
 require('./index.less');
 
-const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 
 const _menuList = [
     { id: 1, name: '预览', selected: false },
     { id: 2, name: '编辑', selected: false },
+    // { id: 3, name: '绑定属性', selected: false },
+    // { id: 4, name: '确定', selected: false },
 ]
 
 export default function Index(props) {
