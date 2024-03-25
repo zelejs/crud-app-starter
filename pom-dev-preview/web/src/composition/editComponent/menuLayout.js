@@ -12,6 +12,8 @@ module.exports = {
         { id: 6, name: 'layout' },,
         { id: 7, name: 'attribute' },
         { id: 8, name: 'props' },
+        { id: 9, name: 'gateway' },
+        { id: 10, name: 'binding' },
 
     ],
     presenter: 'Text',

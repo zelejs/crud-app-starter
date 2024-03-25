@@ -4,6 +4,7 @@ import { AutoLayout } from 'zero-element-boot';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 import menuLayoutJson from './menuLayout';
+import { propsManageLayout, propsManageConverter,  bindingManageLayout, bindingManageConverter} from './manageConfig'
 
 require('./index.less');
 
@@ -13,17 +14,29 @@ const componentListIdmap = {
   indicator: 161,
   selector: 163,
   container: 270,
-  layout: 153
+  layout: 153,
+  gateway: 287,
+  binding: 0,
 }
 
 const childComponentListMap = {
   presenter: 272,
   cart: 273,
+  gateway: 286,
+  binding: 0,
 }
 
-const layoutNameMap = {
-  props: 'PropertyManage',
-  attribute: 'PropsManage',
+const managePageConfigMap = {
+  // 属性管理
+  props:{
+    layout:propsManageLayout,
+    converter:propsManageConverter,
+  },
+  // 绑定管理
+  binding:{
+    layout:bindingManageLayout,
+    converter:bindingManageConverter,
+  }
 }
 
 
@@ -158,8 +171,6 @@ export default function EditComponent(props) {
     })
   }
 
-  console.log('componentId = ', componentId)
-
   return (
     <HStack spacing={'0'}>
       <Box style={{
@@ -179,15 +190,24 @@ export default function EditComponent(props) {
 
       <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
       {
-        matchLayoutName == 'attribute' || matchLayoutName == 'props' ? (
-          <Box minW={'220px'} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
-            <PreviewAutoLayout layoutName={layoutNameMap[matchLayoutName]} moduleId={componentId} />
-          </Box>
+        matchLayoutName == 'attribute' || matchLayoutName == 'props' || matchLayoutName == 'binding' ? (
+          matchLayoutName == 'attribute' ? (
+            <Box minW={'220px'} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
+              <PreviewAutoLayout layoutName={'PropsManage'} moduleId={componentId} />
+            </Box>
+          ): matchLayoutName == 'props' || matchLayoutName == 'binding'  ? ( 
+            
+            <Box minW={'220px'} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
+              <AutoLayout moduleId={componentId} {...managePageConfigMap[matchLayoutName]}/>
+            </Box>
+            
+          ):<></>
         ) : (
           menuName ? (
             <Box display={'flex'} flex={1} flexDirection={'row'}>
               {childApi && childLayoutApi && (
                 <Box className='child-module-container' style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
+                  
                   <PreviewAutoLayout layoutApi={childLayoutApi} containerHeight={containerHeight} api={childApi} onItemClick={childMenuClick} />
                 </Box>
               )}

@@ -32,6 +32,7 @@ export default function Index(props) {
   const [ currentAddModuleIdList, setCurrentAddModuleIdList ] = useState([])
   const [ newComponentId, seNewComponentId ] = useState('') // mainModuleId
   const [ currentSkipComponentOptionList, setCurrentSkipComponentOptionList] = useState([])
+  const [containerHeight, setContainerHeight] = useState(window.innerHeight)
   const toast = useToast()
 
   useEffect(() => {
@@ -165,9 +166,9 @@ export default function Index(props) {
           )
         }
       </HStack>
-      <Box style={{ margin: '20px 5px 5px 5px', paddingLeft: '8px' }} >
+      <Box style={{ margin: '20px 5px 5px 5px', width: '1000px' }} >
         {currentApi && currentLayoutApi ? (
-          <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onOkClick={onComponentsOkClick} onItemClick={onComponentItemClick} />
+          <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onOkClick={onComponentsOkClick} onItemClick={onComponentItemClick} containerHeight={containerHeight-48} />
         ) : <></>}
       </Box>
 
