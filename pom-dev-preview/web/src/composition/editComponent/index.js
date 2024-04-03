@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, HStack, InputGroup, Input, InputRightElement, Button, Text, useToast } from '@chakra-ui/react';
 import { AutoLayout } from 'zero-element-boot';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
 import menuLayoutJson from './menuLayout';
-import { propsManageLayout, propsManageConverter,  bindingManageLayout, bindingManageConverter} from './manageConfig'
+import { propsManageLayout, propsManageConverter, bindingManageLayout, bindingManageConverter } from './manageConfig'
+import DataSetManage from '@/composition/dataSetManage';
 
 require('./index.less');
 
@@ -23,20 +24,39 @@ const childComponentListMap = {
   presenter: 272,
   cart: 273,
   gateway: 286,
+  container: 333,
+  indicator: 334,
+  selector: 335,
+  layout: 336,
   binding: 0,
 }
 
 const managePageConfigMap = {
   // 属性管理
-  props:{
-    layout:propsManageLayout,
-    converter:propsManageConverter,
+  props: {
+    layout: propsManageLayout,
+    converter: propsManageConverter,
   },
   // 绑定管理
-  binding:{
-    layout:bindingManageLayout,
-    converter:bindingManageConverter,
+  binding: {
+    layout: bindingManageLayout,
+    converter: bindingManageConverter,
   }
+}
+
+const otherMenuList = [
+  'attribute', 'props', 'binding', 'dataSet'
+]
+
+const addBtnMenuList = [
+  'new presenter', 'new cart', 'new indicator', 'new container'
+]
+
+const componentNameMap ={
+  'new presenter': 'presenter',
+  'new cart': 'cart',
+  'new indicator': 'indicator',
+  'new container': 'container',
 }
 
 
@@ -54,29 +74,43 @@ export default function EditComponent(props) {
   const [childLayoutApi, setChildLayoutApi] = useState()
 
   const [menuName, setMenuName] = useState('')
-  const [matchLayoutName, setMatchLayoutName] = useState('')
-  const [childMenuId, setChildMenuId] = useState(0)
+  const [childMenuId, setChildMenuId] = useState('')
   const [currentModuleName, setCurrentModuleName] = useState(moduleName)
   const [containerHeight, setContainerHeight] = useState(window.innerHeight - 72)
   const toast = useToast()
+  const menuLayoutParentRef = useRef(null);
+  const [menuLayoutHeight, setMenuLayoutHeight] = useState('')
 
   useEffect(_ => {
-    setMenuName()
+    if (menuLayoutParentRef.current) {
+      // 先将容器高度设置为100%
+      menuLayoutParentRef.current.style.height = '100%';
+      // 获取容器的实际高度
+      const height = menuLayoutParentRef.current.getBoundingClientRect().height;
+      // 更新容器高度状态
+      setMenuLayoutHeight(parseInt(height));
+    }
   }, [])
 
   useEffect(_ => {
     if (menuName) {
       // setComponentData('card');
-      // 获取子组件
-      getComponentDetail(menuName)
-      const newApi = originApi + '&componentOption=' + menuName
-      const newLayoutApi = originLayoutApi + '/' + componentListIdmap[menuName]
+      let newMenuName = ''
+      if(!addBtnMenuList.includes(menuName)){
+        // 获取子组件
+        newMenuName = menuName
+        getComponentDetail(newMenuName)
+      }else{
+        newMenuName = componentNameMap[menuName]
+      }
+      const newApi = originApi + '&componentOption=' + newMenuName
+      const newLayoutApi = originLayoutApi + '/' + componentListIdmap[newMenuName]
       setApi(newApi)
       setLayoutApi(newLayoutApi)
-      setMatchLayoutName(menuName)
     }
   }, [menuName])
 
+  console.log('menuLayoutHeight = ', menuLayoutHeight)
 
   //根据ID获取组件信息
   const getComponentDetail = (componentName) => {
@@ -110,10 +144,10 @@ export default function EditComponent(props) {
 
   //修改组件
   const editComponent = (newComponentId) => {
-    if (!childMenuId) {
-      toastTips('请选择要替换的组件')
-      return
-    }
+    // if (!childMenuId) {
+    //   toastTips('请选择要替换的组件')
+    //   return
+    // }
     const api = '/openapi/lc/module/replace-add-child-module'
     const query = {
       "mainModuleId": componentId,
@@ -135,12 +169,30 @@ export default function EditComponent(props) {
 
   }
 
+
+  //新增组件
+  const addNewComponent = (item) => {
+    const api = '/openapi/lc/module/presenter/based-on-presenter-create-presenter'
+    const query = {
+      "mainModuleId" : componentId,
+      "addModuleId": item.id,
+    }
+    return promiseAjax(api, query, { method: 'POST' }).then(resp => {
+      if (resp && resp.code === 200) {
+        toastTips('新增成功')
+      } else {
+        toastTips('新增失败')
+      }
+    }).finally(_ => {
+    });
+
+  }
+
   const menuItemClick = (item) => {
     setApi('')
     setLayoutApi('')
     setChildApi('')
     setChildLayoutApi('')
-    setMatchLayoutName('')
     setMenuName(item.name)
 
   }
@@ -149,10 +201,25 @@ export default function EditComponent(props) {
     setChildMenuId(item.id)
   }
 
+  const childMenuItemDelete = (status) => {
+    if(status){
+      setChildApi('')
+      setChildLayoutApi('')
+      getComponentDetail(menuName)
+    }
+  }
+
   //选择组件
   const onSelectComponentItemClick = (item) => {
-    console.log('onSelectComponentItemClick = ', item)
+    // console.log('onSelectComponentItemClick = ', item)
     editComponent(item.id)
+  }
+
+  //new component
+  const onAddNewComponentClick = (item) => {
+    if(item.isSelected){
+      addNewComponent(item)
+    }
   }
 
   const handleChangeInputValue = (e) => {
@@ -171,11 +238,14 @@ export default function EditComponent(props) {
     })
   }
 
+  console.log('addBtnMenuList.includes(menuName) = ', addBtnMenuList.includes(menuName), menuName)
+
   return (
-    <HStack spacing={'0'}>
+    <HStack spacing={'0'} alignItems={'flex-start'}>
       <Box style={{
-        width: '185px', height: '100vh', padding: '10px 20px', background: '#fff', display: 'flex',
-        alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column'
+        width: '185px', height: `${containerHeight}px`, padding: '10px 20px', background: '#fff', display: 'flex',
+        alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column',
+        flexShrink: 0,
       }}>
         <Text fontSize={'14px'} fontWeight={'bold'} marginBottom={1}>修改名称</Text>
         <Input placeholder='名称' defaultValue={currentModuleName} onChange={handleChangeInputValue} />
@@ -185,35 +255,45 @@ export default function EditComponent(props) {
 
         <Text fontSize={'14px'} fontWeight={'bold'} marginBottom={1}>修改组件</Text>
 
-        <AutoLayout layout={menuLayoutJson} isScroll={false} onItemClick={menuItemClick} />
+        <div ref={menuLayoutParentRef}>
+          <AutoLayout layout={menuLayoutJson} isScroll={false} 
+          onItemClick={menuItemClick}
+          containerHeight={menuLayoutHeight} />
+        </div>
       </Box>
 
-      <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
+      <Box style={{ width: '6px', height: `${containerHeight}px` }} background={'#EDECF1'}></Box>
       {
-        matchLayoutName == 'attribute' || matchLayoutName == 'props' || matchLayoutName == 'binding' ? (
-          matchLayoutName == 'attribute' ? (
-            <Box minW={'220px'} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
-              <PreviewAutoLayout layoutName={'PropsManage'} moduleId={componentId} />
-            </Box>
-          ): matchLayoutName == 'props' || matchLayoutName == 'binding'  ? ( 
-            
-            <Box minW={'220px'} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
-              <AutoLayout moduleId={componentId} {...managePageConfigMap[matchLayoutName]}/>
-            </Box>
-            
-          ):<></>
+        otherMenuList.includes(menuName) ? (
+          <Box minW={'220px'} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff' }}>
+            {
+              menuName == 'attribute' ? (
+                <PreviewAutoLayout layoutName={'PropsManage'} moduleId={componentId} />
+              ) : menuName == 'props' || menuName == 'binding' ? (
+                <AutoLayout moduleId={componentId} {...managePageConfigMap[menuName]} />
+              ) : menuName === 'dataSet' ? (
+                <DataSetManage moduleId={componentId} containerHeight={containerHeight} />
+              ) : <></>
+            }
+          </Box>
+        ) : addBtnMenuList.includes(menuName) ? (
+          <Box w={'100%'} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff' }}>
+            {api && layoutApi && (
+                  <PreviewAutoLayout layoutApi={layoutApi} isSwitch={false} containerHeight={containerHeight} api={api} onItemClick={onAddNewComponentClick} />
+                )}
+          </Box>
         ) : (
           menuName ? (
             <Box display={'flex'} flex={1} flexDirection={'row'}>
               {childApi && childLayoutApi && (
-                <Box className='child-module-container' style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
-                  
-                  <PreviewAutoLayout layoutApi={childLayoutApi} containerHeight={containerHeight} api={childApi} onItemClick={childMenuClick} />
+                <Box className='child-module-container' style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff' }}>
+                  <PreviewAutoLayout layoutApi={childLayoutApi} containerHeight={containerHeight} moduleId={componentId} api={childApi}
+                   onItemClick={childMenuClick} onItemDeleted={childMenuItemDelete} />
                 </Box>
               )}
-              <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
+              <Box style={{ width: '6px', height: `${containerHeight}px` }} background={'#EDECF1'}></Box>
 
-              <Box flex={1} style={{ height: '100vh', padding: '10px 20px', background: '#fff' }}>
+              <Box flex={1} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff' }}>
                 {api && layoutApi && (
                   <PreviewAutoLayout layoutApi={layoutApi} isSwitch={false} containerHeight={containerHeight} api={api} onItemClick={onSelectComponentItemClick} />
                 )}

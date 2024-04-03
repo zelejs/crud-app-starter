@@ -1,7 +1,7 @@
 module.exports = {
     xname: 'Gridbox',
     props: {
-        columns: 1
+        columns: 1,
     },
     mock: [
         { id: 1, name: 'presenter' },
@@ -14,7 +14,11 @@ module.exports = {
         { id: 8, name: 'props' },
         { id: 9, name: 'gateway' },
         { id: 10, name: 'binding' },
-
+        { id: 11, name: 'dataSet' },
+        { id: 12, name: 'new presenter' },
+        { id: 13, name: 'new cart' },
+        { id: 14, name: 'new indicator' },
+        { id: 15, name: 'new container' },
     ],
     presenter: 'Text',
     binding: {
@@ -23,7 +27,7 @@ module.exports = {
     cart: {
       xname: 'Cart',
       props: {
-        padding: '10px 40px',
+        padding: '10px 12px',
         margin: '0',
         linewidth: '1px',
         corner: '8px',

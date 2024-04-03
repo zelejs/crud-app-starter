@@ -45,7 +45,7 @@ export default function Index(props) {
     }
   }, [currentPage])
 
-  //处理数据
+  //处理数据--跳过按钮
   function getPostSkipComponent(data, skipData) {
     let api = '/openapi/lc/module/presenter/build-presenter'
     const queryData = {
@@ -166,7 +166,7 @@ export default function Index(props) {
           )
         }
       </HStack>
-      <Box style={{ margin: '20px 5px 5px 5px', width: '1000px' }} >
+      <Box style={{ margin: '20px 5px 5px 5px', width: '100%' }} >
         {currentApi && currentLayoutApi ? (
           <PreviewAutoLayout layoutApi={currentLayoutApi} api={currentApi} onOkClick={onComponentsOkClick} onItemClick={onComponentItemClick} containerHeight={containerHeight-48} />
         ) : <></>}

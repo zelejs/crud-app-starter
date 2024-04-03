@@ -55,11 +55,22 @@ export default function Index(props) {
         //             props: item.componentProps
         //         }
         //     })
+
         setTimeout(_=>{
             setModuleName(item.moduleName)
             setPreviewAutoLayoutId(item.id)
         },100)
-            
+        
+            // if(currentCategoryName === 'card'){
+            //     //跳转新页面
+            //     window.open(`/#/details?layoutName=${item.moduleName}`)
+            // }else{
+            //     setTimeout(_=>{
+            //         setModuleName(item.moduleName)
+            //         setPreviewAutoLayoutId(item.id)
+            //     },100)
+            // }
+        
         }
     }
 

@@ -7,8 +7,10 @@ import Carts from '@/composition/carts';
 import Presenters from '@/composition/presenters';
 import Layouts from '@/composition/Layouts';
 import AutoLayouts from '@/composition/autoLayouts';
+import PaletteManage from '@/composition/paletteManage'
 
-import { IndicatorIcon, SelectorIcon, CartIcon, PresenterIcon, AutoLayoutIcon } from './svg'
+import { IndicatorIcon, SelectorIcon, CartIcon, 
+  PresenterIcon, AutoLayoutIcon, PaletteIcon } from './svg'
 
 require('./index.less');
 
@@ -19,6 +21,7 @@ const _menuList = [
   { id: 4, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
   { id: 5, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
   // { id: 6, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
+  { id: 7, name: 'palette', icon: <PaletteIcon />, hoverIcon: <PaletteIcon fill="#4BDD97" />, selected: false },
 ]
 
 const _showAddBtns = [ 'carts', 'presenters']
@@ -118,7 +121,11 @@ export default function Index(props) {
       </Box>
 
       <Box style={{ width: '100%', height: window.innerHeight, background: '#15171C' }}>
-        {componentName ? matchComponentPage()  : <></>}
+        {componentName ==='palette' ? (
+          <Box w={"100%"} h={"100%"} bg={"#ffffff"} padding={'10px'}>
+            <PaletteManage/>
+          </Box>
+        ) : componentName ? matchComponentPage() : <></>}
       </Box>
 
     </HStack>
