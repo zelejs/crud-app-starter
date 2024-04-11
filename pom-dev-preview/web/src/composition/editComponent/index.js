@@ -45,7 +45,7 @@ const managePageConfigMap = {
 }
 
 const otherMenuList = [
-  'attribute', 'props', 'binding', 'dataSet'
+  'attribute', 'props', 'binding', 'dataSet', 'new dataset'
 ]
 
 const addBtnMenuList = [
@@ -56,7 +56,7 @@ const componentNameMap ={
   'new presenter': 'presenter',
   'new cart': 'cart',
   'new indicator': 'indicator',
-  'new container': 'container',
+  'new container': 'container'
 }
 
 
@@ -110,8 +110,6 @@ export default function EditComponent(props) {
     }
   }, [menuName])
 
-  console.log('menuLayoutHeight = ', menuLayoutHeight)
-
   //根据ID获取组件信息
   const getComponentDetail = (componentName) => {
     const api = `/openapi/lc/module/childModuleList/${componentId}?componentOption=${componentName}`
@@ -159,6 +157,7 @@ export default function EditComponent(props) {
       if (resp && resp.code === 200) {
         setChildApi('')
         setChildLayoutApi('')
+        setChildMenuId('')
         getComponentDetail(menuName)
         toastTips('修改成功')
       } else {
@@ -238,18 +237,16 @@ export default function EditComponent(props) {
     })
   }
 
-  console.log('addBtnMenuList.includes(menuName) = ', addBtnMenuList.includes(menuName), menuName)
-
   return (
     <HStack spacing={'0'} alignItems={'flex-start'}>
       <Box style={{
-        width: '185px', height: `${containerHeight}px`, padding: '10px 20px', background: '#fff', display: 'flex',
+        width: '185px', height: `${containerHeight + 10}px`, padding: '10px 20px', background: '#fff', display: 'flex',
         alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column',
         flexShrink: 0,
       }}>
         <Text fontSize={'14px'} fontWeight={'bold'} marginBottom={1}>修改名称</Text>
-        <Input placeholder='名称' defaultValue={currentModuleName} onChange={handleChangeInputValue} />
-        <Button h='1.75rem' size='sm' margin={'8px 8px 20px 8px'} onClick={() => editModuleName()}>
+        <Input padding={'5px 10px'} placeholder='名称' defaultValue={currentModuleName} onChange={handleChangeInputValue} />
+        <Button h='48px' padding={'5px 15px'} size='sm' margin={'8px 8px 10px 8px'} onClick={() => editModuleName()}>
           确定
         </Button>
 
@@ -265,14 +262,14 @@ export default function EditComponent(props) {
       <Box style={{ width: '6px', height: `${containerHeight}px` }} background={'#EDECF1'}></Box>
       {
         otherMenuList.includes(menuName) ? (
-          <Box minW={'220px'} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff' }}>
+          <Box minW={'220px'} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff', overflow: 'hidden' }}>
             {
               menuName == 'attribute' ? (
                 <PreviewAutoLayout layoutName={'PropsManage'} moduleId={componentId} />
               ) : menuName == 'props' || menuName == 'binding' ? (
                 <AutoLayout moduleId={componentId} {...managePageConfigMap[menuName]} />
-              ) : menuName === 'dataSet' ? (
-                <DataSetManage moduleId={componentId} containerHeight={containerHeight} />
+              ) : menuName === 'dataSet' || menuName === 'new dataset' ? (
+                <DataSetManage moduleId={componentId} containerHeight={containerHeight} type={menuName} />
               ) : <></>
             }
           </Box>

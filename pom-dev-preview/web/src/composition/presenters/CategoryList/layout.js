@@ -12,7 +12,8 @@ module.exports = {
         { id: 6, name: 'selector' },
         { id: 7, name: 'tag' },
         { id: 8, name: 'user' },
-        { id: 9, name: 'autolayout' }
+        { id: 9, name: 'autolayout' },
+        { id: 10, name: 'button' }
     ],
     presenter: 'Text',
     binding: {
