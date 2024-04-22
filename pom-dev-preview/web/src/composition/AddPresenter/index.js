@@ -45,8 +45,8 @@ export default function Index(props) {
     }
   }, [currentPage])
 
-  //处理数据--跳过按钮
-  function getPostSkipComponent(data, skipData) {
+  //处理添加和跳过
+  function handleComponentFetch(data, skipData ) {
     let api = '/openapi/lc/module/presenter/build-presenter'
     const queryData = {
     };
@@ -97,7 +97,7 @@ export default function Index(props) {
           }
         } else if ( resp.code === 4000 ) {
           cb('error')
-          toastTips(resp.message)
+          toastTips(resp.message, 'error')
         }  else {
             console.error("getPostComponent = ", resp)
             toastTips(resp.message)
@@ -106,19 +106,73 @@ export default function Index(props) {
     });
   }
 
-  //保存presenter
-  const savePresenters = () => {
-    // cb('success')
-    getPostSkipComponent()
+  //占位按钮
+  function handlePlaceholder (componentOpton) {
+
+    let api = '/openapi/lc/module/presenter/build-presenter'
+    const queryData = {
+      addModuleId:"",
+      addModuleIdList:[],
+      mainModuleId:newComponentId,
+      placeholderComponentOption:componentOpton,
+      skipComponentOptionList:currentSkipComponentOptionList
+    };
+
+    //
+    promiseAjax(api, queryData, {method: 'POST'}).then(resp => {
+        if (resp && resp.code === 200) {
+          if(!newComponentId && resp.data.mainModuleId){
+            seNewComponentId(resp.data.mainModuleId)
+          }
+          if(resp.data.nextComponent === 'finish'){
+            cb('success')
+            toastTips('操作成功')
+          }else{
+            setCurrentApi()
+            setCurrentLayoutApi()
+            setTimeout(() => {
+              setCurrentPage(resp.data.nextComponent)
+            }, 100)
+          }
+          if(resp.data.skipComponentOptionList && resp.data.skipComponentOptionList.length > 0){
+            setCurrentSkipComponentOptionList(resp.data.skipComponentOptionList)
+          }
+        } else if ( resp.code === 4000 ) {
+          cb('error')
+          toastTips(resp.message, 'error')
+        }  else {
+            toastTips(resp.message)
+        }
+    }).finally(_ => {
+    });
   }
+
+  //保存presenter
+  // const savePresenters = () => {
+  //   // cb('success')
+  //   handleComponentFetch()
+  // }
 
   const onComponentItemClick = (data) => {
     if (data.isSelected) {
       setCurrentApi('')
       setCurrentLayoutApi('')
-      getPostSkipComponent(data)
+      handleComponentFetch(data)
     } 
     
+  }
+
+  const onComponentsOkClick =(data)=>{
+    if(data && Array.isArray(data) && data.length > 0){
+      const ids = []
+      data.map(item=>{
+        ids.push(item.id)
+      })
+      // setCurrentAddModuleIdList(ids)
+      setCurrentApi('')
+      setCurrentLayoutApi('')
+      handleComponentFetch(ids)
+    }
   }
 
   // tips
@@ -133,20 +187,6 @@ export default function Index(props) {
     })
   }
 
-  const onComponentsOkClick =(data)=>{
-    console.log('on click = ', data)
-    if(data && Array.isArray(data) && data.length > 0){
-      const ids = []
-      data.map(item=>{
-        ids.push(item.id)
-      })
-      // setCurrentAddModuleIdList(ids)
-      setCurrentApi('')
-      setCurrentLayoutApi('')
-      getPostSkipComponent(ids)
-    }
-  }
-
   return (
 
     <VStack align='stretch' spacing='-2'>
@@ -155,14 +195,23 @@ export default function Index(props) {
         <Text fontSize={'16px'} fontWeight={'bold'}>新增组件</Text>
         {
           currentPage != 'presenter' ? (
-            <Button colorScheme='teal' size='sm' onClick={() => getPostSkipComponent("", currentPage)}>
-              跳过
-            </Button>
+              <HStack spacing={2}>
+                <Button colorScheme='teal' size='sm' onClick={() => handleComponentFetch("", currentPage)}>
+                  跳过
+                </Button>
+                <Button colorScheme='teal' size='sm' onClick={() => handlePlaceholder(currentPage)}>
+                  占位
+                </Button>
+              </HStack>
+
           ) : (
             // <Button colorScheme='teal' size='sm' onClick={() => savePresenters()}>
             //   确认
             // </Button>
-            <div></div>
+            <Button colorScheme='teal' size='sm' onClick={() => handlePlaceholder(currentPage)}>
+              占位
+            </Button>
+            // <div></div>
           )
         }
       </HStack>

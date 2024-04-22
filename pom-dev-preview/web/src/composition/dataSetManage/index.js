@@ -1,13 +1,11 @@
 import React, { useRef, useState, useEffect} from "react";
 import { ConfirmContainer } from 'zero-element-boot/lib/components/container'
 import { LowCodeDatasetManageList } from 'zero-element-boot/lib/components/list'
-import { useForceUpdate } from 'zero-element-boot/lib/components/hooks/lifeCycle';
 
 export default function DataSetManage(props) {
 
     const { moduleId, containerHeight, type } = props
 
-    const forceUpdate = useForceUpdate()
 
     useEffect(_ => {
     }, [type])

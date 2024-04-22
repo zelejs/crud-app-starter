@@ -16,7 +16,8 @@ const propsManageLayout = {
   ],
   xname:'HStack',
   props:{
-    flexFlow: "no-wrap"
+    flexFlow: "no-wrap",
+    spacing: 8
   },
   container: "DataFlowContainer"
 }
@@ -43,7 +44,8 @@ const bindingManageLayout = {
   ],
   xname:'HStack',
   props:{
-    flexFlow: "no-wrap"
+    flexFlow: "no-wrap",
+    spacing: 8
   },
   container: "DataFlowContainer"
 }

@@ -146,11 +146,14 @@ export default function EditComponent(props) {
     //   toastTips('请选择要替换的组件')
     //   return
     // }
-    const api = '/openapi/lc/module/replace-add-child-module'
+    // const api = '/openapi/lc/module/replace-add-child-module'
+    const api = '/openapi/lc/module/add-child-module'
     const query = {
+      // "mainModuleId": componentId,
+      // "removeModuleId": childMenuId,
+      // "replaceModuleId": newComponentId
       "mainModuleId": componentId,
-      "removeModuleId": childMenuId,
-      "replaceModuleId": newComponentId
+      "addModuleId": newComponentId
     }
 
     return promiseAjax(api, query, { method: 'PATCH' }).then(resp => {
@@ -192,7 +195,10 @@ export default function EditComponent(props) {
     setLayoutApi('')
     setChildApi('')
     setChildLayoutApi('')
-    setMenuName(item.name)
+    setMenuName('')
+    setTimeout(_ => {
+      setMenuName(item.name)
+    }, 100)
 
   }
 
