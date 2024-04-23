@@ -49,27 +49,22 @@ export default function Index(props) {
         setIsAddClick(false)
         setPreviewAutoLayoutId()
         if (item.isSelected) {
-        //     setPreviewData({
-        //         ___presenter2: {
-        //             xname: item.componentType,
-        //             props: item.componentProps
-        //         }
-        //     })
 
-        setTimeout(_=>{
-            setModuleName(item.moduleName)
-            setPreviewAutoLayoutId(item.id)
-        },100)
+        // setTimeout(_=>{
+        //     setModuleName(item.moduleName)
+        //     setPreviewAutoLayoutId(item.id)
+        // },100)
         
-            // if(currentCategoryName === 'card'){
-            //     //跳转新页面
-            //     window.open(`/#/details?layoutName=${item.moduleName}`)
-            // }else{
-            //     setTimeout(_=>{
-            //         setModuleName(item.moduleName)
-            //         setPreviewAutoLayoutId(item.id)
-            //     },100)
-            // }
+            if(currentCategoryName === 'card' || currentCategoryName === 'autolayout'){
+                //跳转新页面
+                const w = window.open('about:blank');
+                w.location.href = `/#/preview?layoutName=${item.moduleName}`
+            }else{
+                setTimeout(_=>{
+                    setModuleName(item.moduleName)
+                    setPreviewAutoLayoutId(item.id)
+                },100)
+            }
         
         }
     }
