@@ -92,7 +92,7 @@ module.exports = {
             }
           ],
           "presenter": {
-            "xname": "ImageSize",
+            "xname": "CozeImage",
             "props": {
               "width": 144,
             }

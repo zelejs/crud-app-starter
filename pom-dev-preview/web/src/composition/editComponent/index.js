@@ -266,6 +266,8 @@ export default function EditComponent(props) {
       </Box>
 
       <Box style={{ width: '6px', height: `${containerHeight}px` }} background={'#EDECF1'}></Box>
+      {/* 隐藏此模块 */}
+      <Box display={'none'}>
       {
         otherMenuList.includes(menuName) ? (
           <Box minW={'220px'} style={{ height: `${containerHeight}px`, padding: '10px 20px', background: '#fff', overflow: 'hidden' }}>
@@ -306,6 +308,7 @@ export default function EditComponent(props) {
 
         )
       }
+      </Box>
 
     </HStack>
   )

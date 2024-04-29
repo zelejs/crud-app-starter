@@ -7,10 +7,11 @@ import Carts from '@/composition/carts';
 import Presenters from '@/composition/presenters';
 import Layouts from '@/composition/Layouts';
 import AutoLayouts from '@/composition/autoLayouts';
-import PaletteManage from '@/composition/paletteManage'
+import PaletteManage from '@/composition/paletteManage';
+import Categorys from '@/composition/categorys';
 
 import { IndicatorIcon, SelectorIcon, CartIcon, 
-  PresenterIcon, AutoLayoutIcon, PaletteIcon } from './svg'
+  PresenterIcon, AutoLayoutIcon, PaletteIcon, CategoryIcon } from './svg'
 
 require('./index.less');
 
@@ -19,9 +20,10 @@ const _menuList = [
   { id: 2, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
   { id: 3, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
   { id: 4, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
-  { id: 5, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: true },
+  { id: 5, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
   // { id: 6, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
   { id: 7, name: 'palette', icon: <PaletteIcon />, hoverIcon: <PaletteIcon fill="#4BDD97" />, selected: false },
+  { id: 8, name: 'categorys', icon: <CategoryIcon />, hoverIcon: <CategoryIcon fill="#4BDD97" />, selected: true },
 ]
 
 const _showAddBtns = [ 'carts', 'presenters']
@@ -41,7 +43,7 @@ export default function Index(props) {
   const [menuList, setMenuList] = useState(_menuList)
   const [onHover, setOnHover] = useState(false);
   const [currentHoverMenuId, setCurrentHoverMenuId] = useState(0);
-  const [componentName, setComponentName] = useState('presenters');
+  const [componentName, setComponentName] = useState('categorys');
   const [isSwitch, setIsSwitch] = useState(false)
 
   const toggleHoverEntered = (menuId) => {
@@ -124,6 +126,10 @@ export default function Index(props) {
         {componentName ==='palette' ? (
           <Box w={"100%"} h={"100%"} bg={"#ffffff"} padding={'10px'}>
             <PaletteManage/>
+          </Box>
+        ) : componentName === 'categorys' ? (
+          <Box w={"100%"} h={"100%"} bg={"#EDECF1"}>
+            <Categorys/>
           </Box>
         ) : componentName ? matchComponentPage() : <></>}
       </Box>

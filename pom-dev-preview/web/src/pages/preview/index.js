@@ -316,6 +316,12 @@ export default function Preview ( props ) {
                 xname: 'SortPresenterAction',
                 props: {
                 },
+            },
+            //dataset binding
+            {
+                xname: 'DatasetBindingAction',
+                props: {
+                },
             }
         ],
 

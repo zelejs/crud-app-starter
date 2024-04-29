@@ -29,7 +29,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "react-beautiful-dnd": "^13.1.1",
     "zero-element": "^1.0.0",
-    "zero-element-boot": "file:../../../zero-element-boot",
+    "zero-element-boot": "^1.0.11",
     "zero-element-boot-plugin-theme": "file:../../../zero-element-boot-plugin-theme",
     "zero-element-boot-presenter": "file:../../../zero-element-boot-presenter"
   },

@@ -21,7 +21,8 @@ const apiIdMap = {
 
 export default function Index(props) {
 
-  const { id, status, cb, moduleType } = props
+  const { id, status, cb, moduleType, onActionCompleted, ...rest } = props;
+
   //   const api = '/openapi/lc/module?componentOption=cart'
   const api = '/openapi/lc/module?pageNum=1&pageSize=100'
   const layoutApi = '/openapi/crud/lc_low_auto_module/lowAutoModule/lowAutoModules'
@@ -83,7 +84,8 @@ export default function Index(props) {
             seNewComponentId(resp.data.mainModuleId)
           }
           if(resp.data.nextComponent === 'finish'){
-            cb('success')
+            cb && cb('success')
+            onActionCompleted && onActionCompleted()
             toastTips('新增成功')
           }else{
             setCurrentApi()
@@ -96,7 +98,7 @@ export default function Index(props) {
             setCurrentSkipComponentOptionList(resp.data.skipComponentOptionList)
           }
         } else if ( resp.code === 4000 ) {
-          cb('error')
+          cb && cb('error')
           toastTips(resp.message, 'error')
         }  else {
             console.error("getPostComponent = ", resp)
@@ -125,7 +127,8 @@ export default function Index(props) {
             seNewComponentId(resp.data.mainModuleId)
           }
           if(resp.data.nextComponent === 'finish'){
-            cb('success')
+            cb && cb('success')
+            onActionCompleted && onActionCompleted()
             toastTips('操作成功')
           }else{
             setCurrentApi()
@@ -138,7 +141,7 @@ export default function Index(props) {
             setCurrentSkipComponentOptionList(resp.data.skipComponentOptionList)
           }
         } else if ( resp.code === 4000 ) {
-          cb('error')
+          cb && cb('error')
           toastTips(resp.message, 'error')
         }  else {
             toastTips(resp.message)
