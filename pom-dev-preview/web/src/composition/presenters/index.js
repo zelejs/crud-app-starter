@@ -134,7 +134,7 @@ export default function Index(props) {
                     <AutoLayout layout={categoryListLayout} isScroll={false} onItemClick={onCateItemClick} />
                 </Box>
                 <Box style={{ width: '6px', height: '100vh' }} background={'#EDECF1'}></Box>
-                <Box style={{ width: '500px', height: '100vh', display: 'flex', flexDirection:'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '0px 8px 0px 8px', background: '#fff' }}>
+                <Box style={{ height: '100vh', display: 'flex', flexDirection:'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '0px 8px 0px 8px', background: '#fff' }}>
                     { isSwitch && (
                         <Button style={{marginTop: '8px', padding: '8px'}} onClick={addNewClick}>新增</Button>
                     )}

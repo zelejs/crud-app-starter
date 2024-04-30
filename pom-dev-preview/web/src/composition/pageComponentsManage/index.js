@@ -17,13 +17,13 @@ require('./index.less');
 
 const _menuList = [
   // { id: 1, name: 'auto', icon: <AutoLayoutIcon />, hoverIcon: <AutoLayoutIcon fill="#4BDD97" />, selected: false },
-  { id: 2, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: false },
+  { id: 2, name: 'indicators', icon: <IndicatorIcon />, hoverIcon: <IndicatorIcon fill="#4BDD97" />, selected: true },
   { id: 3, name: 'selectors', icon: <SelectorIcon />, hoverIcon: <SelectorIcon fill="#4BDD97" />, selected: false },
   { id: 4, name: 'carts', icon: <CartIcon />, hoverIcon: <CartIcon fill="#4BDD97" />, selected: false },
   { id: 5, name: 'presenters', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
   // { id: 6, name: 'layouts', icon: <PresenterIcon />, hoverIcon: <PresenterIcon fill="#4BDD97" />, selected: false },
   { id: 7, name: 'palette', icon: <PaletteIcon />, hoverIcon: <PaletteIcon fill="#4BDD97" />, selected: false },
-  { id: 8, name: 'categorys', icon: <CategoryIcon />, hoverIcon: <CategoryIcon fill="#4BDD97" />, selected: true },
+  { id: 8, name: 'categorys', icon: <CategoryIcon />, hoverIcon: <CategoryIcon fill="#4BDD97" />, selected: false },
 ]
 
 const _showAddBtns = [ 'carts', 'presenters']
@@ -43,7 +43,7 @@ export default function Index(props) {
   const [menuList, setMenuList] = useState(_menuList)
   const [onHover, setOnHover] = useState(false);
   const [currentHoverMenuId, setCurrentHoverMenuId] = useState(0);
-  const [componentName, setComponentName] = useState('categorys');
+  const [componentName, setComponentName] = useState('indicators');
   const [isSwitch, setIsSwitch] = useState(false)
 
   const toggleHoverEntered = (menuId) => {

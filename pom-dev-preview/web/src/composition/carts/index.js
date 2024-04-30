@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChakraProvider, VStack, HStack, Box, Button, Text, FormControl, FormLabel } from '@chakra-ui/react';
 import PreviewAutoLayout from 'zero-element-boot/lib/components/PreviewAutoLayout';
 import LocalPreview from '@/composition/localPreview';
 import AddCarts from '@/composition/AddCarts'
+import EditProps from '@/composition/editProps';
 
 
 export default function Index(props) {
@@ -16,11 +17,18 @@ export default function Index(props) {
   const [previewData, setPreviewData] = useState('')
 
   const [isAddClick, setIsAddClick] = useState(false)
+  const [moduleName, setModuleName] = useState('')
+
+  useEffect(() => {
+    setApi(api1)
+    setLayoutApi(layoutApi1)
+  },[api, layoutApi])
 
   //左侧cart列表 item点击事件
   const onComponentItemClick = (item) => {
     setIsAddClick(false)
     if (item.isSelected) {
+      setModuleName(item.moduleName)
       setPreviewData({
         __cart2: {
           xname: item.componentType,
@@ -36,17 +44,22 @@ export default function Index(props) {
   }
   //新增cart回调事件
   const cb = (status) => {
-    if(status === 'success'){
+    if (status === 'success') {
       setApi()
       setLayoutApi()
       setIsAddClick(false)
       setTimeout(() => {
         setApi(api1)
         setLayoutApi(layoutApi1)
-      },100)
-    }else if (status === 'error'){
+      }, 100)
+    } else if (status === 'error') {
       setIsAddClick(false)
     }
+  }
+
+  const onCompleted = (data) => {
+    setApi()
+    setLayoutApi()
   }
 
   return (
@@ -58,7 +71,7 @@ export default function Index(props) {
             {
               api && layoutApi ? (
                 <PreviewAutoLayout layoutApi={layoutApi} api={api} onItemClick={onComponentItemClick} onAddNewClick={addNewClick} isSwitch={isSwitch} />
-              ):<></>
+              ) : <></>
             }
           </Box>
 
@@ -74,7 +87,10 @@ export default function Index(props) {
               <Box style={{ width: '100%', height: window.innerHeight, padding: '8px' }} background={'#EDECF1'}>
                 {
                   previewData ? (
-                    <LocalPreview previewData={previewData} type='cart' />
+                    <VStack spacing={2} alignItems={'flex-start'} >
+                      <EditProps moduleName={moduleName} onActionCompleted={onCompleted} />
+                      <LocalPreview previewData={previewData} type='cart' />
+                    </VStack>
                   ) : <></>
                 }
               </Box>
@@ -82,7 +98,7 @@ export default function Index(props) {
           }
         </HStack>
       </VStack>
-    </ChakraProvider>
+    </ChakraProvider >
   )
 
 }
