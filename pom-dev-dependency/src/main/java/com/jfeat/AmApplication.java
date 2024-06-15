@@ -28,7 +28,7 @@ public class AmApplication extends WebMvcConfigurerAdapter {
 //        // dependency-ui.html
 //        registry.addResourceHandler("dependency-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 //        registry.addResourceHandler("/dependency-ui/**").addResourceLocations("classpath:/META-INF/resources/dependency-ui/");
-//    }
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(AmApplication.class, args);
