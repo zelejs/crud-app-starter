@@ -22,12 +22,13 @@ public class AmApplication extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // swagger-ui.html
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 
-//        // dependency-ui.html
-//        registry.addResourceHandler("dependency-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-//        registry.addResourceHandler("/dependency-ui/**").addResourceLocations("classpath:/META-INF/resources/dependency-ui/");
+        // dependency-ui.html
+        registry.addResourceHandler("dependency-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/dependency-ui/**").addResourceLocations("classpath:/META-INF/resources/dependency-ui/");
     }
 
     public static void main(String[] args) {
