@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 /*
 //            ServletOutputStream out = response.getOutputStream();
@@ -146,10 +147,12 @@ public class DependencyEndpoint {
                 throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
             }
         }
-        if (all == null) {
-            all = false;
-        }
+        all = Objects.isNull(all) ? false : all;
+        logger.info("JAR_ROOT= ", System.getenv("JAR_ROOT"));
+
         String rootPath = jarDeployProperties.getRootPath();
+        logger.info("rootPath= " + rootPath);
+
         String rootPathJar = null;
         if(new File(rootPath).exists()){
             // find the first .jar
