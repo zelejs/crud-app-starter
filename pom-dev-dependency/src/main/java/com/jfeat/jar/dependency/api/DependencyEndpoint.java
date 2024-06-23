@@ -2,8 +2,6 @@ package com.jfeat.jar.dependency.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfeat.crud.base.exception.BusinessCode;
-import com.jfeat.crud.base.exception.BusinessException;
 import com.jfeat.crud.base.tips.SuccessTip;
 import com.jfeat.crud.base.tips.Tip;
 import com.jfeat.jar.dep.properties.JarDeployProperties;
@@ -53,9 +51,12 @@ import java.util.stream.Collectors;
 public class DependencyEndpoint {
     protected final static Logger logger = LoggerFactory.getLogger(DependencyEndpoint.class);
 
-
     private static final Long ttl = 14400000L;
     private static final String key = "514528";
+
+    @Autowired
+    private JarDeployProperties jarDeployProperties;
+
 
     /**
      * 获取依赖树
@@ -126,11 +127,6 @@ public class DependencyEndpoint {
         return decompileLines;
     }
 
-
-    @Autowired
-    private JarDeployProperties jarDeployProperties;
-
-
     @GetMapping("/json")
     @ApiOperation(value = "[JSON格式] 返回所有的依赖文件,如果只有一个文件匹配,则反编译文件")
     public Tip getDependencyJson(
@@ -143,11 +139,11 @@ public class DependencyEndpoint {
 
         // 默认没有配置需要签名保护
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
-                throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
-            }
+            sign = Objects.isNull(sign) ? "" : sign;
+            SignatureKit.parseSignature(sign, key, ttl);
         }
-        all = Objects.isNull(all) ? false : all;
+
+        all = !Objects.isNull(all) ? false : all;
         logger.info("JAR_ROOT= ", System.getenv("JAR_ROOT"));
 
         String rootPath = jarDeployProperties.getRootPath();
@@ -205,14 +201,11 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
-                throw new BusinessException(BusinessCode.NoPermission, "sign invalid!");
-            }
+            sign = Objects.isNull(sign) ? "" : sign;
+            SignatureKit.parseSignature(sign, key, ttl);
         }
+        all = !Objects.isNull(all) ? false : all;
 
-        if (all == null) {
-            all = false;
-        }
         String rootPath = jarDeployProperties.getRootPath();
         String rootPathJar = null;
         if(new File(rootPath).exists()){
@@ -271,13 +264,12 @@ public class DependencyEndpoint {
     public void extraDependencyEntry(
             @ApiParam(name = "pattern", value = "搜索过滤条件")
             @RequestParam(value = "pattern", required = false) String pattern,
-            @RequestParam(name = "sign", required = true) String sign,
+            @RequestParam(name = "sign", required = false) String sign,
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            if (StringUtils.isBlank(sign) || !SignatureKit.parseSignature(sign, key, ttl)) {
-                throw new BusinessException(BusinessCode.NoPermission, "sign invalid !");
-            }
+            sign = Objects.isNull(sign) ? "" : sign;
+            SignatureKit.parseSignature(sign, key, ttl);
         }
 
         String rootPath = jarDeployProperties.getRootPath();
