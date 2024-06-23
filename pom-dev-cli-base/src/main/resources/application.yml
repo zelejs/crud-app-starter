@@ -1,0 +1,26 @@
+#### jar-dependency
+jar-dependency:
+  root-path: ${JAR_ROOT}
+  signature-opt: ${SIGN_OPT}  #enable
+#  container: testapi
+#  docker-api-endpoint: http://192.168.3.239:2375
+
+#### default
+server:
+  port: 8080
+
+spring:
+  # profiles:
+  #   active: dev
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /META-INF//
+      suffix: .html
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+    converters:
+      preferred-json-mapper: fastjson
