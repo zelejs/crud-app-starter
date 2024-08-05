@@ -102,7 +102,7 @@
         <repository>
             <id>archiva-internal</id>
             <name>Internal Repository</name>
-            <url>http://120.79.49.72:8081/repository/internal</url>
+            <url>http://202.63.172.43:8081/repository/internal</url>
         </repository>
     </distributionManagement>
 
@@ -110,7 +110,7 @@
         <repository>
             <id>archiva-internal</id>
             <name>Internal Repository</name>
-            <url>http://120.79.49.72:8081/repository/internal</url>
+            <url>http://202.63.172.43:8081/repository/internal</url>
         </repository>
     </repositories>
 
