@@ -1,0 +1,44 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+group = 'com.newconf.mqttclient'
+version = '1.0-SNAPSHOT'
+
+
+dependencies {
+    implementation ('org.springframework.boot:spring-boot-starter-web'){
+        exclude group: 'ch.qos.logback'
+    }
+    implementation 'org.springframework.integration:spring-integration-mqtt'
+    implementation 'org.projectlombok:lombok'
+    implementation 'com.alibaba:fastjson:1.2.83'
+    implementation 'org.json:json:20210307'
+    implementation"org.springframework.boot:spring-boot-dependencies:3.3.0"
+    implementation('org.springframework.boot:spring-boot-starter-logging') {
+        exclude group: 'ch.qos.logback'
+    }
+    implementation 'org.slf4j:slf4j-api:2.0.0'
+    implementation 'org.slf4j:slf4j-simple:2.0.0'
+    implementation project(':mqtt-client')
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}

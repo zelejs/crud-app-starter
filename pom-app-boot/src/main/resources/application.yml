@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+# mqtt配置
+mqtt:
+  brk: tcp://202.63.172.178:8883 # 端口
+  usr: admin # 用户名
+  pw: admin # 密码
+  tp: room-controller-exchange # 主题
