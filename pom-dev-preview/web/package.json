@@ -10,8 +10,6 @@
     "buildA": "node init.js && umi build && node gen"
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.16.5",
-    "@babel/preset-react": "^7.16.5",
     "@chakra-ui/avatar": "^1.2.5",
     "@chakra-ui/layout": "^1.4.5",
     "@chakra-ui/react": "^1.6.3",
@@ -34,8 +32,8 @@
     "zero-element-boot-presenter": "file:plugins/zero-element-boot-presenter"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/preset-react": "^7.13.13",
+    "@babel/plugin-transform-class-properties": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
     "@umijs/preset-react": "^1.5.12",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.1.0",
