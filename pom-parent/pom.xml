@@ -29,7 +29,7 @@
         <crud-runtime.version>0.0.1</crud-runtime.version>
         <!-- framework -->
         <jwt-core.version>0.1.2</jwt-core.version>
-        <perm-core.version>0.1.2</perm-core.version>
+        <perm-core.version>0.1.3</perm-core.version>
         <field-config.version>1.2.2</field-config.version>
         <eav.version>2.1.1</eav.version>
         <!-- <uaas.version>3.1.0</uaas.version> -->
