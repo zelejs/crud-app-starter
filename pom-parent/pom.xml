@@ -33,7 +33,9 @@
         <field-config.version>1.2.2</field-config.version>
         <eav.version>2.1.1</eav.version>
         <!-- <uaas.version>3.1.0</uaas.version> -->
-        <uaas.version>4.0.0</uaas.version>
+        <org.version>4.0.0</org.version>  <!--delete_flag: -1,1 deleted, 0, normal-->
+        <uaas.version>4.0.0</uaas.version> 
+        
 
         <!-- sprintboot  -->
         <spring-boot-starter-web.version>2.1.2.RELEASE</spring-boot-starter-web.version>
