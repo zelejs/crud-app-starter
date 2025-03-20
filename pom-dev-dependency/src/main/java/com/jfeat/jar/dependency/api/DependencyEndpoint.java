@@ -139,11 +139,11 @@ public class DependencyEndpoint {
 
         // 默认没有配置需要签名保护
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            sign = Objects.isNull(sign) ? "" : sign;
+            sign = sign==null ? "" : sign;
             SignatureKit.parseSignature(sign, key, ttl);
         }
 
-        all = !Objects.isNull(all) ? false : all;
+        all = (all==null) ? false : all;
         logger.info("JAR_ROOT= ", System.getenv("JAR_ROOT"));
 
         String rootPath = jarDeployProperties.getRootPath();
@@ -201,10 +201,10 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            sign = Objects.isNull(sign) ? "" : sign;
+            sign = (sign==null) ? "" : sign;
             SignatureKit.parseSignature(sign, key, ttl);
         }
-        all = !Objects.isNull(all) ? false : all;
+        all = (all==null) ? false : true;
 
         String rootPath = jarDeployProperties.getRootPath();
         String rootPathJar = null;
@@ -268,7 +268,7 @@ public class DependencyEndpoint {
             HttpServletResponse response) throws IOException {
 
         if(StringUtils.isBlank(jarDeployProperties.getSignatureOpt()) || "enable".equals(jarDeployProperties.getSignatureOpt())) {
-            sign = Objects.isNull(sign) ? "" : sign;
+            sign = (sign==null) ? "" : sign;
             SignatureKit.parseSignature(sign, key, ttl);
         }
 
