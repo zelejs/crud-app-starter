@@ -144,9 +144,8 @@ public class DependencyEndpoint {
         }
 
         all = (all==null) ? false : all;
-        logger.info("JAR_ROOT= ", System.getenv("JAR_ROOT"));
-
-        String rootPath = jarDeployProperties.getRootPath();
+        // logger.info("JAR_ROOT= ", System.getenv("JAR_ROOT"));  //NOT WORK
+        String rootPath = jarDeployProperties.getRootPath();  //WORK
         logger.info("rootPath= " + rootPath);
 
         String rootPathJar = null;
