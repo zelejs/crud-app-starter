@@ -24,7 +24,7 @@
     "lodash": "^4.17.19",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-hook-form": "^7.22.2",
+    "react-hook-form": "^6.15.8",
     "zero-element": "^1.0.0",
     "zero-element-boot": "^1.0.7"
   },
