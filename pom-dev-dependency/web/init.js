@@ -1,8 +1,6 @@
 var p = require('path');
 var fs = require('fs-extra');
 
-let path=p.join(__dirname,"./dist");
-deleteFolder(path);
 function deleteFolder(path) {
     let files = [];
     if( fs.existsSync(path) ) {
@@ -18,3 +16,7 @@ function deleteFolder(path) {
         fs.rmdirSync(path);
     }
 }
+
+// main
+let path=p.join(__dirname,"./dist");
+deleteFolder(path);

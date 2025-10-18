@@ -3,7 +3,7 @@ import { Flex, Box, Stack, VStack, Container, Button  } from "@chakra-ui/react";
 import { AutoLayout } from 'zero-element-boot/lib/components';
 import Loading from 'zero-element-boot/lib/components/loading';
 const promiseAjax = require('zero-element-boot/lib/components/utils/request');
-import JarItem from 'zero-element-boot/lib/composition/Standalone/JarItem';
+import JarItem from './JarItem';
 
 import layout from './layout';
 
