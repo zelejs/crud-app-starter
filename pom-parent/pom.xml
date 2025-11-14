@@ -18,8 +18,8 @@
 
     <properties>
         <!-- community's -->
-        <lombok.version>1.18.24</lombok.version>
-        <hutool.version>5.8.16</hutool.version>
+        <lombok.version>1.18.20</lombok.version>
+        <!-- <hutool.version>5.8.16</hutool.version> -->
 
         <!-- crud -->
         <crud-base.version>0.0.1</crud-base.version>
@@ -29,7 +29,7 @@
         <crud-runtime.version>0.0.1</crud-runtime.version>
         <!-- framework -->
         <jwt-core.version>0.1.2</jwt-core.version>
-        <perm-core.version>0.1.3</perm-core.version>
+        <perm-core.version>0.3.6</perm-core.version>
         <field-config.version>1.3.0</field-config.version>
         <eav.version>2.1.1</eav.version>
         <!-- <uaas.version>3.1.0</uaas.version> -->
@@ -44,20 +44,20 @@
         <mysql.version>8.0.27</mysql.version>
 
         <!-- common -->
-        <hutool-all.version>5.7.2</hutool-all.version>
+        <!-- <hutool-all.version>5.7.2</hutool-all.version> -->
         <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-io.version>2.5</commons-io.version>
-        <commons-logging.version>1.2</commons-logging.version>
-        <log4j.version>1.2.17</log4j.version>
+        <!-- <commons-io.version>2.5</commons-io.version> -->
+        <!-- <commons-logging.version>1.2</commons-logging.version> -->
+        <!-- <log4j.version>1.2.17</log4j.version> -->
         <slf4j-api.version>1.7.29</slf4j-api.version>
-        <ehcache-core.version>2.6.11</ehcache-core.version>
-        <ehcache.version>3.3.1</ehcache.version>
+        <!-- <ehcache-core.version>2.6.11</ehcache-core.version> -->
+        <!-- <ehcache.version>3.3.1</ehcache.version> -->
 
         <!-- swagger -->
         <io.swagger.version>1.5.20</io.swagger.version>
-        <swagger-ui.version>2.9.2</swagger-ui.version>
+        <!-- <swagger-ui.version>2.9.2</swagger-ui.version> -->
         <!-- swagger@deprecated -->
-        <io.springfox.version>2.9.2</io.springfox.version>
+        <!-- <io.springfox.version>2.9.2</io.springfox.version> -->
         <swagger.version>2.9.2</swagger.version>
 
         <!-- java 11  -->
@@ -77,27 +77,27 @@
 
 
         <!-- legacy  -->
-        <flyway-core.version>5.2.4</flyway-core.version>
+        <!-- <flyway-core.version>5.2.4</flyway-core.version> -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <!-- <java.version>1.8</java.version> -->
         <shiro.version>1.4.0</shiro.version>
         <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
         <mybatisplus.version>2.1.9</mybatisplus.version>
         <fastjson.version>1.2.52</fastjson.version>
-        <commons.io.version>2.5</commons.io.version>
+        <!-- <commons.io.version>2.5</commons.io.version> -->
         <commons.lang3.version>3.7</commons.lang3.version>
-        <velocity.version>1.7</velocity.version>
-        <kaptcha.version>2.3.2</kaptcha.version>
+        <!-- <velocity.version>1.7</velocity.version> -->
+        <!-- <kaptcha.version>2.3.2</kaptcha.version> -->
         <!-- <zxing.version>3.2.1</zxing.version> -->
         <druid.version>1.1.12</druid.version>
-        <beetl.version>2.7.15</beetl.version>
+        <!-- <beetl.version>2.7.15</beetl.version> -->
         <jjwt.version>0.7.0</jjwt.version>
         <jedis.version>2.9.0</jedis.version>
         <fst.version>2.50</fst.version>
         <!-- <h2.version>1.4.196</h2.version> not support ON UPDATE -->
         <h2.version>1.4.200</h2.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>20.0</guava.version>
     </properties>
 
     <distributionManagement>

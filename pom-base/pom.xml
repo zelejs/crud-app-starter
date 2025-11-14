@@ -19,7 +19,6 @@
 
     <properties>
         <skipStandalone>true</skipStandalone>
-        <lombok.version>1.18.4</lombok.version>
     </properties>
 
     <dependencies>
@@ -66,11 +65,6 @@
             <groupId>com.jfeat</groupId>
             <artifactId>crud-plus</artifactId>
             <version>${crud-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jfeat</groupId>
-            <artifactId>crud-core</artifactId>
-            <version>${crud-core.version}</version>
         </dependency>
         <!-- Permission -->
         <dependency>
