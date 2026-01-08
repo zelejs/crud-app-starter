@@ -20,6 +20,7 @@
         <!-- community's -->
         <lombok.version>1.18.20</lombok.version>
         <!-- <hutool.version>5.8.16</hutool.version> -->
+        <jackson.version>2.10.5</jackson.version>
 
         <!-- crud -->
         <crud-base.version>0.0.1</crud-base.version>
